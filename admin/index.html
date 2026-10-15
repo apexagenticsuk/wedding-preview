@@ -1,0 +1,83 @@
+<!doctype html><html lang="en-IE"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex, nofollow"><title>Website editor | Dave Young</title>
+<link rel="icon" href="data:,"><link rel="stylesheet" href="../style.css"><link rel="stylesheet" href="shell.css"></head><body>
+<div id="login" class="login" hidden><div class="card">
+  <div class="brand"><span class="d">Dave</span> <span class="y">Young</span><small>Website editor</small></div>
+  <h1>Edit your website</h1>
+  <p class="lead2">Click on anything on your pages to change it, then press Publish. No coding needed.</p>
+  <label for="tok">Your editor key</label>
+  <input id="tok" type="password" autocomplete="off" placeholder="Starts with github_pat_…">
+  <p class="hint">Paste the key you were given. It stays in this browser on this device only and is never put on the website.</p>
+  <div class="row"><button class="btn red" id="signin">Sign in</button><button class="btn ghost" id="demo">Just look around (demo mode)</button></div>
+  <p id="loginmsg" class="msg"></p>
+  <details class="help"><summary>Where do I get a key?</summary>
+  <p>Your web person sets this up with you once. In short: sign in to <b>github.com</b>, go to <b>Settings → Developer settings → Personal access tokens → Fine-grained tokens → Generate new token</b>. Set Resource owner to <b>apexagenticsuk</b>, pick <b>Only select repositories → dave-preview</b>, and under <b>Repository permissions</b> set <b>Contents</b> to <b>Read and write</b>. Copy the key and paste it above.</p></details>
+</div></div>
+
+<div id="app" hidden>
+<header class="tb">
+  <div class="g"><span class="logo"><b>Dave</b> <i>Young</i></span><span id="demobadge" class="demob" hidden title="Demo mode: changes stay on this device and can't be published">DEMO</span>
+  <select id="page" aria-label="Page"></select></div>
+  <div class="g"><div class="seg" role="group" aria-label="View"><button id="vdesk" class="on" title="Desktop view">🖥<span class="sl"> Desktop</span></button><button id="vphone" title="Phone view">📱<span class="sl"> Phone</span></button></div>
+  <button id="undo" class="ib" title="Undo the last change"><span aria-hidden="true">↶</span> Undo</button><button id="redo" class="ib" title="Redo the change you undid">Redo <span aria-hidden="true">↷</span></button></div>
+  <div class="g tools"><button id="pagesb" class="tbb">Pages</button><button id="psettings" class="tbb">Page settings</button><button id="sharedb" class="tbb" title="Shared content">Shared<span class="wide"> content</span></button><button id="style" class="tbb">Style</button><button id="helpb" class="tbb">Help</button><button id="preview" class="tbb gold">Preview</button><button id="out" class="tbb ghost"></button></div>
+  <div class="g pubg"><span id="pill" class="pill"></span><button id="publish" class="pub">Publish</button></div>
+</header>
+<div id="selbar" class="selbar" hidden></div>
+<div class="work"><div id="stage" class="stage"><iframe id="frame" title="Your page"></iframe></div>
+<aside id="side" class="side" hidden><div class="sidehd"><b id="sidet"></b><button id="sidex" title="Close">✕</button></div><div id="sideb" class="sideb"></div></aside></div>
+<div id="toast" class="toast" hidden></div>
+</div>
+
+<div id="helpm" class="modal" hidden><div class="mc"><button class="x" data-close>✕</button>
+<h2>How to edit your website</h2>
+<div class="steps">
+<div><h3>Sign in</h3><p>Open this page, paste your editor key and tap <b>Sign in</b>. You only do this once on each phone or computer. <b>Demo mode</b> lets you try everything without changing the real site.</p></div>
+<div><h3>Change words</h3><p>Pick a page at the top. Things you can change get a yellow outline when you point at them. Click a heading, paragraph or button and just type. Click somewhere else when you're done.</p></div>
+<div><h3>Change a button</h3><p>Click any button or link. A panel opens on the right where you can change its words, where it goes (one of your pages, a web address, a phone number or an email) and its colour.</p></div>
+<div><h3>Change a show date</h3><p>Click a show (or its <b>Edit</b> button) to change the date, venue, town or ticket link. Type the date any normal way, for example <b>Fri 4th Dec</b>, <b>4 Dec 2026</b> or <b>04/12/2026</b>: the weekday is ignored and worked out for you, and a message tells you if a date can't be read. Shows sort themselves by date. Each row has its own <b>Sold out</b>, <b>Drag</b> and <b>Delete</b> buttons, and <b>+ Add show</b> is under the list.</p></div>
+<div><h3>Swap the poster or a photo</h3><p>Click any picture and choose <b>Replace picture</b>. Photos from your phone are shrunk automatically.</p></div>
+<div><h3>Move or hide a section</h3><p><b>Drag:</b> point at a section and grab the blue <b>⠿ Drag</b> tab (top right), or a block’s yellow <b>⠿</b>, and drop it where the yellow line shows; the page scrolls when you get near the edge. Pictures, cards, testimonials and other repeated items have a small <b>⠿</b> too (on a phone, tap the section first). Drag menu links sideways, or the <b>⠿</b> in <b>Pages</b>. In <b>Add a block</b> you can drag a tile straight onto the page (on a phone: hold it, then drag). Every drag can be undone with <b>↶</b>.</p><p>Or click inside a section: the bar under the toolbar shows what is selected, with <b>Move up</b>, <b>Move down</b>, <b>Reorder…</b> (drag in a list), <b>Hide</b>, <b>Copy</b> and <b>Delete</b>. Hidden sections stay faded in the editor so you can bring them back.</p></div>
+<div><h3>Check, then publish</h3><p><b>📱 Phone</b> shows how it looks on a mobile. <b>Preview</b> opens the site with your changes. When you're happy, tap the big red <b>Publish</b>. The real website updates in about a minute.</p></div>
+<div><h3>Add something new</h3><p>Click any heading or paragraph and tap the yellow <b>+</b> under it (or <b>+ Add below</b>) to add a heading, text, picture, button, video, gallery, quote, cards and more. Use the blue <b>+ Add section</b> lines between sections for ready-made layouts.</p></div>
+<div><h3>Add or change pages</h3><p>Tap <b>Pages</b> at the top. <b>+ New page</b> makes a new page from a ready-made layout and adds it to the menu. From there you can also rename, copy, delete, hide from the menu, change the menu order and the Google title and description.</p></div>
+<div><h3>Made a mistake?</h3><p>Use <b>↶ Undo</b>. Unpublished changes are kept even if you close the page. Every published version is saved, so your web person can always roll back.</p>
+<button class="btn ghost sm" id="discard">Throw away all unpublished changes</button></div>
+</div></div></div>
+
+<div id="stylem" class="modal" hidden><div class="mc"><button class="x" data-close>✕</button>
+<h2>Site style</h2><p class="hint">Pick the accent colour used on buttons and highlights.</p><div id="accents" class="accents"></div>
+<label>Main booking phone number</label><input id="mphone" inputmode="tel"><p class="hint">Updates the number on every page and every “Call” button.</p>
+<h3 style="margin-top:20px">Social media links</h3><p class="hint">Also editable by clicking the icons on any page.</p><div id="socs"></div><button class="btn gold sm" id="addsoc">+ Add a social link</button>
+<h3 style="margin-top:20px">Contact page icon strip</h3><p class="hint">The four icons in the middle of the Contact page only.</p><div id="csocs"></div><button class="btn gold sm" id="addcsoc">+ Add an icon</button>
+<div class="row"><button class="btn red" data-close>Done</button></div></div></div>
+
+
+<div id="pickm" class="modal" hidden><div class="mc wide"><button class="x" data-close>✕</button>
+<h2 id="pickt">Add a block</h2><p class="hint" id="pickh">Pick what to add. Everything uses the site’s own fonts and colours.</p><div id="pickg" class="tiles"></div></div></div>
+
+<div id="pagesm" class="modal" hidden><div class="mc wide"><button class="x" data-close>✕</button>
+<h2>Pages &amp; menu</h2><p class="hint">The order here is the order in the menu. “Menu” shows the page in the top menu and footer, “Footer” only in the footer, “Hidden” nowhere (the page still exists).</p>
+<div id="plist"></div><div class="row pbar"><button class="btn ghost" id="pundo" title="Undo">↶ Undo</button><button class="btn ghost" id="predo" title="Redo">↷ Redo</button><button class="btn red" id="newpb">+ New page</button><button class="btn ghost" data-close>Done</button></div></div></div>
+
+<div id="newpm" class="modal" hidden><div class="mc"><button class="x" data-close>✕</button>
+<h2 id="newpt">New page</h2>
+<label for="np-title">Page title</label><input id="np-title" placeholder="e.g. Christmas Parties">
+<label for="np-label">Name in the menu</label><input id="np-label" placeholder="e.g. Parties">
+<label for="np-slug">Web address</label><div class="slug"><span id="np-base"></span><input id="np-slug" placeholder="christmas-parties"><span>.html</span></div><p class="hint">Made from the title automatically. Letters, numbers and dashes only.</p>
+<label for="np-tpl">Start from</label><select id="np-tpl"></select>
+<p id="np-msg" class="msg err"></p>
+<div class="row"><button class="btn red" id="np-go">Create page</button><button class="btn ghost" data-close>Cancel</button></div></div></div>
+
+<div id="seom" class="modal" hidden><div class="mc"><button class="x" data-close>✕</button>
+<h2>Page settings</h2><p class="hint" id="seo-for"></p>
+<div id="ps-custom"><label for="ps-title">Page title</label><input id="ps-title"></div>
+<label for="ps-label">Name in the menu</label><input id="ps-label">
+<label for="ps-show">Show this page in</label><select id="ps-show"><option value="menu">The top menu and the footer</option><option value="footer">The footer only</option><option value="none">Nowhere (the page still exists)</option></select>
+<label for="seo-title">Google title (shown in the browser tab and on Google)</label><input id="seo-title" maxlength="70">
+<label for="seo-desc">Google description (the grey text under the title on Google)</label><textarea id="seo-desc" rows="3" maxlength="170"></textarea>
+<p class="hint">This preview site is hidden from Google on purpose; these details apply when the real site goes live.</p>
+<div class="row"><button class="btn red" id="seo-save">Save</button><button class="btn ghost" data-close>Cancel</button></div></div></div>
+
+<div id="dlg" class="modal dlg" hidden><div class="mc"><h2 id="dlg-t"></h2><p id="dlg-x" class="dlgtext"></p><div id="dlg-f"></div><p id="dlg-e" class="msg err"></p><div class="row" id="dlg-b"></div></div></div>
+<script>window.DY_SHELL=true;</script><script src="../content.js"></script><script src="drag.js"></script><script src="shell.js"></script><script src="shared.js"></script>
+</body></html>
