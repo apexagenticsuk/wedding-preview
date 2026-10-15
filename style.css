@@ -82,7 +82,7 @@ section{padding:clamp(54px,9vw,104px) 0}
 .litebtn:hover .play{transform:scale(1.08)}
 .lite iframe{position:absolute;inset:0;width:100%;height:100%;border:0}.lite.on .litebtn{display:none}
 /* intro / two columns */
-.two{display:grid;gap:34px;align-items:center}.two.top{align-items:start}
+.two{display:grid;grid-template-columns:minmax(0,1fr);gap:34px;align-items:center}.two.top{align-items:start}
 .photo{border-radius:var(--r);box-shadow:var(--sh);width:100%;height:auto;border:6px solid var(--paper)}
 .intro{background:var(--paper)}.intro .big{margin-top:18px}
 /* praise */
@@ -141,7 +141,7 @@ section{padding:clamp(54px,9vw,104px) 0}
 .enq input,.enq textarea{font:400 16px var(--sans);padding:13px 14px;border:1.5px solid #d9c9bd;border-radius:14px;background:#fff;color:var(--ink);width:100%}
 .enq input:focus,.enq textarea:focus{border-color:var(--rose);outline:3px solid rgba(155,50,70,.18)}.enq abbr{color:var(--rose);text-decoration:none}
 .enq .fine{margin:0}
-.side{display:grid;gap:22px}.cbox{background:var(--plum);color:#f6ece4;border-radius:var(--r);padding:28px;box-shadow:var(--sh)}
+.side{display:grid;grid-template-columns:minmax(0,1fr);gap:22px}.cbox{background:var(--plum);color:#f6ece4;border-radius:var(--r);padding:28px;box-shadow:var(--sh)}
 .cbox h3{color:#fff;font-size:26px}.cbox .tag{font-family:var(--serif);font-style:italic;font-size:20px;color:#ffd9a8;margin:8px 0 18px}.cbox dl{display:grid;grid-template-columns:auto 1fr;gap:8px 16px}.cbox dt{color:#d9c3b6;font-size:13px;letter-spacing:.12em;text-transform:uppercase;padding-top:3px}.cbox a{color:#fff}
 .deposit{background:var(--blush)}.deposit .terms{font-size:19px;max-width:60ch}
 .paybox{margin-top:22px;border:2px dashed #b8a9a0;background:repeating-linear-gradient(135deg,#f6efe9 0 10px,#fbf7f2 10px 20px);border-radius:var(--r);padding:20px}
@@ -175,3 +175,4 @@ hr{border:0;border-top:1px solid var(--line);margin:24px 0}.blk.space{height:40p
 @media (min-width:1240px){.brand .bn{font-size:22px}}
 @media (min-width:1280px){.vgrid.three{grid-template-columns:repeat(3,1fr)}}
 @media print{.sticky,header.top,.proto{display:none}}
+.cbox dd,.cbox dt{min-width:0;overflow-wrap:anywhere}

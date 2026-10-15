@@ -20,21 +20,21 @@ const gx=Math.max(bx.pub.x-(bx.pre.x+bx.pre.w),bx.pre.x-(bx.pub.x+bx.pub.w)),gy=
 ok(M+': Publish is set apart from Preview (not adjacent)',Math.max(gx,gy)>=20||(mobile&&bx.pub.y+bx.pub.h<=bx.pre.y),JSON.stringify(bx));
 ok(M+': toolbar stays compact',await p.evaluate(m=>document.querySelector('header.tb').getBoundingClientRect().height<=(m?130:70),mobile),'');
 // Shared list stays open
-await p.evaluate(()=>DYE.openShared('shows'));await p.waitForSelector('#sharedm:not([hidden])');
+await p.evaluate(()=>DYE.openShared('posts'));await p.waitForSelector('#sharedm:not([hidden])');
 await p.evaluate(()=>{document.querySelectorAll('#sharedm details.shrow')[1].open=true;document.querySelectorAll('#sharedm details.shrow')[1].dispatchEvent(new Event('toggle'));});
-const ven=p.locator('#sharedm details.shrow').nth(1).locator('label.shf:has(span:text-is("Venue")) input').first();await ven.fill('Ball Alley edited');await ven.dispatchEvent('change');await ready();
+const ven=p.locator('#sharedm details.shrow').nth(1).locator('label.shf:has(span:text-is("Title")) input').first();await ven.fill('Ball Alley edited');await ven.dispatchEvent('change');await ready();
 ok(M+': Shared row stays open after an edit',await p.evaluate(()=>document.querySelectorAll('#sharedm details.shrow')[1].open&&!document.querySelector('#sharedm').hidden));
 // typed date
 const dt=p.locator('#sharedm details.shrow').nth(1).locator('.shdate input[type=text]');
 await dt.fill('Dec 11 2026');await dt.dispatchEvent('change');await ready();
-ok(M+': typed date “Dec 11 2026” is accepted',await p.evaluate(()=>DYE.state().content.shows.some(s=>s.venue==='Ball Alley edited'&&s.date==='2026-12-11')));
+ok(M+': typed date “Dec 11 2026” is accepted',await p.evaluate(()=>DYE.state().content.posts.some(s=>s.title==='Ball Alley edited'&&s.date==='2026-12-11')));
 ok(M+': ...and the row is still open after the list re-sorts',await p.evaluate(()=>[...document.querySelectorAll('#sharedm details.shrow')].some(d=>d.open&&/Ball Alley edited/.test(d.textContent))));
 const dt2=p.locator('#sharedm details.shrow[open] .shdate input[type=text]').first();await dt2.fill('10/12/2026');await dt2.dispatchEvent('change');await ready();
-ok(M+': typed date 10/12/2026 is accepted',await p.evaluate(()=>DYE.state().content.shows.some(s=>s.venue==='Ball Alley edited'&&s.date==='2026-12-10')));
+ok(M+': typed date 10/12/2026 is accepted',await p.evaluate(()=>DYE.state().content.posts.some(s=>s.title==='Ball Alley edited'&&s.date==='2026-12-10')));
 await dt2.fill('not a date');await dt2.dispatchEvent('change');
-ok(M+': nonsense date is refused with a message',await p.evaluate(()=>DYE.state().content.shows.some(s=>s.venue==='Ball Alley edited'&&s.date==='2026-12-10')&&/couldn/i.test(document.querySelector('#sharedm .shmsg.err').textContent)));
+ok(M+': nonsense date is refused with a message',await p.evaluate(()=>DYE.state().content.posts.some(s=>s.title==='Ball Alley edited'&&s.date==='2026-12-10')&&/couldn/i.test(document.querySelector('#sharedm .shmsg.err').textContent)));
 await dt2.fill('FRI 4th Dec');await dt2.dispatchEvent('change');await ready();
-ok(M+': “FRI 4th Dec” is accepted (weekday ignored)',await p.evaluate(()=>DYE.state().content.shows.some(s=>s.venue==='Ball Alley edited'&&/^\d{4}-12-04$/.test(s.date))));
+ok(M+': “FRI 4th Dec” is accepted (weekday ignored)',await p.evaluate(()=>DYE.state().content.posts.some(s=>s.title==='Ball Alley edited'&&/^\d{4}-12-04$/.test(s.date))));
 ok(M+': date error message shows an example',await p.evaluate(()=>{const f=document.querySelector('#sharedm .shdate input[type=text]');return /Fri 4th Dec/.test(f.placeholder);}));
 ok(M+': date field also has a calendar picker',await p.evaluate(()=>!!document.querySelector('#sharedm .shdate input[type=date]')));
 await p.evaluate(()=>document.querySelector('#sharedm').hidden=true);
@@ -54,15 +54,15 @@ ok(M+': Move up is disabled on the first section',await first.isDisabled());
 // no text selection / sideways scroll
 ok(M+': no text selection while editing (outside typing)',await F().evaluate(()=>getComputedStyle(document.body).userSelect==='none'));
 // browse all pages + Shared tabs
-for(const pg of ['live','about','book','corporate','contact','clips','magician']){await go(pg);
+for(const pg of ['videos','testimonials','faqs','blog','contact','index']){await go(pg);
  ok(M+': no sideways scroll in the editor on '+pg,await F().evaluate(()=>{const d=document.documentElement;return d.scrollWidth<=d.clientWidth+1;}));}
-for(const k of ['shows','testimonials','clips','services','clients','credits','offers','contact']){await p.evaluate(x=>DYE.openShared(x),k);await p.evaluate(()=>document.querySelectorAll('#sharedm details.shrow').forEach(d=>d.open=true));await p.waitForTimeout(250);}
+for(const k of ['posts','testimonials','clips','faqs','praise','gallery','facts','set','contact','deposit']){await p.evaluate(x=>DYE.openShared(x),k);await p.evaluate(()=>document.querySelectorAll('#sharedm details.shrow').forEach(d=>d.open=true));await p.waitForTimeout(250);}
 ok(M+': no console errors or failed requests',errs.length===0,JSON.stringify(errs.slice(0,4)));
 await ctx.close();}
 // layout shift between plain preview and editing (classic scrollbars)
 {const ctx=await b.newContext({viewport:{width:1400,height:900}});await ctx.addInitScript(()=>{localStorage.setItem('dy-mode','demo')});
 const q=()=>{const h=document.querySelector('main .wrap h2, main h1');return Math.round(h.getBoundingClientRect().left)+'/'+document.documentElement.clientWidth};
-for(const pg of ['index','about','contact']){const p=await ctx.newPage();await p.goto(BASE+'/admin/?page='+pg);await p.waitForTimeout(3000);const ed=await p.frame({url:/edit=1/}).evaluate(q);await p.close();
+for(const pg of ['index','faqs','contact']){const p=await ctx.newPage();await p.goto(BASE+'/admin/?page='+pg);await p.waitForTimeout(3000);const ed=await p.frame({url:/edit=1/}).evaluate(q);await p.close();
  const p2=await ctx.newPage();await p2.setViewportSize({width:1400,height:794});await p2.goto(BASE+'/'+pg+'.html');await p2.waitForTimeout(1200);const pv=await p2.evaluate(q);await p2.close();ok('no layout shift between preview and editing on '+pg,ed===pv,ed+' vs '+pv);}
 await ctx.close();}
 await b.close();console.log('SUMMARY',res.filter(r=>r[1]).length+'/'+res.length);process.exit(res.every(r=>r[1])?0:1);})().catch(e=>{console.error('CRASH',e.message);process.exit(1);});
