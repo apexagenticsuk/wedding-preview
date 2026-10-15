@@ -10,46 +10,51 @@ const F=()=>p.frame({url:/edit=1/});
 const ready=async()=>{await p.waitForFunction(()=>{try{return !!document.querySelector('#frame').contentWindow.DYI&&document.querySelector('#frame').contentDocument.readyState==='complete';}catch(e){return false;}});await p.waitForTimeout(700);};
 const go=async pg=>{await p.evaluate(x=>DYE.goPage(x),pg);await ready();};
 const tap=async(sel)=>mobile?F().tap(sel):F().click(sel);
-await p.goto(BASE+'/admin/?page=about');await p.waitForFunction(()=>window.DYE&&window.DYE.state().content&&document.querySelector('#frame').contentWindow.DYI);await ready();
+await p.goto(BASE+'/admin/?page=index');await p.waitForFunction(()=>window.DYE&&window.DYE.state().content&&document.querySelector('#frame').contentWindow.DYI);await ready();
+const txt=()=>F().evaluate(()=>document.body.innerText);
+const hide=()=>p.evaluate(()=>document.querySelector('#sharedm').hidden=true);
 // 1 clicking a shared region opens its panel
 await F().evaluate(()=>document.querySelector('[data-dy-cms=testimonials]').scrollIntoView({block:'center',behavior:'instant'}));await p.waitForTimeout(200);
-await tap('[data-dy-cms=testimonials] .tcard');await p.waitForSelector('#sharedm:not([hidden])');
-ok(M+': clicking testimonials on About opens Shared content on Testimonials',await p.evaluate(()=>document.querySelector('#sharedm .shtab.on').textContent==='Testimonials'));
-// 2 edit a testimonial once; it shows on the page it belongs to
-await p.evaluate(()=>{const d=document.querySelector('#sharedm details.shrow');d.open=true;});
-const ta=p.locator('#sharedm details.shrow').first().locator('textarea');await ta.fill('“SHARED EDIT ONE”');await ta.dispatchEvent('change');await ready();
-ok(M+': testimonial edit shows on About',/SHARED EDIT ONE/.test(await F().evaluate(()=>document.body.innerText)));
-ok(M+': edit is recorded as one undoable step',await p.evaluate(()=>!document.querySelector('#undo').disabled));
-// 3 move it to the Book page: it leaves Home and appears on Book
-await p.locator('#sharedm details.shrow').first().locator('select').selectOption('magician');await ready();
-ok(M+': moving it to the Magician removes it from About',!/SHARED EDIT ONE/.test(await F().evaluate(()=>document.body.innerText)));
-await p.evaluate(()=>document.querySelector('#sharedm').hidden=true);await go('magician');
-ok(M+': ...and shows it on the Magician page',/SHARED EDIT ONE/.test(await F().evaluate(()=>document.body.innerText)));
-// 4 contact email changes the footer on every page
+await tap('[data-dy-cms=testimonials] .rev');await p.waitForSelector('#sharedm:not([hidden])');
+ok(M+': clicking testimonials on Home opens Shared content on Testimonials',await p.evaluate(()=>document.querySelector('#sharedm .shtab.on').textContent==='Testimonials'));
+// 2 edit once; it shows
+const first=await p.evaluate(()=>DYE.state().content.testimonials.find(t=>t.place==='home').who);
+await p.evaluate(()=>{const d=[...document.querySelectorAll('#sharedm details.shrow')].find(d=>d.querySelector('select').value==='home');d.open=true;d.setAttribute('data-t','1');});
+const row=p.locator('#sharedm details.shrow[data-t="1"]');const ta=row.locator('textarea');await ta.fill('SHARED EDIT ONE');await ta.dispatchEvent('change');await ready();
+ok(M+': testimonial edit shows on Home',/SHARED EDIT ONE/.test(await txt()));
+ok(M+': edit is one undoable step',await p.evaluate(()=>!document.querySelector('#undo').disabled));
+// 3 move it to the Testimonials page
+await p.evaluate(()=>{const d=[...document.querySelectorAll('#sharedm details.shrow')].find(d=>/SHARED EDIT ONE/.test(d.querySelector('textarea').value));d.open=true;d.setAttribute('data-t','2');});
+await p.locator('#sharedm details.shrow[data-t="2"] select').first().selectOption('page');await ready();
+ok(M+': moving it removes it from Home',!/SHARED EDIT ONE/.test(await txt()));
+await hide();await go('testimonials');
+ok(M+': ...and it shows on the Testimonials page (once)',(await txt()).split('SHARED EDIT ONE').length===2);
+// 4 contact email changes the footer/contact on every page
 await p.evaluate(()=>DYE.openShared('contact'));await p.waitForSelector('#sharedm:not([hidden])');
-const ems=p.locator('#sharedm .shbody input[type=text]').nth(1);await ems.fill('hello@example.ie, two@example.ie');await ems.dispatchEvent('change');await ready();
-for(const pg of ['book','contact','about','corporate']){await p.evaluate(()=>document.querySelector('#sharedm').hidden=true);await go(pg);
- ok(M+': new emails in the footer of '+pg,await F().evaluate(()=>[...document.querySelectorAll('footer .mail a[href^=mailto]')].map(a=>a.textContent).join()==='hello@example.ie,two@example.ie'));}
-ok(M+': contact card on Contact page shows both emails',await (async()=>{await go('contact');return F().evaluate(()=>[...document.querySelectorAll('[data-cms=contact][data-view=card] a[href^=mailto]')].map(a=>a.textContent).join()==='hello@example.ie,two@example.ie');})());
-// 5 show date: Home dates cards and Live list both change
-await p.evaluate(()=>DYE.openShared('shows'));await p.waitForSelector('#sharedm:not([hidden])');
-await p.evaluate(()=>document.querySelector('#sharedm details.shrow').open=true);
-const ve=p.locator('#sharedm details.shrow').first().locator('label.shf:has(span:text-is("Venue")) input').first();await ve.fill('Test Venue Lucan');await ve.dispatchEvent('change');await ready();
-await p.evaluate(()=>document.querySelector('#sharedm').hidden=true);
-ok(M+': venue edit on Live list',/Test Venue Lucan/.test(await F().evaluate(()=>document.body.innerText))||true);
-await go('live');ok(M+': venue edit shows on Live',/Test Venue Lucan/.test(await F().evaluate(()=>document.querySelector('[data-cms=shows]').innerText)));
-await go('index');ok(M+': venue edit shows on Home (dates strip + next show)',/Test Venue Lucan/.test(await F().evaluate(()=>document.querySelector('[data-cms=showrail]').innerText))&&/Test Venue Lucan/.test(await F().evaluate(()=>document.querySelector('[data-cms=nextshow]').innerText)));
-// 6 add and delete
+const em=p.locator('#sharedm .shbody label.shf:has(span:text-is("Email")) input').first();await em.fill('hello@example.ie');await em.dispatchEvent('change');await ready();
+for(const pg of ['index','videos','testimonials','faqs','blog','contact']){await hide();await go(pg);
+ ok(M+': new email appears on '+pg,await F().evaluate(()=>[...document.querySelectorAll('a[href^=mailto]')].some(a=>/hello@example\.ie/.test(a.href))&&![...document.querySelectorAll('a[href^=mailto]')].some(a=>/theweddingcomedian\.ie/.test(a.href))));}
+// 5 deposit amount: changes every mention
+await p.evaluate(()=>DYE.openShared('deposit'));await p.waitForSelector('#sharedm:not([hidden])');
+const am=p.locator('#sharedm .shbody label.shf:has(span:text-is("Deposit amount")) input').first();await am.fill('€250');await am.dispatchEvent('change');await ready();
+await hide();
+for(const pg of ['index','faqs','contact']){await go(pg);const t=await txt();ok(M+': deposit €250 on '+pg+' and no old €200',/€250/.test(t)&&!/€200/.test(t));}
+// 6 add and delete a video
 await p.evaluate(()=>DYE.openShared('clips'));await p.waitForSelector('#sharedm:not([hidden])');const n0=await p.locator('#sharedm details.shrow').count();
 await p.locator('#sharedm .shbody > button:has-text("+ Add")').click();await ready();
 ok(M+': add a video row',(await p.locator('#sharedm details.shrow').count())===n0+1);
 await p.locator('#sharedm details.shrow').last().locator('[data-del]').click();await p.waitForSelector('#dlg:not([hidden])');await p.click('#dlg-ok');await ready();
 ok(M+': delete it again',(await p.locator('#sharedm details.shrow').count())===n0);
+// 7 typed date on a blog post
+await p.evaluate(()=>DYE.openShared('posts'));await p.waitForSelector('#sharedm:not([hidden])');
+await p.evaluate(()=>{document.querySelector('#sharedm details.shrow').open=true;});
+const de=p.locator('#sharedm details.shrow').first().locator('label.shf:has(span:text-is("Date")) input').first();
+if(await de.count()){await de.fill('4 Oct 2017');await de.dispatchEvent('change');await ready();const d=await p.evaluate(()=>DYE.state().content.posts[0].date);ok(M+': typed date is accepted and normalised',!!d&&/2017/.test(d),d);}else ok(M+': post date field present',false);
 // 7 undo reverts shared edits
 await p.evaluate(()=>document.querySelector('#sharedm').hidden=true);
-for(let i=0;i<12&&await p.evaluate(()=>!document.querySelector('#undo').disabled);i++){await p.click('#undo');await p.waitForTimeout(250);}await ready();
+for(let i=0;i<30&&await p.evaluate(()=>!document.querySelector('#undo').disabled);i++){await p.click('#undo');await p.waitForTimeout(250);}await ready();
 const c=await p.evaluate(()=>JSON.parse(JSON.stringify(DYE.state().content)));
-ok(M+': undo restores the original shared content',c.contact.emails.join()==='young1productions@gmail.com,info@daveyounglive.com'&&c.shows[0].venue==='Courtney\'s of Lucan'&&c.testimonials.every(t=>!/SHARED EDIT/.test(t.text)));
+ok(M+': undo restores the original shared content',await p.evaluate(()=>{const c=DYE.state().content;return c.contact.email==='info@theweddingcomedian.ie'&&c.deposit.amount==='€200'&&!c.testimonials.some(t=>/SHARED EDIT/.test(t.text));}));
 ok(M+': no JS errors',errs.length===0,JSON.stringify(errs));
 await ctx.close();}
 await b.close();console.log('SUMMARY',res.filter(r=>r[1]).length+'/'+res.length);process.exit(res.every(r=>r[1])?0:1);})().catch(e=>{console.error('CRASH',e.message);process.exit(1);});
