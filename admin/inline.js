@@ -316,7 +316,7 @@ secs().forEach(function(s,i,all){var w=mk('div','dy-mv dy-ui'),up=mk('button',''
 /* blocks: within a section, between sections, into empty sections and into built sections (after their content).
    The section under the pointer decides where the block goes, so a drop always lands where you let go. */
 function listFor(P,g){var k=g.slice(4);if(g.indexOf('sec:')===0){P.secs[k].blocks=P.secs[k].blocks||[];return P.secs[k].blocks;}P.ins=P.ins||{};P.ins[k]=P.ins[k]||[];return P.ins[k];}
-var NOPOSTER='The poster banner can\u2019t hold blocks. Drop it in the section below.';
+var NOPOSTER='The banner can\u2019t hold blocks. Drop it in the section below.';
 function blockSlots(){var groups={},order=[],out=[];[].slice.call(D.querySelectorAll('[data-bid]')).filter(live).forEach(function(b){var g=b.dataset.bgroup;if(!groups[g]){groups[g]=[];order.push(g);}groups[g].push(b);});
   order.forEach(function(g){var sec=sectionOf(groups[g][0]);DG.between(groups[g],'y').forEach(function(z){z.data={g:g,at:z.data};z.sec=sec;out.push(z);});});
   secs().forEach(function(s){var r;if(isNew(s)){if(!s.querySelector('[data-bid]')){r=(s.querySelector('.wrap')||s).getBoundingClientRect();out.push({x1:r.left,x2:r.right,y1:r.top+r.height/2,y2:r.top+r.height/2,sec:s,data:{g:'sec:'+R.secId.get(s),at:0}});}return;}
@@ -343,7 +343,7 @@ Object.keys(R.items).forEach(function(L){var par=R.by.page[L];if(!par||!par.isCo
   itemDrag(kids,kids[0].tagName==='DETAILS'?'r':'',function(i,at){var ks=kids.map(function(k){return R.itemKey.get(k);});if(!DG.moveIdx(ks,i,at))return;keep();DYE.change(function(c){bag(E(c,'page'),'lists')[L]=ks;},{reload:true});DYE.toast('Order changed. ↶ Undo puts it back.');});});
 /* menu links in the header: each has a visible ⠿ handle; the link itself can also be dragged (mouse) or held (touch) */
 (function(){var links=[].slice.call(D.querySelectorAll('nav.main a:not(.btn)'));if(links.length<2)return;
-  function go(ev,a,i){finishEdit(true);DYE.closePanel();DG.begin({e:ev,doc:D,ghostFrom:a,pick:function(lx,ly){return DG.halves(links,lx,ly);},drop:function(at){var nav=clone(C().nav||LIB.DEFAULT_NAV),vis=[];nav.forEach(function(n,j){if(n.show==='menu'&&n.key!=='index')vis.push(j);});
+  function go(ev,a,i){finishEdit(true);DYE.closePanel();DG.begin({e:ev,doc:D,ghostFrom:a,pick:function(lx,ly){return DG.halves(links,lx,ly);},drop:function(at){var nav=clone(C().nav||LIB.DEFAULT_NAV),vis=[];nav.forEach(function(n,j){if(n.show==='menu')vis.push(j);});
       if(vis.length!==links.length){DYE.toast('Use Pages to change the menu order.');return;}var it=vis.map(function(j){return nav[j];});if(!DG.moveIdx(it,i,at))return;var out=nav.slice();vis.forEach(function(j,k){out[j]=it[k];});
       keep();DYE.change(function(c){c.nav=out;},{reload:true});DYE.toast('Menu order changed. ↶ Undo puts it back.');}});}
   links.forEach(function(a,i){a.style.webkitTouchCallout='none';a.setAttribute('draggable','false');a.classList.add('dy-navh');

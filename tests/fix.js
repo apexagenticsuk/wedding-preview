@@ -24,7 +24,7 @@ const line=p=>async()=>{const v=await F(p).evaluate(()=>{const i=document.queryS
 const nb=async(p,sel,i=0)=>(await F(p).$$(sel))[i].boundingBox();
 const center=(p,sel,i=0)=>F(p).evaluate(([s,i])=>document.querySelectorAll(s)[i].scrollIntoView({block:'center',behavior:'instant'}),[sel,i]).then(()=>p.waitForTimeout(150));
 async function setup(p){await p.evaluate(()=>{const L=window.DY_LIB;window.DYE.change(c=>{const P=c.pages.index=c.pages.index||{};P.secs={};
-  P.secs.nA={blocks:[L.makeBlock(['heading','Section A']),L.makeBlock('text')]};const G=L.makeBlock('gallery');G.images=[1,2,3,4,5,6].map(n=>({src:'assets/gallery_'+n+'.jpg',alt:'g'+n,caption:''}));P.secs.nG={blocks:[G]};
+  P.secs.nA={blocks:[L.makeBlock(['heading','Section A']),L.makeBlock('text')]};const G=L.makeBlock('gallery');G.images=[1,2,3,4].map(n=>({src:'assets/gallery_'+n+'.webp',alt:'g'+n,caption:''}));P.secs.nG={blocks:[G]};
   const Q=L.makeBlock('faq');P.secs.nF={blocks:[Q]};
   const o=[...(document.querySelector('#frame').contentDocument.querySelector('body>main')||document.querySelector('#frame').contentDocument.body).children].filter(e=>e.classList.contains('dy-sec')).map(e=>e.getAttribute('data-dy').split(' ')[0]);o.splice(2,0,'nA','nG','nF');P.order=o;},{reload:true});});await ready(p);}
 const srcs=c=>c.pages.index.secs.nG.blocks[0].images.map(x=>x.alt).join();
@@ -39,8 +39,8 @@ await drag(ctr(h),{x:t.x+t.width/2,y:t.y+3},{mid:line(p)});await ready(p);await 
 ok(M+' 1: block drop applied',c.pages.index.secs.nA.blocks[0].type==='text');ok(M+' 1: scroll kept after drop',Math.abs(y1-y0)<6,y0+'→'+y1);
 await undo(p);await p.waitForTimeout(300);let y2=await fy(p);ok(M+' 1: scroll kept after undo',Math.abs(y2-y0)<6,y0+'→'+y2);
 // 1b section drop keeps scroll
-await center(p,'[data-nsec="nG"]');y0=await fy(p);if(!mobile){let r=await nb(p,'[data-nsec="nG"]');await p.mouse.move(r.x+r.width-30,r.y+20);await p.waitForTimeout(150);}
-h=await nb(p,'[data-nsec="nG"] > .dy-dh.sec');let s3=await nb(p,'[data-nsec="nA"]');let yd=null;await drag(ctr(h),{x:200,y:Math.max(60,s3.y+s3.height*0.3)},{hold:mobile?0:0,mid:async()=>{await line(p)();yd=await fy(p);}});y0=yd;await ready(p);await p.waitForTimeout(300);y1=await fy(p);
+await F(p).evaluate(()=>{document.querySelector('[data-nsec="nG"]').scrollIntoView({block:'start',behavior:'instant'});scrollBy({top:-90,behavior:'instant'});});await p.waitForTimeout(200);y0=await fy(p);if(!mobile){let r=await nb(p,'[data-nsec="nG"]');await p.mouse.move(r.x+r.width-30,r.y+20);await p.waitForTimeout(150);}
+h=await nb(p,'[data-nsec="nG"] > .dy-dh.sec');let s3=await nb(p,'[data-nsec="nF"]');let yd=null;await drag(ctr(h),{x:200,y:Math.max(60,s3.y+s3.height*0.8)},{hold:mobile?0:0,mid:async()=>{await line(p)();yd=await fy(p);}});y0=yd;console.log('DBG1b',JSON.stringify([h,s3,yd,y0]));await ready(p);await p.waitForTimeout(300);y1=await fy(p);
 ok(M+' 1: section drop keeps scroll',Math.abs(y1-y0)<(mobile?130:6)&&(await st(p)).pages.index.order.join()!==c.pages.index.order.join(),y0+'→'+y1);await undo(p);
 // 2 block onto the poster banner: refused with message; onto the Christmas party (image) section: accepted
 await F(p).evaluate(()=>scrollTo({top:0,behavior:'instant'}));await p.waitForTimeout(150);
@@ -48,17 +48,17 @@ await center(p,'[data-nsec="nA"]');
 // drag A's text up to the hero with auto-scroll, hold over the hero
 if(!mobile){let r=await nb(p,'[data-nsec="nA"] [data-bid]',1);await p.mouse.move(r.x+30,r.y+10);}
 h=await nb(p,'[data-nsec="nA"] [data-bid] > .dy-dh.blk',1);let fb=await (await p.$('#frame')).boundingBox();let before=JSON.stringify((await st(p)).pages.index);
-let tipSeen=false;await drag(ctr(h),{x:fb.x+fb.width/2,y:fb.y+90},{hold:2500,mid:async()=>{if(mobile){const c=p._cdp;const mv=y=>c.send('Input.dispatchTouchEvent',{type:'touchMove',touchPoints:[{x:fb.x+fb.width/2,y}]});await mv(fb.y+6);await p.waitForTimeout(2500);const hr=await nb(p,'.hero.full');await mv(Math.max(fb.y+40,hr.y+hr.height/2));await p.waitForTimeout(600);}tipSeen=await p.evaluate(()=>{const fd=document.querySelector('#frame').contentDocument,t=fd.querySelector('.dyd-tip'),i=fd.querySelector('.dyd-ind.no');return !!(t&&!t.hidden&&i);});}});await ready(p);
-console.log('DBG',tipSeen,JSON.stringify((await st(p)).pages.index)===before,await p.evaluate(()=>document.querySelector('#toast').textContent));ok(M+' 2: poster banner refuses with a red line + message',tipSeen&&JSON.stringify((await st(p)).pages.index)===before&&/poster/i.test(await p.evaluate(()=>document.querySelector('#toast').textContent)));
+let tipSeen=false;await drag(ctr(h),{x:fb.x+fb.width/2,y:fb.y+90},{hold:2500,mid:async()=>{if(mobile){const c=p._cdp;const mv=y=>c.send('Input.dispatchTouchEvent',{type:'touchMove',touchPoints:[{x:fb.x+fb.width/2,y}]});await mv(fb.y+6);await p.waitForTimeout(2500);const hr=await nb(p,'.hero');await mv(Math.max(fb.y+40,hr.y+hr.height/2));await p.waitForTimeout(600);}tipSeen=await p.evaluate(()=>{const fd=document.querySelector('#frame').contentDocument,t=fd.querySelector('.dyd-tip'),i=fd.querySelector('.dyd-ind.no');return !!(t&&!t.hidden&&i);});}});await ready(p);
+console.log('DBG',tipSeen,JSON.stringify((await st(p)).pages.index)===before,await p.evaluate(()=>document.querySelector('#toast').textContent));ok(M+' 2: photo banner refuses with a red line + message',tipSeen&&JSON.stringify((await st(p)).pages.index)===before&&/banner/i.test(await p.evaluate(()=>document.querySelector('#toast').textContent)));
 await center(p,'[data-nsec="nA"]');if(!mobile){let r=await nb(p,'[data-nsec="nA"] [data-bid]',1);await p.mouse.move(r.x+30,r.y+10);}
 h=await nb(p,'[data-nsec="nA"] [data-bid] > .dy-dh.blk',1);
-const party=await F(p).evaluate(()=>{const s=document.querySelector('section.aboutt');return [...(document.querySelector('body>main')||document.body).children].filter(e=>e.classList.contains('dy-sec')).indexOf(s);});
+const party=await F(p).evaluate(()=>{const s=document.querySelector('section.intro');return [...(document.querySelector('body>main')||document.body).children].filter(e=>e.classList.contains('dy-sec')).indexOf(s);});
 // put the party section right under A so both are on screen
 await p.evaluate(i=>{window.DYE.change(c=>{const P=c.pages.index;const o=P.order.filter(x=>x!=='nA');const pid=o[i>2?i-1:i];o.splice(o.indexOf(pid),0,'nA');P.order=o;},{reload:true});},party);await ready(p);
 await center(p,'[data-nsec="nA"]');if(!mobile){let r=await nb(p,'[data-nsec="nA"] [data-bid]',1);await p.mouse.move(r.x+30,r.y+10);}
-h=await nb(p,'[data-nsec="nA"] [data-bid] > .dy-dh.blk',1);let pr=await nb(p,'section.aboutt img');
+h=await nb(p,'[data-nsec="nA"] [data-bid] > .dy-dh.blk',1);let pr=await nb(p,'section.intro img');
 await drag(ctr(h),{x:pr.x+pr.width/2,y:Math.min(pr.y+pr.height/2,fb.y+fb.height-90)},{mid:line(p)});await ready(p);c=await st(p);
-ok(M+' 2: block dropped on the image (Home bio teaser) section lands in it',Object.values(c.pages.index.ins||{}).flat().length===1&&c.pages.index.secs.nA.blocks.length===1);await undo(p);
+ok(M+' 2: block dropped on the image (Home intro) section lands in it',Object.values(c.pages.index.ins||{}).flat().length===1&&c.pages.index.secs.nA.blocks.length===1);await undo(p);
 // 3 FAQ handle sits on the right, away from the open/close arrow; FAQ reorder works
 await center(p,'.blk-faq');if(!mobile){let r=await nb(p,'.blk-faq > details',0);await p.mouse.move(r.x+r.width/2,r.y+10);await p.waitForTimeout(150);}else{await F(p).tap('.blk-faq details:nth-child(2) p').catch(()=>{});await center(p,'.blk-faq');}
 const geo=await F(p).evaluate(()=>{const d=document.querySelector('.blk-faq > details'),h=d.querySelector('.dy-dh.itm').getBoundingClientRect(),r=d.getBoundingClientRect();return h.left>r.left+r.width/2;});ok(M+' 3: FAQ handle away from the arrow (right side)',geo);
@@ -67,9 +67,9 @@ await drag(ctr(h),{x:d2.x+d2.width/2,y:d2.y+d2.height-3},{mid:line(p)});await re
 ok(M+' 3: FAQ reorder',JSON.stringify((await st(p)).pages.index.secs.nF.blocks[0].items.map(x=>x.q))!==fq0);
 // 9 gallery halves: left half of a target = before it, right half = after it (rows of 3 on desktop, 2 on phone)
 for(const [side,exp] of [['left',null],['right',null]]){await center(p,'.blk-gallery');if(!mobile){let r=await nb(p,'.blk-gallery > figure',0);await p.mouse.move(r.x+40,r.y+40);await p.waitForTimeout(150);}else{await F(p).tap('.blk-gallery figure:nth-child(1) figcaption');await p.waitForTimeout(300);await center(p,'.blk-gallery');}
-  const g0=srcs(await st(p));h=await nb(p,'.blk-gallery > figure > .dy-dh.itm',0);const T=await nb(p,'.blk-gallery > figure',3);
-  await drag(ctr(h),{x:side==='left'?T.x+T.width*0.25:T.x+T.width*0.75,y:T.y+T.height/2},{mid:line(p)});await ready(p);const g1=srcs(await st(p)).split(',');const a0=g0.split(',');
-  const want=a0.slice(1);want.splice(side==='left'?2:3,0,a0[0]);ok(M+' 9: gallery drop on '+side+' half of the 4th picture',g1.join()===want.join(),g0+' → '+g1.join());await undo(p);}
+  const g0=srcs(await st(p));h=await nb(p,'.blk-gallery > figure > .dy-dh.itm',0);if(mobile){await F(p).evaluate(()=>{document.querySelectorAll('.blk-gallery > figure')[0].scrollIntoView({block:'start',behavior:'instant'});scrollBy({top:-75,behavior:'instant'});});await p.waitForTimeout(250);h=await nb(p,'.blk-gallery > figure > .dy-dh.itm',0);}const ti=mobile?1:3;const T=await nb(p,'.blk-gallery > figure',ti);
+  await drag(ctr(h),{x:side==='left'?T.x+T.width*0.25:T.x+T.width*0.75,y:mobile?T.y+40:T.y+T.height/2},{mid:line(p)});await ready(p);const g1=srcs(await st(p)).split(',');const a0=g0.split(',');
+  const want=a0.slice(1);want.splice(side==='left'?ti-1:ti,0,a0[0]);ok(M+' 9: gallery drop on '+side+' half of the picture '+(ti+1)+'',g1.join()===want.join(),g0+' → '+g1.join());await undo(p);}
 // 4 menu handle visible; dragging it does not open the side panel (desktop header only)
 if(!mobile){await F(p).evaluate(()=>scrollTo({top:0,behavior:'instant'}));await p.waitForTimeout(150);
   const vis=await F(p).evaluate(()=>[...document.querySelectorAll('nav.main a .dy-dh.nav')].map(h=>+getComputedStyle(h).opacity));ok('mouse 4: every menu link has a visible handle',vis.length>=6&&vis.every(v=>v>=.8),vis.join());
