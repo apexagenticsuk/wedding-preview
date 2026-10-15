@@ -6,7 +6,7 @@ window.DY_ICONS=ICONS;
 var ACCENTS={rose:['#9b3246','#7a2236','#5c1828','#b4485c'],plum:['#6d2a63','#521d4a','#3a1234','#8a4a80'],sage:['#4e7358','#3a5744','#273d2f','#6b9376'],navy:['#274a7a','#1b3659','#12243b','#4a6fa3']};
 window.DY_ACCENTS=ACCENTS;
 var BUILTIN=['index','videos','testimonials','faqs','blog','contact'];
-var DEFAULT_NAV=[{key:'index',label:'Home',show:'menu'},{key:'videos',label:'Videos',show:'menu'},{key:'testimonials',label:'Testimonials',show:'menu'},{key:'faqs',label:'FAQs',show:'menu'},{key:'blog',label:'Blog',show:'menu'},{key:'contact',label:'Contact',show:'menu'},{key:'dave',label:'Dave Young',href:'http://www.daveyounglive.com/',show:'menu'}];
+var DEFAULT_NAV=[{key:'index',label:'Home',show:'menu'},{key:'videos',label:'Videos',show:'menu'},{key:'testimonials',label:'Testimonials',show:'menu'},{key:'faqs',label:'FAQs',show:'menu'},{key:'blog',label:'Blog',show:'menu'},{key:'contact',label:'Contact',show:'menu'},{key:'dave',label:'Dave Young',href:'https://daveyounglive.com',show:'menu'}];
 function esc(s){return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
 function uid(p){return (p||'b')+Date.now().toString(36)+Math.random().toString(36).slice(2,6);}
 
@@ -25,7 +25,7 @@ var BLOCKS={
  quotes:{label:'Testimonials (3)',icon:'❝❝',make:function(){return {type:'quotes',items:[0,1,2].map(function(){return {title:'Brilliant!',text:'“Dave had the whole room in stitches.”',who:'Name, Company'};})};}},
  spacer:{label:'Spacer',icon:'↕',make:function(){return {type:'divider',kind:'space'};}},
  divider:{label:'Divider line',icon:'—',make:function(){return {type:'divider',kind:'line'};}},
- cta:{label:'Contact / booking',icon:'☎',make:function(){return {type:'cta',title:'Want Dave at your <span class="r">wedding</span>?',text:'A one-of-a-kind show built around your family and friends.',btnLabel:'Book Dave',btnUrl:'contact.html'};}},
+ cta:{label:'Contact / booking',icon:'☎',make:function(){return {type:'cta',title:'{contact.tagline}',text:'',btnLabel:'Book Today',btnUrl:'contact.html'};}},
  socials:{label:'Social links',icon:'＠',make:function(){return {type:'socials'};}},
  cards2:{label:'2 cards',icon:'▥',make:function(){return {type:'cards',cols:2,items:[CARD(0),CARD(1)]};}},
  cards3:{label:'3 cards',icon:'▥▥',make:function(){return {type:'cards',cols:3,items:[CARD(0),CARD(1),CARD(2)]};}},

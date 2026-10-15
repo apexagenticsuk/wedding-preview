@@ -185,3 +185,4 @@ button.ham{flex:none;min-width:44px}
 .blog ol li a{overflow-wrap:anywhere;max-width:100%}
 .flinks a{min-width:44px;justify-content:center;padding:0 6px}
 .post a,.post p{overflow-wrap:anywhere}
+.blk-cta,.blk-cta h2,.blk-cta h3,.blk-cta p{color:var(--ink)}.blk-cta .r,.blk-cta em{color:var(--rose3)}.blk-cta .btn{color:#fff}
