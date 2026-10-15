@@ -30,7 +30,7 @@ var BLOCKS={
  cards2:{label:'2 cards',icon:'▥',make:function(){return {type:'cards',cols:2,items:[CARD(0),CARD(1)]};}},
  cards3:{label:'3 cards',icon:'▥▥',make:function(){return {type:'cards',cols:3,items:[CARD(0),CARD(1),CARD(2)]};}},
  faq:{label:'Questions & answers',icon:'?',make:function(){return {type:'faq',items:[{q:'How long is the show?',a:'Click to change this answer.'},{q:'Where does Dave perform?',a:'At weddings all over the country and further afield.'},{q:'How do I book?',a:'Use the Enquire button or the Contact page.'}]};}},
- hero:{label:'Hero banner',icon:'▀',hidden:true,make:function(){return {type:'hero',img:{src:'assets/hero_1200.webp',alt:''},title:'Page <span class="r">title</span>',text:'A short line under the title.'};}}
+ hero:{label:'Hero banner',icon:'▀',hidden:true,make:function(){return {type:'hero',img:{src:'assets/hero_dave.webp',alt:''},title:'Page <span class="r">title</span>',text:'A short line under the title.'};}}
 };
 var SECTIONS={
  hero:{label:'Hero banner',bare:true,blocks:['hero']},
@@ -124,7 +124,7 @@ function ldApply(c){if(!/^(index|faqs)$/.test(PAGE)||EDITING||PREV)return;var s=
 
 /* ---------- blocks ---------- */
 function F(tag,cls,path,val,ph){val=val||'';if(!val&&!EDITING)return '';return '<'+tag+(cls?' class="'+cls+'"':'')+' data-bf="'+path+'"'+(ph?' data-ph="'+esc(ph)+'"':'')+'>'+clean(val)+'</'+tag+'>';}
-function IM(path,img,cls){img=img||{};return '<img'+(cls?' class="'+cls+'"':'')+' data-bi="'+path+'" src="'+esc(RES(img.src||'assets/hero_1200.webp'))+'" alt="'+esc(img.alt||'')+'" loading="lazy">';}
+function IM(path,img,cls){img=img||{};return '<img'+(cls?' class="'+cls+'"':'')+' data-bi="'+path+'" src="'+esc(RES(img.src||'assets/hero_dave.webp'))+'" alt="'+esc(img.alt||'')+'" loading="lazy">';}
 var BSTY=['rose','gold','ghost','call'];
 function BT(lp,up,label,url,style,sp,sm){if(!label&&!EDITING)return '';var ext=/^https?:/.test(url||'');style=BSTY.indexOf(style)>-1?style:'rose';return '<a class="btn '+style+(sm?' sm':'')+'" href="'+esc(safeUrl(url||'#'))+'" data-bl="'+up+'" data-bf="'+lp+'"'+(sp?' data-bs="'+sp+'"':'')+' data-ph="Button text"'+(ext?' target="_blank" rel="noopener"':'')+'>'+clean(label||'')+'</a>';}
 function ytId(u){u=String(u||'').trim();if(/^[\w-]{11}$/.test(u))return u;if(!/youtu\.?be|youtube(-nocookie)?\.com/i.test(u))return '';var m=u.match(/(?:youtu\.be\/|[?&]v=|\/embed\/|\/shorts\/|\/live\/|\/v\/|\/e\/)([\w-]{11})(?![\w-])/);return m?m[1]:'';}

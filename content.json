@@ -366,8 +366,8 @@
       "title": "Weddings Online Awards 2019",
       "by": "The Wedding Comedian Team",
       "date": "2018-10-11",
-      "img": "",
-      "alt": "",
+      "img": "assets/blog_awards_2019.webp",
+      "alt": "Dave Young holding a sign: The Wedding Comedian, Weddingsonline Awards, Best Entertainer. Text in the picture: “Give him a vote… they all did!”",
       "body": "Hey guy’s, we are delighted to tell you Dave Young has been nominated for the Weddingsonline Awards 2019 in the Entertainer of the Year category.\n\nIf you would like Dave to win please give this funny guy a vote.\n\nIt’s really simple, just follow these 3 simple steps!\n\n1 Click on the link below & Fill in your name and email address\n\n2 scroll down to the Entertainer of the Year section and pick Dave Young - The Wedding Comedian\n\n3 check your email for validation and that’s it!\n\nWe would really appreciate it. Voting closes next Monday, 22nd October so please vote now.\n\nHere’s the link https://weddingsonlineawards.com/vote/"
     },
     {
@@ -375,8 +375,8 @@
       "title": "Fun Wedding Facts",
       "by": "The Wedding Comedian",
       "date": "2018-05-11",
-      "img": "assets/blog_reception_laughter.webp",
-      "alt": "Fun Wedding Facts",
+      "img": "assets/blog_fun_facts.webp",
+      "alt": "Infographic: 10 Facts you didn’t know about Weddings",
       "body": ""
     },
     {
@@ -384,8 +384,8 @@
       "title": "Should you have a comedian entertain at your wedding?",
       "by": "XPOSÉ",
       "date": "2017-10-25",
-      "img": "",
-      "alt": "",
+      "img": "assets/blog_xpose.webp",
+      "alt": "XPOSÉ.ie: interview with The Wedding Comedian. Dave Young stands beside a laughing bride and groom.",
       "body": "#TBT to interview in XPOSÉ Magazine\n\nWhile bands and DJs have always been the mainstay of wedding entertainment, a new concept is set to become very popular over the coming years – namely comedy. And what could be more perfect than a comedian bringing a spark of life to the event?\n\nDave Young is a comedian who specialises in warming up guests for television programmes, and his latest venture is helping to transform wedding guests from a post-dinner slump into a relaxed party mode. He believes that making people laugh is a great way to break the ice between guests and get everyone in the mood for a fun night ahead.\n\n“I have been entertaining wedding guests for years and the concept is definitely becoming more popular. At the moment I think there is only myself and one other guy in the west of Ireland doing this because it is actually quite a difficult gig – it’s not the same as going out on stage to perform in front of a crowd who have paid to see you, instead you have to make sure your material is suitable for all age groups from kids right up to granny and granddad.\n\n“I always make sure that my appearance is a surprise to the guests as there is more of an impact that way – they are all sitting there feeling full and not ready to get up and move around on the dancefloor, so when I come out and blast them with a few laughs, they can kick off their shoes and relax for an hour.\n\n“I make a point of talking to the bride and groom beforehand and get the low-down on them and the crowd – so the bride might tell me something funny about the groom and vice-versa and sometimes I can throw in something referring to another member of the bridal party, which always gets a great cheer and gets everyone laughing.\n\n“I remember one bride telling me that once while they were on holiday they were given a bottle of mosquito repellent and told to ‘spray it everywhere’. When they woke up on the first morning, the brides’ skin was perfect while the groom was covered in bites. Apparently her husband thought ‘everywhere’ meant all over the doors, windows and bedroom – needless to say that gave the whole crowd a big laugh.\n\n“I do a lot of gigs in Vicar Street and places like that and they are very different to what I do for weddings or for RTÉ, but I really enjoy the challenge of making everyone laugh – I’m a little bit cheeky but don’t say anything which could offend. I couldn’t really say that there is any comedian which inspired me as there aren’t many which actually make me laugh. And to be honest I don’t even really see myself as a comedian, more like someone who is just having a laugh and I think this makes the crowd relax with me.\n\n“I think this is the key to a successful wedding as both the guests, and the bride and groom are having a great time and all the stress is taken out of wondering how to keep people amused between the dinner and the disco. Also when the event is videoed and the couple look back at it afterwards, it is lovely for them to be able to see the faces of their guests as they are crying with laughter – I have only ever had positive feedback and the idea is becoming more and more popular, so much so that I would encourage people to book a year in advance if possible – then with the booking sorted, they can relax in the knowledge that their guests will have a great time.”\n\nContact The Wedding Comedian today"
     },
     {
@@ -393,8 +393,8 @@
       "title": "Did You Know?",
       "by": "The Wedding Comedian",
       "date": "2017-10-06",
-      "img": "",
-      "alt": "",
+      "img": "assets/blog_reception_laughter.webp",
+      "alt": "Sign reading “Reception & Laughter, Wedding Comedian”",
       "body": "Here's some interesting statistics:\n\n*(Sources include The Irish Times, RTE, Brides Magazine)*\n\nImportant: Read this before you plan your Wedding Reception.\n\n• 72% of brides say they would have spent more time choosing their reception entertainment.\n\n• Almost 100% say they would have spent more of their budget on the entertainment.\n\n• 78% of brides said they would have made the entertainment their highest priority.\n\n• 81% of guests say the thing they remember the most about a reception is the entertainment.\n\n• 100% of The Wedding Comedian clients said they would hire him again for future events.\n\nDo you need a interesting and fun way to keep your guests entertained and invollved during your wedding reception?\n\nWell look no further!\n\nSo avoid that dreaded after dinner lull, and have The Wedding Comedian give your guests\n\nFun, Incredible, Unique & Unforgettable after dinner show.\n\nFor more info contact us here"
     },
     {
@@ -510,45 +510,57 @@
       320,
       230
     ],
+    "assets/blog_awards_2019.webp": [
+      740,
+      523
+    ],
     "assets/blog_bride_of_the_year.webp": [
-      454,
-      151
+      553,
+      184
     ],
     "assets/blog_brides_choice_nominated.webp": [
-      454,
-      454
+      740,
+      740
     ],
     "assets/blog_brides_choice_winner.webp": [
-      454,
-      340
+      740,
+      555
     ],
     "assets/blog_citywest.webp": [
-      454,
-      454
+      740,
+      740
     ],
     "assets/blog_forever_young.webp": [
-      454,
-      363
+      648,
+      518
+    ],
+    "assets/blog_fun_facts.webp": [
+      740,
+      904
     ],
     "assets/blog_honeymoon_rds.webp": [
-      454,
-      454
+      740,
+      740
     ],
     "assets/blog_honeymoon_show.webp": [
-      454,
-      451
+      740,
+      736
     ],
     "assets/blog_reception_laughter.webp": [
-      454,
-      680
+      520,
+      779
     ],
     "assets/blog_unforgettable.webp": [
-      454,
-      303
+      740,
+      493
     ],
     "assets/blog_wedding_show.webp": [
-      454,
-      303
+      740,
+      493
+    ],
+    "assets/blog_xpose.webp": [
+      740,
+      583
     ],
     "assets/car.webp": [
       560,
@@ -594,10 +606,6 @@
       1200,
       630
     ],
-    "assets/rings.webp": [
-      700,
-      933
-    ],
     "assets/rv_connor.webp": [
       320,
       213
@@ -641,6 +649,10 @@
     "assets/rv_susan.webp": [
       120,
       120
+    ],
+    "assets/testi_strip.webp": [
+      1260,
+      420
     ]
   }
 }
