@@ -176,3 +176,12 @@ hr{border:0;border-top:1px solid var(--line);margin:24px 0}.blk.space{height:40p
 @media (min-width:1280px){.vgrid.three{grid-template-columns:repeat(3,1fr)}}
 @media print{.sticky,header.top,.proto{display:none}}
 .cbox dd,.cbox dt{min-width:0;overflow-wrap:anywhere}
+/* tap targets: 44px minimum */
+.brand{min-height:44px;justify-content:center}
+button.ham{flex:none;min-width:44px}
+.fbrand .mail a,.flinks a,.cbox dd a,ol.pidx li a,.blog ol li a{display:inline-flex;align-items:center;min-height:44px}
+.fbrand .mail{display:grid;gap:0}
+.sticky.dock{grid-template-columns:minmax(0,1fr) minmax(0,1.25fr)}.dock .btn{min-width:0;text-align:center;overflow-wrap:anywhere}
+.blog ol li a{overflow-wrap:anywhere;max-width:100%}
+.flinks a{min-width:44px;justify-content:center;padding:0 6px}
+.post a,.post p{overflow-wrap:anywhere}
