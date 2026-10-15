@@ -2,7 +2,7 @@
 
 Source: the read-only Wix crawl in `audit/` (public pages and public media URLs only; no logins). Every row says where the live item is on the new site, or flags it as a gap. No text was invented. Where an image carries its own text, that text stays inside the image and the alt text only names or quotes what is visible.
 
-## 1. Pages (13 crawled)
+## 1. Pages
 
 | Live page | New site | Notes |
 |---|---|---|
@@ -13,11 +13,10 @@ Source: the read-only Wix crawl in `audit/` (public pages and public media URLs 
 | `/blog` | `blog.html` | All 13 posts (section 2) |
 | `/post/...` x13 | `blog.html` | Posts are shown on one page, each in full |
 | `/faqs` | `faqs.html` | All questions. The €200 deposit appears only as FAQ text, as live has it |
-| `/dave-young` (menu "DAVE YOUNG") | link to `https://daveyounglive.com` | Dave's own site, same as the live menu link |
+| "DAVE YOUNG" menu item | link to `https://daveyounglive.com` | Dave's own site, same as the live menu link |
 | `/map` | not reproduced | Wix template leftover: "500 Terry Francois Street, San Francisco", `info@mysite.com`, `123-456-7890`. Not Dave's content |
 | `/book-online` | not reproduced | Wix Bookings template leftover (Nails, Hair, Pedicure... priced in US$). Not Dave's content |
 | `/service-page/haircut` | not reproduced | Template leftover ("Describe your service here...") |
-| 404 / error | `404.html` is not needed on Pages | none |
 
 ## 2. Blog posts (13)
 
