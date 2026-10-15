@@ -82,9 +82,11 @@ function paras(s,c){return String(s==null?'':s).split(/\n+/).filter(function(x){
 function plain(s,c){var t=document.createElement('template');t.innerHTML=String(T(s,c));return t.content.textContent;}
 function factsHTML(c){return (c.facts||[]).map(function(f){return '<div class="fact"><b>'+esc(T(f.v,c))+'</b><span>'+esc(f.k)+'</span></div>';}).join('');}
 function faqHTML(c){return (c.faqs||[]).map(function(q,i){return '<details class="qa"><summary>'+clean(T(q.q,c))+'</summary><div class="qa-a">'+paras(q.a,c)+'</div></details>';}).join('');}
+/* focal point: stored as "x% y%" in content.json and applied as object-position so faces stay in frame at every size */
+function posAttr(v){return /^\d{1,3}% \d{1,3}%$/.test(v||'')?' style="object-position:'+v+'"':'';}
 function reviewHTML(t,c){var who=t.who?'<b>'+esc(t.who)+'</b>':'',role=t.role?'<small>'+esc(t.role)+'</small>':'',src=t.source?'<small class="src">'+esc(t.source)+'</small>':'';
-  return '<figure class="rev"><blockquote>'+paras(t.text,c)+'</blockquote><figcaption>'+(t.img?'<img src="'+esc(RES(t.img))+'" alt="" loading="lazy">':'')+'<span>'+who+role+src+'</span></figcaption></figure>';}
-function praiseHTML(p,c){return '<article class="pr"><img src="'+esc(RES(p.img||''))+'" alt="" loading="lazy"><div><b>'+esc(p.name)+'</b><p>'+clean(T(p.text,c))+'</p></div></article>';}
+  return '<figure class="rev"><blockquote>'+paras(t.text,c)+'</blockquote><figcaption>'+(t.img?'<img src="'+esc(RES(t.img))+'"'+posAttr(t.pos)+' alt="" loading="lazy">':'')+'<span>'+who+role+src+'</span></figcaption></figure>';}
+function praiseHTML(p,c){return '<article class="pr"><img src="'+esc(RES(p.img||''))+'"'+posAttr(p.pos)+' alt="" loading="lazy"><div><b>'+esc(p.name)+'</b><p>'+clean(T(p.text,c))+'</p></div></article>';}
 function galleryHTML(g){return '<figure><img src="'+esc(RES(g.img||''))+'" alt="'+esc(g.alt||'')+'" loading="lazy"><figcaption>'+clean(g.cap||'')+'</figcaption></figure>';}
 function clipHTML(k,view){var th=esc(RES(k.thumb||'')),lite='<div class="lite" data-yt="'+esc(k.vid)+'" data-title="'+esc(k.title)+'" style="--bg:url(\''+th+'\')"><button type="button" class="litebtn" aria-label="Play video: '+esc(k.title)+'"><span class="play" aria-hidden="true"></span></button></div>';
   if(view==='cards')return '<article class="vid">'+lite+'<h2 class="vt">'+clean(k.title)+'</h2>'+(k.cap?'<p>'+clean(k.cap)+'</p>':'')+'</article>';return lite;}

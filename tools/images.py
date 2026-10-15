@@ -15,6 +15,9 @@ def load(p):
 def fit(im,w,h=None,focus=(0.5,0.5)):
     if h: return ImageOps.fit(im,(w,h),Image.LANCZOS,centering=focus)
     r=w/im.width;return im.resize((w,round(im.height*r)),Image.LANCZOS)
+def cap(im,m):
+    # natural aspect, longest side at most m (never upscaled); the face focus is set in content.json (pos) with object-position
+    r=m/max(im.size);return im if r>=1 else im.resize((round(im.width*r),round(im.height*r)),Image.LANCZOS)
 def wide(im,w):
     return fit(im,w) if im.width>w else im
 # name: (original id prefix, [(suffix,width,height|None,focus)], quality)
@@ -41,9 +44,9 @@ def main():
         im=load(p)
         for suf,w,h,f in vs: save(wide(im,w) if not h else fit(im,w,h,f or (0.5,0.5)),f'{k}{suf}.webp',q)
     for i,(p,f) in enumerate(G,1): save(wide(load(p),640),f'gallery_{i}.webp',76)
-    for p,n in zip(AV,AVN): save(fit(load(p),160,160,AFOC[n]),f'av_{n}.webp',78)
-    for n,p in TA.items(): save(fit(load(p),120,120,(0.5,0.35)),f'rv_{n}.webp',80)
-    save(fit(load('c41c5f_e6e0fe1e'),120,120,(0.5,0.3)),'rv_franc.webp',80)
+    for p,n in zip(AV,AVN): save(cap(load(p),320),f'av_{n}.webp',80)
+    for n,p in TA.items(): save(cap(load(p),320),f'rv_{n}.webp',82)
+    save(cap(load('c41c5f_e6e0fe1e'),320),'rv_franc.webp',82)
     for n,p in BL.items(): save(wide(load(p),454),f'blog_{n}.webp',80)
     for v in ['HMX01IPn8Pc','CaZVC3OfLpo','1h0IttQTLRI','WL2Fnn3lwGA','XmhCEtHtXkM','AM0VQBR10wU','H6mMF-nWVpY']:
         im=Image.open(os.path.join(O,f'yt_{v}.jpg')).convert('RGB');save(fit(im,640,360),f'yt_{v}.webp',72)
