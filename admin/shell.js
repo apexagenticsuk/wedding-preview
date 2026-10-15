@@ -48,7 +48,7 @@ window.DYE={
   page:function(){return page;},
   resolve:function(p){return uploads[p]||p;},
   change:function(fn,opt){fn(c);record();if(opt&&opt.focus)focusId=opt.focus;if(opt&&opt.reload)reload();},
-  takeFocus:function(){var f=focusId;focusId=null;return f;},
+  noRestore:function(){scrollKeep=null;},takeFocus:function(){var f=focusId;focusId=null;return f;},
   upload:function(file,maxW){return new Promise(function(ok,bad){var r=new FileReader();r.onerror=bad;r.onload=function(){var im=new Image();im.onerror=function(){bad(new Error('That file is not a picture we can read. Try a JPG or PNG.'));};
     im.onload=function(){var s=Math.min(1,(maxW||1600)/im.width),cv=document.createElement('canvas');cv.width=Math.round(im.width*s);cv.height=Math.round(im.height*s);cv.getContext('2d').drawImage(im,0,0,cv.width,cv.height);
       var path='assets/uploads/img-'+new Date().toISOString().replace(/\D/g,'').slice(0,14)+'-'+Math.random().toString(36).slice(2,6)+'.jpg';uploads[path]=cv.toDataURL('image/jpeg',0.85);ok(path);};im.src=r.result;};r.readAsDataURL(file);});},
@@ -86,7 +86,7 @@ function record(){var s=JSON.stringify(c);if(hist[pos]===s)return;hist=hist.slic
 function ui(){var d=dirty(),p=$('#pill');$('#publish').classList.toggle('ready',!!d);p.className='pill'+(d?' dirty':'');p.textContent=d?'● You have unpublished changes':'✓ Everything is published';
   if(mode==='demo')p.textContent=d?'● Demo changes (this device only)':'Demo: nothing changed yet';
   $('#undo').disabled=$('#pundo').disabled=pos<=0;$('#redo').disabled=$('#predo').disabled=pos>=hist.length-1;renderPicker();}
-function after(){persist();ui();if(!exists(page))page='index';reload();if(!$('#pagesm').hidden)pagesModal();}
+function after(){persist();ui();if(!exists(page))page='index';renderPicker();reload();if(!$('#pagesm').hidden)pagesModal();}
 function undo(){if(pos<=0)return;pos--;c=JSON.parse(hist[pos]);after();}
 function redo(){if(pos>=hist.length-1)return;pos++;c=JSON.parse(hist[pos]);after();}
 function keyUndo(e){var t=e.target,ed=t&&(t.isContentEditable||/^(INPUT|TEXTAREA|SELECT)$/.test(t.tagName));if(ed||!(e.ctrlKey||e.metaKey)||String(e.key).toLowerCase()!=='z')return;e.preventDefault();if(e.shiftKey)redo();else undo();}
