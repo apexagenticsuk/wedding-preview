@@ -40,7 +40,7 @@ def main():
     for k,(p,vs,q) in M.items():
         im=load(p)
         for suf,w,h,f in vs: save(wide(im,w) if not h else fit(im,w,h,f or (0.5,0.5)),f'{k}{suf}.webp',q)
-    for i,(p,f) in enumerate(G,1): save(fit(load(p),640,480,f),f'gallery_{i}.webp',76)
+    for i,(p,f) in enumerate(G,1): save(wide(load(p),640),f'gallery_{i}.webp',76)
     for p,n in zip(AV,AVN): save(fit(load(p),160,160,AFOC[n]),f'av_{n}.webp',78)
     for n,p in TA.items(): save(fit(load(p),120,120,(0.5,0.35)),f'rv_{n}.webp',80)
     save(fit(load('c41c5f_e6e0fe1e'),120,120,(0.5,0.3)),'rv_franc.webp',80)
