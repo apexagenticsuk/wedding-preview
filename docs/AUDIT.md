@@ -72,8 +72,7 @@ Dates are as printed on Wix. Views/comments/likes counters are visitor data and 
 - Post comment threads (counts shown on Wix): [-] not copied (visitor content, behind script).
 
 ## Payment / deposit
-- **No online payment method exists on the live site.** No PayPal, Stripe, Wix Pay, bank details, "pay now" button or booking checkout anywhere (checked all pages, the footer, the blog and the template Bookings pages). The deposit is only described in the FAQ (and is arranged after an enquiry, with a formal confirmation sent by Dave's team).
-- Preview: a "Pay the €200 deposit" button on every page leads to the deposit terms on Contact (word for word from the FAQ). The payment details themselves are a **clearly marked placeholder that is not live** — Dave must supply them.
+- The live site has no online payment method. The €200 deposit is described only in the FAQ ("We are very interested in looking into the possibility…"), and the preview shows it only there, word for word. The preview has no deposit buttons, section or editor (removed in round 3 at Dave's request).
 
 ## Unreadable / uncertain
 - Wix form submission target (server side). Preview uses a mailto form.

@@ -40,12 +40,11 @@ button.ham{background:none;border:1px solid var(--line);width:44px;height:44px;b
 .btn.ghost{background:transparent;color:var(--rose);border-color:var(--rose)}.btn.ghost:hover{background:var(--rose);color:#fff}
 .btn.ghost.light{color:#fff;border-color:rgba(255,255,255,.85)}.btn.ghost.light:hover{background:#fff;color:var(--rose2)}
 .btn.call{background:transparent;color:inherit;border-color:currentColor}
-.btn.off{background:repeating-linear-gradient(135deg,#f0e9e2 0 8px,#f7f1eb 8px 16px);color:#6e6066;border:2px dashed #b8a9a0;box-shadow:none;cursor:not-allowed;font-weight:600}.btn.off:hover{transform:none}
 .btn.sm{padding:9px 16px;min-height:38px;font-size:14px}.btn.danger{background:#b3261e;color:#fff}
 .btnrow{display:flex;flex-wrap:wrap;gap:12px;align-items:center}.center{text-align:center;margin-top:28px}
 .hact .btn{padding:10px 18px;min-height:42px;font-size:14px}
-/* dock: Enquire + Pay deposit on every page, always reachable on phones */
-.sticky.dock{position:fixed;left:0;right:0;bottom:0;z-index:60;display:grid;grid-template-columns:1fr 1.25fr;gap:10px;padding:10px 14px calc(10px + env(safe-area-inset-bottom));background:rgba(255,253,249,.96);backdrop-filter:blur(10px);border-top:1px solid var(--line);box-shadow:0 -12px 30px -22px rgba(92,24,40,.5)}
+/* dock: Enquire on every page, always reachable on phones */
+.sticky.dock{position:fixed;left:0;right:0;bottom:0;z-index:60;display:grid;grid-template-columns:1fr;gap:10px;padding:10px 14px calc(10px + env(safe-area-inset-bottom));background:rgba(255,253,249,.96);backdrop-filter:blur(10px);border-top:1px solid var(--line);box-shadow:0 -12px 30px -22px rgba(92,24,40,.5)}
 .dock .btn{padding:11px 10px;font-size:14px}
 /* type */
 h1,h2,h3,h4{font-family:var(--serif);font-weight:600;line-height:1.1;letter-spacing:-.015em;color:var(--rose3)}
@@ -115,10 +114,10 @@ section{padding:clamp(54px,9vw,104px) 0}
 .band{background:linear-gradient(120deg,var(--rose3),var(--rose));color:#fff;text-align:center;position:relative;overflow:hidden}
 .band:before{content:"";position:absolute;inset:0;background:url(assets/glasses_800.webp) center/cover;opacity:.16;mix-blend-mode:luminosity}
 .band .wrap{position:relative}.band h2{color:#fff;max-width:18ch;margin-inline:auto}.band h2 .r{color:#ffd7de}.band .btnrow{justify-content:center;margin-top:26px}
-.band .btn.rose{background:#fff;color:var(--rose2)}.band .btn.gold{background:var(--gold2)}
+.band .btn.rose{background:#fff;color:var(--rose2)}
 /* page heads */
 .phead{background:linear-gradient(180deg,var(--blush),var(--ivory));padding:clamp(46px,8vw,86px) 0 clamp(30px,5vw,50px)}
-.vids,.faqs,.blog,.enquire,.deposit,.seeya{padding-top:clamp(36px,6vw,64px)}
+.vids,.faqs,.blog,.enquire,.seeya{padding-top:clamp(36px,6vw,64px)}
 .vgrid{display:grid;gap:28px}
 .vid h2{font-size:26px;margin:16px 0 4px}.vid p{color:var(--mut);margin:0}
 /* faqs */
@@ -143,9 +142,6 @@ section{padding:clamp(54px,9vw,104px) 0}
 .enq .fine{margin:0}
 .side{display:grid;grid-template-columns:minmax(0,1fr);gap:22px}.cbox{background:var(--plum);color:#f6ece4;border-radius:var(--r);padding:28px;box-shadow:var(--sh)}
 .cbox h3{color:#fff;font-size:26px}.cbox .tag{font-family:var(--serif);font-style:italic;font-size:20px;color:#ffd9a8;margin:8px 0 18px}.cbox dl{display:grid;grid-template-columns:auto 1fr;gap:8px 16px}.cbox dt{color:#d9c3b6;font-size:13px;letter-spacing:.12em;text-transform:uppercase;padding-top:3px}.cbox a{color:#fff}
-.deposit{background:var(--blush)}.deposit .terms{font-size:19px;max-width:60ch}
-.paybox{margin-top:22px;border:2px dashed #b8a9a0;background:repeating-linear-gradient(135deg,#f6efe9 0 10px,#fbf7f2 10px 20px);border-radius:var(--r);padding:20px}
-.paybox b{display:block;font-size:13px;letter-spacing:.14em;text-transform:uppercase;color:#6e6066;margin-bottom:6px}.paybox p{color:#4b3f45;font-size:16px;margin:0 0 14px}
 .seeya .pull{font-family:var(--serif);font-style:italic;font-size:clamp(26px,5vw,40px);line-height:1.2;color:var(--rose)}.seeya img{max-width:320px;border-radius:var(--r);margin-inline:auto}
 /* footer */
 footer{background:var(--plum);color:#e9dcd3;padding:48px 0 30px;margin-top:0}
@@ -182,7 +178,7 @@ hr{border:0;border-top:1px solid var(--line);margin:24px 0}.blk.space{height:40p
 button.ham{flex:none;min-width:44px}
 .fbrand .mail a,.flinks a,.cbox dd a,ol.pidx li a,.blog ol li a{display:inline-flex;align-items:center;min-height:44px}
 .fbrand .mail{display:grid;gap:0}
-.sticky.dock{grid-template-columns:minmax(0,1fr) minmax(0,1.25fr)}.dock .btn{min-width:0;text-align:center;overflow-wrap:anywhere}
+.sticky.dock{grid-template-columns:minmax(0,1fr)}.dock .btn{min-width:0;text-align:center;overflow-wrap:anywhere}
 .blog ol li a{overflow-wrap:anywhere;max-width:100%}
 .flinks a{min-width:44px;justify-content:center;padding:0 6px}
 .post a,.post p{overflow-wrap:anywhere}

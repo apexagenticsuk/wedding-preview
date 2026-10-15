@@ -35,8 +35,14 @@ for(const [t,ps] of Object.entries(regions))if(ps.length>1){extra++;console.log(
 const fs=require('fs');const C=JSON.parse(fs.readFileSync(__dirname+'/../content.json','utf8'));let cj=0;const strs={};
 (function w(o,path){if(path.startsWith('dims'))return;if(typeof o==='string'){if(/\.alt$/.test(path))return;const t=o.replace(/\s+/g,' ').trim().toLowerCase();if(t.length>=28&&!/^assets\//.test(t))(strs[t]=strs[t]||[]).push(path);}else if(o&&typeof o==='object')Object.keys(o).forEach(k=>w(o[k],path+'.'+k));})(C,'');
 for(const [t,ps] of Object.entries(strs))if(ps.length>1){cj++;console.log('CONTENT.JSON DUPLICATE',ps.join(' & '),'|',t.slice(0,80));}
-const facts=[[/€\s?200\b/,'deposit.amount'],[/\bone hour\b|\b1[- ]hour\b/i,'set.length'],[/sound and lighting/i,'set.kit'],[/ireland, uk and spain/i,'set.regions'],[/info@theweddingcomedian\.ie/,'contact.email'],[/87 261 6317/,'contact.phone']];
-(function w(o,path){if(path.startsWith('.dims')||path.startsWith('._help'))return;if(typeof o==='string'){for(const [re,home] of facts)if(re.test(o)&&path!=='.'+home&&!/^\.faqs\.\d+\.q$/.test(path)){cj++;console.log('FACT LITERAL outside',home,'at',path,'|',o.slice(0,70));}}else if(o&&typeof o==='object')Object.keys(o).forEach(k=>w(o[k],path+'.'+k));})(C,'');
+const facts=[[/\bone hour\b|\b1[- ]hour\b/i,'set.length'],[/sound and lighting/i,'set.kit'],[/ireland, uk and spain/i,'set.regions'],[/info@theweddingcomedian\.ie/,'contact.email'],[/87 261 6317/,'contact.phone']];
+(function w(o,path){if(path.startsWith('.dims')||path.startsWith('._help'))return;if(typeof o==='string'){for(const [re,home] of facts)if(re.test(o)&&path!=='.'+home&&!/^\.faqs\.\d+\.[qa]$/.test(path)){cj++;console.log('FACT LITERAL outside',home,'at',path,'|',o.slice(0,70));}}else if(o&&typeof o==='object')Object.keys(o).forEach(k=>w(o[k],path+'.'+k));})(C,'');
+for(const pg of pages){const p=await b.newPage();await p.goto(`${base}/${pg}.html`,{waitUntil:'networkidle'});
+ const bad=await p.evaluate(()=>[...document.querySelectorAll('a,button,h1,h2,h3,[data-cms=deposit],.paybox')].filter(e=>/deposit|payment|pay the/i.test(e.innerText||'')||e.matches('[data-cms=deposit],.paybox')).map(e=>e.tagName+':'+(e.innerText||'').slice(0,40)));
+ bad.forEach(x=>{cj++;console.log('DEPOSIT UI on',pg,x);});
+ const dep=await p.evaluate(()=>[...document.querySelectorAll('main *')].filter(e=>/deposit/i.test(e.innerText||'')&&![...e.children].some(c=>/deposit/i.test(c.innerText||''))&&!e.closest('details')).map(e=>e.tagName));
+ dep.forEach(x=>{cj++;console.log('DEPOSIT TEXT outside FAQ on',pg,x);});await p.close();}
+if(C.deposit){cj++;console.log('content.json still has a deposit object');}
 extra+=cj;
 let n=0;for(const [t,ps] of Object.entries(seen))if(ps.length>1){n++;console.log(ps.join('+'),'|',t.slice(0,110));}
 console.log('DUPLICATED BLOCKS',n,'EXTRA',extra);await b.close();process.exit(n||extra?1:0);})();

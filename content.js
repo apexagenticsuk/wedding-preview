@@ -76,7 +76,7 @@ window.DY_clean=clean;
 
 /* ---------- shared collections (single source: content.json) ---------- */
 function ATTR(el,n,d){var v=el.getAttribute('data-'+n);return v==null||v===''?d:v;}
-/* Facts are written once in content.json; {tokens} in stored text are filled in here (e.g. {deposit.amount}, {contact.phone}). */
+/* Facts are written once in content.json; {tokens} in stored text are filled in here (e.g. {set.length}, {contact.phone}). */
 function T(s,c){c=c||window.DY_C||{};s=String(s==null?'':s);var n=0;while(n++<4&&/\{[\w.]+\}/.test(s))s=s.replace(/\{([\w.]+)\}/g,function(m,p){var v=p.split('.').reduce(function(a,k){return a==null?a:a[k];},c);return(v==null||typeof v==='object')?m:v;});return s;}
 function paras(s,c){return String(s==null?'':s).split(/\n+/).filter(function(x){return x.trim();}).map(function(p){return '<p>'+clean(T(p,c)).replace(/(^|[\s(])(https?:\/\/[^\s<)]+)/g,function(m,a,u){return a+'<a href="'+esc(safeUrl(u))+'" target="_blank" rel="noopener">'+esc(u)+'</a>';})+'</p>';}).join('');}
 function plain(s,c){var t=document.createElement('template');t.innerHTML=String(T(s,c));return t.content.textContent;}
@@ -90,13 +90,11 @@ function clipHTML(k,view){var th=esc(RES(k.thumb||'')),lite='<div class="lite" d
   if(view==='cards')return '<article class="vid">'+lite+'<h2 class="vt">'+clean(k.title)+'</h2>'+(k.cap?'<p>'+clean(k.cap)+'</p>':'')+'</article>';return lite;}
 function fmtDate(iso){var d=new Date(iso+'T12:00:00Z');return isNaN(d)?'':d.getUTCDate()+' '+MON[d.getUTCMonth()]+' '+d.getUTCFullYear();}
 function postHTML(p,c){return '<article class="post" id="'+esc(p.id)+'"><header><h2>'+clean(p.title)+'</h2><p class="meta"><time datetime="'+esc(p.date)+'">'+fmtDate(p.date)+'</time> · '+esc(p.by)+'</p></header>'+(p.img?'<img src="'+esc(RES(p.img))+'" alt="'+esc(p.alt||'')+'" loading="lazy">':'')+'<div class="pbody">'+paras(p.body,c)+'</div></article>';}
-function actionsHTML(c){var d=c.deposit||{};return '<a class="btn rose" href="contact.html#enquire">Enquire</a><a class="btn gold" href="contact.html#deposit">Pay the '+esc(d.amount||'')+' deposit</a>';}
+function actionsHTML(c){return '<a class="btn rose" href="contact.html#enquire">Enquire</a>';}
 function contactHTML(c,view){var ct=c.contact||{},tel='tel:'+telOf(ct.phone),mail='mailto:'+ct.email;
   if(view==='foot')return '<b>'+esc(ct.brand)+'</b><a href="'+esc(tel)+'">'+esc(ct.phone)+'</a><a href="'+esc(mail)+'">'+esc(ct.email)+'</a>';
   if(view==='legal')return '&copy; 2026 '+esc(ct.org)+' · Preview of a rebuild of '+esc(ct.website);
   return '<h3>'+esc(ct.brand)+'</h3><p class="tag">'+esc(ct.tagline)+'</p><dl><dt>Tel</dt><dd><a href="'+esc(tel)+'">'+esc(ct.phone)+'</a></dd><dt>E-mail</dt><dd><a href="'+esc(mail)+'">'+esc(ct.email)+'</a></dd><dt>Website</dt><dd>'+esc(ct.website)+'</dd></dl>';}
-function depositHTML(c){var d=c.deposit||{},m=d.method||{},live=m.live&&/^https?:/.test(m.url||'');
-  return '<p class="terms">'+clean(T(d.terms,c))+'</p>'+(live?'<p><a class="btn gold" href="'+esc(safeUrl(m.url))+'" target="_blank" rel="noopener">'+esc(m.label||'Pay the deposit')+'</a></p>':'<div class="paybox" role="note"><b>'+esc(m.label||'Payment method not set up')+'</b><p>'+clean(T(m.note,c))+'</p><span class="btn off" aria-disabled="true">Online payment: not live in this preview</span></div>');}
 function enquiryHTML(c){var ct=c.contact||{};return '<form class="enq" action="mailto:'+esc(ct.email)+'?subject='+encodeURIComponent('Wedding enquiry: The Wedding Comedian')+'" method="post" enctype="text/plain"><label><span>Name <abbr title="required">*</abbr></span><input name="Name" required autocomplete="name"></label><label><span>Email</span><input name="Email" type="email" autocomplete="email"></label><label><span>Phone</span><input name="Phone" type="tel" autocomplete="tel"></label><label><span>Wedding date <abbr title="required">*</abbr></span><input name="Wedding date" type="date" required></label><label class="wide"><span>Wedding location</span><input name="Wedding location"></label><label class="wide"><span>Message <abbr title="required">*</abbr></span><textarea name="Message" rows="5" required></textarea></label><button class="btn rose" type="submit">Send</button><p class="fine">Sending opens your email app with these details, addressed to '+esc(ct.email)+'. Nothing is sent from this page itself.</p></form>';}
 function shared(c,root){root=root||document;window.DY_C=c;
   root.querySelectorAll('[data-cms]').forEach(function(el){var k=el.getAttribute('data-cms'),v=ATTR(el,'view',''),h=null;
@@ -111,7 +109,6 @@ function shared(c,root){root=root||document;window.DY_C=c;
     else if(k==='posts')h=v==='index'?'<ol>'+(c.posts||[]).map(function(p){return '<li><a href="#'+esc(p.id)+'">'+clean(p.title)+'</a> <time datetime="'+esc(p.date)+'">'+fmtDate(p.date)+'</time></li>';}).join('')+'</ol>':(c.posts||[]).map(function(p){return postHTML(p,c);}).join('');
     else if(k==='actions')h=actionsHTML(c);
     else if(k==='contact')h=contactHTML(c,v);
-    else if(k==='deposit')h=depositHTML(c);
     else if(k==='enquiry')h=enquiryHTML(c);
     else if(k==='say')h=esc((c.contact||{}).sayhello||'');
     if(h!==null)el.innerHTML=AD(h);});}

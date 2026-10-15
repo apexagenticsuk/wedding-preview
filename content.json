@@ -21,17 +21,6 @@
     "kit": "own sound and lighting crew",
     "regions": "Ireland, UK and Spain"
   },
-  "deposit": {
-    "amount": "€200",
-    "due": "within ten working days of booking",
-    "terms": "We will require a deposit of {deposit.amount} due {deposit.due} and with the agreed balance due for collection on the night, or if you prefer, we can arrange for payment of the balance on a monthly basis. Formal confirmation of your booking with us will be sent to you.",
-    "method": {
-      "live": false,
-      "url": "",
-      "label": "Payment method to be added by Dave",
-      "note": "The live site has no online payment link or bank details, so none are shown here. Nothing on this page takes a payment. Until Dave supplies his payment method, call or email to arrange the deposit."
-    }
-  },
   "nav": [
     {
       "key": "index",
@@ -96,10 +85,6 @@
     {
       "k": "Travels to",
       "v": "{set.regions}"
-    },
-    {
-      "k": "Booking deposit",
-      "v": "{deposit.amount}"
     }
   ],
   "faqs": [
@@ -129,7 +114,7 @@
     },
     {
       "q": "We are very interested in looking into the possibility of having The Wedding Comedian at our wedding. What do we need to do?",
-      "a": "You can contact us by phone, email or via our short form. You can check availability and price for your date and venue. While you are here, you can also check out some of Dave’s <a href=\"videos.html\">videos here</a> to get a little sample of what you can expect. This award winning comedian at your wedding will turn it into a fantastic night!\n{deposit.terms}\nMake a note in your wedding planning file and get ready to laugh, because you’re in for a great time!"
+      "a": "You can contact us by phone, email or via our short form. You can check availability and price for your date and venue. While you are here, you can also check out some of Dave’s <a href=\"videos.html\">videos here</a> to get a little sample of what you can expect. This award winning comedian at your wedding will turn it into a fantastic night!\nWe will require a deposit of €200 due within ten working days of booking and with the agreed balance due for collection on the night, or if you prefer, we can arrange for payment of the balance on a monthly basis. Formal confirmation of your booking with us will be sent to you.\nMake a note in your wedding planning file and get ready to laugh, because you’re in for a great time!"
     }
   ],
   "testimonials": [

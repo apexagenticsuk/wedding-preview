@@ -34,12 +34,7 @@ await p.evaluate(()=>DYE.openShared('contact'));await p.waitForSelector('#shared
 const em=p.locator('#sharedm .shbody label.shf:has(span:text-is("Email")) input').first();await em.fill('hello@example.ie');await em.dispatchEvent('change');await ready();
 for(const pg of ['index','videos','testimonials','faqs','blog','contact']){await hide();await go(pg);
  ok(M+': new email appears on '+pg,await F().evaluate(()=>[...document.querySelectorAll('a[href^=mailto]')].some(a=>/hello@example\.ie/.test(a.href))&&![...document.querySelectorAll('a[href^=mailto]')].some(a=>/theweddingcomedian\.ie/.test(a.href))));}
-// 5 deposit amount: changes every mention
-await p.evaluate(()=>DYE.openShared('deposit'));await p.waitForSelector('#sharedm:not([hidden])');
-const am=p.locator('#sharedm .shbody label.shf:has(span:text-is("Deposit amount")) input').first();await am.fill('€250');await am.dispatchEvent('change');await ready();
-await hide();
-for(const pg of ['index','faqs','contact']){await go(pg);const t=await txt();ok(M+': deposit €250 on '+pg+' and no old €200',/€250/.test(t)&&!/€200/.test(t));}
-// 6 add and delete a video
+// 5 add and delete a video
 await p.evaluate(()=>DYE.openShared('clips'));await p.waitForSelector('#sharedm:not([hidden])');const n0=await p.locator('#sharedm details.shrow').count();
 await p.locator('#sharedm .shbody > button:has-text("+ Add")').click();await ready();
 ok(M+': add a video row',(await p.locator('#sharedm details.shrow').count())===n0+1);
@@ -54,7 +49,7 @@ if(await de.count()){await de.fill('4 Oct 2017');await de.dispatchEvent('change'
 await p.evaluate(()=>document.querySelector('#sharedm').hidden=true);
 for(let i=0;i<30&&await p.evaluate(()=>!document.querySelector('#undo').disabled);i++){await p.click('#undo');await p.waitForTimeout(250);}await ready();
 const c=await p.evaluate(()=>JSON.parse(JSON.stringify(DYE.state().content)));
-ok(M+': undo restores the original shared content',await p.evaluate(()=>{const c=DYE.state().content;return c.contact.email==='info@theweddingcomedian.ie'&&c.deposit.amount==='€200'&&!c.testimonials.some(t=>/SHARED EDIT/.test(t.text));}));
+ok(M+': undo restores the original shared content',await p.evaluate(()=>{const c=DYE.state().content;return c.contact.email==='info@theweddingcomedian.ie'&&!c.deposit&&!c.testimonials.some(t=>/SHARED EDIT/.test(t.text));}));
 ok(M+': no JS errors',errs.length===0,JSON.stringify(errs));
 await ctx.close();}
 await b.close();console.log('SUMMARY',res.filter(r=>r[1]).length+'/'+res.length);process.exit(res.every(r=>r[1])?0:1);})().catch(e=>{console.error('CRASH',e.message);process.exit(1);});

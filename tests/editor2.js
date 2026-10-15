@@ -56,7 +56,7 @@ ok(M+': no text selection while editing (outside typing)',await F().evaluate(()=
 // browse all pages + Shared tabs
 for(const pg of ['videos','testimonials','faqs','blog','contact','index']){await go(pg);
  ok(M+': no sideways scroll in the editor on '+pg,await F().evaluate(()=>{const d=document.documentElement;return d.scrollWidth<=d.clientWidth+1;}));}
-for(const k of ['posts','testimonials','clips','faqs','praise','gallery','facts','set','contact','deposit']){await p.evaluate(x=>DYE.openShared(x),k);await p.evaluate(()=>document.querySelectorAll('#sharedm details.shrow').forEach(d=>d.open=true));await p.waitForTimeout(250);}
+for(const k of ['posts','testimonials','clips','faqs','praise','gallery','facts','set','contact']){await p.evaluate(x=>DYE.openShared(x),k);await p.evaluate(()=>document.querySelectorAll('#sharedm details.shrow').forEach(d=>d.open=true));await p.waitForTimeout(250);}
 ok(M+': no console errors or failed requests',errs.length===0,JSON.stringify(errs.slice(0,4)));
 await ctx.close();}
 // layout shift between plain preview and editing (classic scrollbars)

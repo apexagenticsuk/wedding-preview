@@ -27,7 +27,7 @@ D.querySelectorAll(NAVSEL).forEach(function(a){a.setAttribute('data-dy-nav','');
 function secs(){return [].slice.call((D.querySelector('body>main')||D.body).children).filter(function(e){return R.secId.has(e);});}
 secs().forEach(function(s){s.classList.add('dy-sec');if(s.classList.contains('dy-hidden'))s.appendChild(mk('div','dy-hidlab','Hidden section · click it, then “Show”'));});
 D.querySelectorAll('[data-cms="socials"]').forEach(function(s){s.setAttribute('data-dy-soc','');});
-var CMSLAB={testimonials:'Testimonials',clips:'Videos',faqs:'FAQs',praise:'Quotes about Dave',gallery:'Photo gallery',galleryintro:'Gallery intro',posts:'Blog posts',facts:'Key facts',contact:'Contact details',deposit:'Deposit',actions:'Enquire and deposit buttons',enquiry:'Contact details',say:'Contact details'},CMSKEY={galleryintro:'gallery',actions:'deposit',enquiry:'contact',say:'contact'};
+var CMSLAB={testimonials:'Testimonials',clips:'Videos',faqs:'FAQs',praise:'Quotes about Dave',gallery:'Photo gallery',galleryintro:'Gallery intro',posts:'Blog posts',facts:'Key facts',contact:'Contact details',actions:'Enquire button',enquiry:'Contact details',say:'Contact details'},CMSKEY={galleryintro:'gallery',actions:'contact',enquiry:'contact',say:'contact'};
 D.querySelectorAll('[data-cms]').forEach(function(s){var k=s.getAttribute('data-cms');if(CMSLAB[k]){s.setAttribute('data-dy-cms',CMSKEY[k]||k);s.setAttribute('data-dy-label','Shared: '+CMSLAB[k]+'. Click to edit everywhere');}});
 D.querySelectorAll('.blk-video').forEach(function(v){v.appendChild(mk('div','dy-vidcover','<span>▶ Video · click to select, then “Change video”</span>'));});
 function isNew(s){return !!(s&&s.hasAttribute('data-nsec'));}
