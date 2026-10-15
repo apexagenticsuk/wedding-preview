@@ -4,7 +4,7 @@
 set -euo pipefail
 cd "$(dirname "$0")/.."
 PORT="${1:-8799}"
-PAGES="index live about book clips corporate contact magician page"
+PAGES="index videos testimonials faqs blog contact page"
 for p in $PAGES; do sed -i 's/ data-dy="[^"]*"//g' "$p.html"; done
 python3 tools/imgdims.py
 python3 -m http.server "$PORT" >/dev/null 2>&1 & SRV=$!

@@ -1,7 +1,7 @@
-<!doctype html><html lang="en-IE"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex, nofollow"><title>Website editor | Dave Young</title>
-<link rel="icon" href="data:,"><link rel="stylesheet" href="../style.css"><link rel="stylesheet" href="shell.css"></head><body>
+<!doctype html><html lang="en-IE"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex, nofollow"><title>Website editor | The Wedding Comedian</title>
+<link rel="icon" href="data:,"><link rel="stylesheet" href="base.css"><link rel="stylesheet" href="shell.css"></head><body>
 <div id="login" class="login" hidden><div class="card">
-  <div class="brand"><span class="d">Dave</span> <span class="y">Young</span><small>Website editor</small></div>
+  <div class="brand"><span class="d">The Wedding</span> <span class="y">Comedian</span><small>Website editor</small></div>
   <h1>Edit your website</h1>
   <p class="lead2">Click on anything on your pages to change it, then press Publish. No coding needed.</p>
   <label for="tok">Your editor key</label>
@@ -15,7 +15,7 @@
 
 <div id="app" hidden>
 <header class="tb">
-  <div class="g"><span class="logo"><b>Dave</b> <i>Young</i></span><span id="demobadge" class="demob" hidden title="Demo mode: changes stay on this device and can't be published">DEMO</span>
+  <div class="g"><span class="logo"><b>Wedding</b> <i>Comedian</i></span><span id="demobadge" class="demob" hidden title="Demo mode: changes stay on this device and can't be published">DEMO</span>
   <select id="page" aria-label="Page"></select></div>
   <div class="g"><div class="seg" role="group" aria-label="View"><button id="vdesk" class="on" title="Desktop view">🖥<span class="sl"> Desktop</span></button><button id="vphone" title="Phone view">📱<span class="sl"> Phone</span></button></div>
   <button id="undo" class="ib" title="Undo the last change"><span aria-hidden="true">↶</span> Undo</button><button id="redo" class="ib" title="Redo the change you undid">Redo <span aria-hidden="true">↷</span></button></div>
@@ -34,7 +34,7 @@
 <div><h3>Sign in</h3><p>Open this page, paste your editor key and tap <b>Sign in</b>. You only do this once on each phone or computer. <b>Demo mode</b> lets you try everything without changing the real site.</p></div>
 <div><h3>Change words</h3><p>Pick a page at the top. Things you can change get a yellow outline when you point at them. Click a heading, paragraph or button and just type. Click somewhere else when you're done.</p></div>
 <div><h3>Change a button</h3><p>Click any button or link. A panel opens on the right where you can change its words, where it goes (one of your pages, a web address, a phone number or an email) and its colour.</p></div>
-<div><h3>Change a show date</h3><p>Click a show (or its <b>Edit</b> button) to change the date, venue, town or ticket link. Type the date any normal way, for example <b>Fri 4th Dec</b>, <b>4 Dec 2026</b> or <b>04/12/2026</b>: the weekday is ignored and worked out for you, and a message tells you if a date can't be read. Shows sort themselves by date. Each row has its own <b>Sold out</b>, <b>Drag</b> and <b>Delete</b> buttons, and <b>+ Add show</b> is under the list.</p></div>
+<div><h3>Change a date, review, video or answer</h3><p>Click a review, video, FAQ, blog post or the contact box to open <b>Shared content</b>: each one is written once and shows everywhere it is used. Type a blog post date any normal way, for example <b>Fri 4th Dec</b>, <b>4 Dec 2026</b> or <b>04/12/2026</b>: the weekday is ignored, and a message tells you if a date can't be read. Rows have <b>↑ ↓</b> to reorder, <b>Delete</b>, and <b>+ Add</b> is under the list.</p></div>
 <div><h3>Swap the poster or a photo</h3><p>Click any picture and choose <b>Replace picture</b>. Photos from your phone are shrunk automatically.</p></div>
 <div><h3>Move or hide a section</h3><p><b>Drag:</b> point at a section and grab the blue <b>⠿ Drag</b> tab (top right), or a block’s yellow <b>⠿</b>, and drop it where the yellow line shows; the page scrolls when you get near the edge. Pictures, cards, testimonials and other repeated items have a small <b>⠿</b> too (on a phone, tap the section first). Drag menu links sideways, or the <b>⠿</b> in <b>Pages</b>. In <b>Add a block</b> you can drag a tile straight onto the page (on a phone: hold it, then drag). Every drag can be undone with <b>↶</b>.</p><p>Or click inside a section: the bar under the toolbar shows what is selected, with <b>Move up</b>, <b>Move down</b>, <b>Reorder…</b> (drag in a list), <b>Hide</b>, <b>Copy</b> and <b>Delete</b>. Hidden sections stay faded in the editor so you can bring them back.</p></div>
 <div><h3>Check, then publish</h3><p><b>📱 Phone</b> shows how it looks on a mobile. <b>Preview</b> opens the site with your changes. When you're happy, tap the big red <b>Publish</b>. The real website updates in about a minute.</p></div>
@@ -61,9 +61,9 @@
 
 <div id="newpm" class="modal" hidden><div class="mc"><button class="x" data-close>✕</button>
 <h2 id="newpt">New page</h2>
-<label for="np-title">Page title</label><input id="np-title" placeholder="e.g. Christmas Parties">
+<label for="np-title">Page title</label><input id="np-title" placeholder="e.g. Venues we love">
 <label for="np-label">Name in the menu</label><input id="np-label" placeholder="e.g. Parties">
-<label for="np-slug">Web address</label><div class="slug"><span id="np-base"></span><input id="np-slug" placeholder="christmas-parties"><span>.html</span></div><p class="hint">Made from the title automatically. Letters, numbers and dashes only.</p>
+<label for="np-slug">Web address</label><div class="slug"><span id="np-base"></span><input id="np-slug" placeholder="venues-we-love"><span>.html</span></div><p class="hint">Made from the title automatically. Letters, numbers and dashes only.</p>
 <label for="np-tpl">Start from</label><select id="np-tpl"></select>
 <p id="np-msg" class="msg err"></p>
 <div class="row"><button class="btn red" id="np-go">Create page</button><button class="btn ghost" data-close>Cancel</button></div></div></div>

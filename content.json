@@ -1,0 +1,647 @@
+{
+  "version": "2026-10-15T23:00:00Z",
+  "_help": "Edited by the visual editor at /admin/. 'pages' and 'site' hold per-element edits keyed by element id; empty means the page is shown exactly as built.",
+  "siteUrl": "https://apexagenticsuk.github.io/wedding-preview/",
+  "theme": {
+    "accent": "rose"
+  },
+  "contact": {
+    "phone": "+353 87 261 6317",
+    "email": "info@theweddingcomedian.ie",
+    "org": "Young1Productions",
+    "brand": "The Wedding Comedian",
+    "person": "Dave Young",
+    "base": "Wicklow",
+    "tagline": "Available for your wedding in Ireland, Worldwide & Beyond!",
+    "website": "theweddingcomedian.ie",
+    "sayhello": "See you soon guys, You’re in for a great time!"
+  },
+  "set": {
+    "length": "one hour",
+    "kit": "own sound and lighting crew",
+    "regions": "Ireland, UK and Spain"
+  },
+  "deposit": {
+    "amount": "€200",
+    "due": "within ten working days of booking",
+    "terms": "We will require a deposit of {deposit.amount} due {deposit.due} and with the agreed balance due for collection on the night, or if you prefer, we can arrange for payment of the balance on a monthly basis. Formal confirmation of your booking with us will be sent to you.",
+    "method": {
+      "live": false,
+      "url": "",
+      "label": "Payment method to be added by Dave",
+      "note": "The live site has no online payment link or bank details, so none are shown here. Nothing on this page takes a payment. Until Dave supplies his payment method, call or email to arrange the deposit."
+    }
+  },
+  "nav": [
+    {
+      "key": "index",
+      "label": "Home",
+      "show": "menu"
+    },
+    {
+      "key": "videos",
+      "label": "Videos",
+      "show": "menu"
+    },
+    {
+      "key": "testimonials",
+      "label": "Testimonials",
+      "show": "menu"
+    },
+    {
+      "key": "faqs",
+      "label": "FAQs",
+      "show": "menu"
+    },
+    {
+      "key": "blog",
+      "label": "Blog",
+      "show": "menu"
+    },
+    {
+      "key": "contact",
+      "label": "Contact",
+      "show": "menu"
+    },
+    {
+      "key": "dave",
+      "label": "Dave Young",
+      "href": "http://www.daveyounglive.com/",
+      "show": "menu"
+    }
+  ],
+  "socials": [
+    {
+      "network": "tiktok",
+      "url": "https://www.tiktok.com/@theweddingcomedian?lang=en"
+    },
+    {
+      "network": "facebook",
+      "url": "https://www.facebook.com/theweddingcomedian"
+    },
+    {
+      "network": "instagram",
+      "url": "https://www.instagram.com/theweddingcomedian/"
+    }
+  ],
+  "facts": [
+    {
+      "k": "Set length",
+      "v": "{set.length}"
+    },
+    {
+      "k": "Sound & lighting",
+      "v": "{set.kit}"
+    },
+    {
+      "k": "Travels to",
+      "v": "{set.regions}"
+    },
+    {
+      "k": "Booking deposit",
+      "v": "{deposit.amount}"
+    }
+  ],
+  "faqs": [
+    {
+      "q": "Price & Availability?",
+      "a": "These two questions are probably the most frequently asked questions we get: “is The Wedding Comedian available and how much does he charge”?\nTo check availability <a href=\"contact.html#enquire\">click here</a> and simply fill in your details and we’ll confirm if a booking is available.\n<b>NOTE:</b> Regarding costs, fees are based on each individual enquiry and requirements, location and the date of wedding are also important elements of our pricing structure."
+    },
+    {
+      "q": "What time does ‘The Wedding Comedian’ normally start at and how long is the show?",
+      "a": "The standard Wedding Comedian performance is {set.length} and the time he starts at is decided by the happy couple which is usually after the meal and before the band takes to the stage."
+    },
+    {
+      "q": "Where is he based and how far does he travel?",
+      "a": "Dave is based in {contact.base} and will travel to weddings all over {set.regions}."
+    },
+    {
+      "q": "Will our older guests enjoy it?",
+      "a": "They most certainly will. In fact, all of your guests will. Impossible, you say? Well a lot of what the younger people laugh at still has relevance for older people today. Likewise, the older generation find the humour keeps them young and Dave Young knows how to make everyone happy at all weddings!"
+    },
+    {
+      "q": "Do you provide your own sound and lighting and when do you set up?",
+      "a": "The Wedding Comedian comes complete with his {set.kit}, the crew set up discreetly before the meal as sometimes The Wedding comedian is kept as a surprise. Set up takes less than 15 minutes and it is quite normal for the guests to remain in the room throughout."
+    },
+    {
+      "q": "We know on the night our Best man will be slagging us, is there anyway The Wedding Comedian can get him back for us?",
+      "a": "Leave it to Dave, before the show he will get some info from you about your best man or anyone you want to seek revenge on (in a fun way of course) and he will have everybody in fits of laughter, with your victim wondering how did Dave know that?"
+    },
+    {
+      "q": "We are very interested in looking into the possibility of having The Wedding Comedian at our wedding. What do we need to do?",
+      "a": "You can contact us by phone, email or via our short form. You can check availability and price for your date and venue. While you are here, you can also check out some of Dave’s <a href=\"videos.html\">videos here</a> to get a little sample of what you can expect. This award winning comedian at your wedding will turn it into a fantastic night!\n{deposit.terms}\nMake a note in your wedding planning file and get ready to laugh, because you’re in for a great time!"
+    }
+  ],
+  "testimonials": [
+    {
+      "id": "mary",
+      "place": "home",
+      "who": "Mary McNally",
+      "role": "Mother of the Bride",
+      "text": "I haven't laughed so hard in a long while!! There were 8 of us sitting near the dance floor so we were all part of the show. Very interactive and so very funny! So much fun to watch the progression of the evening, especially with the priest - We all loved it! I loved his way of 'getting' everyone so fast, he was consistent throughout the show. I would definitely recommend The Wedding Comedian, make sure you have an open mind, a sense of humour & a spare pair of knickers!!",
+      "img": "assets/rv_mary.webp"
+    },
+    {
+      "id": "susan",
+      "place": "home",
+      "who": "Susan Clarke",
+      "role": "Maid of Honor",
+      "text": "From the time I spoke to Dave on the phone to day of the performance he had me in stitches! A down to earth gent that has our Irish humour down to a T and knows how to entertain any crowd. I seen full grown men cry with laughter, he truly is the best comedian of his time. Made our wedding far from \"ordinary\"!",
+      "img": "assets/rv_susan.webp"
+    },
+    {
+      "id": "franc",
+      "place": "page",
+      "who": "Franc - Weddings by Franc",
+      "role": "Wedding Event Designer",
+      "text": "I've been to many weddings where they have had wedding comedians and the majority of them just die on the stage and there is nothing worse! So, there is only one guy I know that's able to deliver time and time again... that's Dave Young - The Wedding Comedian!",
+      "img": "assets/rv_franc.webp",
+      "source": "Wedding By Franc (RTE)"
+    },
+    {
+      "id": "sean",
+      "place": "page",
+      "who": "Sean O Reilly",
+      "role": "Groom",
+      "text": "Dave Young was excellent. I booked him to make my wife happy, but I ended up loving him more (lol), He's fantastic at getting the audience involved and if Im ever getting married again he will be the first one I book!",
+      "img": "assets/rv_sean.webp"
+    },
+    {
+      "id": "johnrita",
+      "place": "home",
+      "who": "John & Rita Crawford",
+      "role": "Bride & Groom",
+      "text": "Superb, superb, superb! The Wedding Comedian was one of the first things booked for our wedding (you need to get in fast when booking this guy) and he delivered an blinding performance for our reception! No one was safe, he had all the goods on us and went to town on our past 'secrets'. We're still laughing!!!!\nBook this man... now!",
+      "img": "assets/rv_johnrita.webp"
+    },
+    {
+      "id": "morris",
+      "place": "page",
+      "who": "Morris Dillon",
+      "role": "Father Of The Bride",
+      "text": "Well, I have to be honest, I thought the idea of having a wedding comedian was an unnecessary luxury BUT with hindsight, it turned out to be a major success and an very fond memory for all who fell under Dave's spell. As one of his 'victims' I can say I never laughed at myself as much as i did that night - his comic ability, quick timing and the general air of devilment was electric!\nAs the proud Father of The Bride my job was made easier by having The Wedding Comedian as part of my plan - Dave's a real professional and a super guy to deal with.",
+      "img": "assets/rv_morris.webp"
+    },
+    {
+      "id": "jeremy",
+      "place": "page",
+      "who": "Jeremy & Susan Cunningham",
+      "role": "Bride & Groom",
+      "text": "It was the easiest decision to book Dave Young - The Wedding Comedian! I knew of his reputation and had seen one of his shows at Vicar St so knew what I was getting myself in for! His production team at Young 1 productions took all the hassle, effort and planning off my shoulders and we got to chat with Dave himself about what we would like for the day, he took our stories, little embarrassments and funny experiences and expertly work them into our performance - both families were in stitches and we're still laughing each time we watch the wedding video!\nHave no doubt, The Wedding Comedian is a must!",
+      "img": "assets/rv_jeremy.webp"
+    },
+    {
+      "id": "connor",
+      "place": "page",
+      "who": "Connor & Ellen Nolan",
+      "role": "Bride & Groom",
+      "text": "Connor (my new husband) had been a fan of Dave's for years, has all his DVD's and recordings so it was a very special surprise for him on the day as I arranged it in secret! Dave was a true gent to work with and took all the hassle and planning out of my shakey hands. I was able to give Dave a 'little colourful background' on both Connor and his family but he also got me to spill the beans on my own gang too so no one was safe!\nThe result was pure magic! We all laughed and cried (for all the right reasons) and everybody afterwards was on a high and smiling for the rest of the night!\nDon't hesitate to book this guy, your wedding day will thank you for the rest of your life!",
+      "img": "assets/rv_connor.webp"
+    },
+    {
+      "id": "kaya",
+      "place": "page",
+      "who": "Kaya & Simon West",
+      "role": "",
+      "text": "Do not Hesitate... book this man now!\nMy family are from London and Simon's are from Jamaica so we wanted 'something different' for the reception, something that would break the ice and bring our two families together. 'The Wedding Comidean' was recommended to me by so many people so I had to check him out!\nI was a little nervous at first, not knowing much about this sort of thing but Dave's production team were amazing (thanks Jenny!) and they helped me with everything! On the day, he surpassed my expectations and even managed to make my non english speaking grandfather chuckle!\nThe day was already amazing but Dave helped ensure it was more than rememberable.",
+      "img": "assets/rv_kaya.webp"
+    },
+    {
+      "id": "geraldine",
+      "place": "page",
+      "who": "Geraldine & David Wallis",
+      "role": "",
+      "text": "The man's a genius!\n140 guests (including about 50 folk I never knew nor met before), all sandwiched into a huge reception room and all looking at each other with nervous smiles! Then Dave Young - The Wedding Comedian entered the room and all hell broke lose fun wise!\nWithin an hour, everybody was part of his mesmerising show and eating out of his comedic hands! When we finally let Dave leave the stage everybody in the room knew each other and all were united in laughter!\nHis ability to take any situation and turn it into comic gold is astounding! He is able to find the humor in every little nuance of both families and channel all the little stories into side splitting routines.\nBook him now... you will not be disappointed!",
+      "img": "assets/rv_geraldine.webp"
+    },
+    {
+      "id": "jim",
+      "place": "page",
+      "who": "Father Jim Morris",
+      "role": "",
+      "text": "Lord above!I can't tell you how many weddings I've both presided over and been honoured to be a guest at - each were and are beautiful and wonderful events in their own collective way; family and friends coming together to express their collective joy for their the blessing of marriage.That said, nothing could have prepared me for the whirlwind that is Dave Young - The Wedding Comedian. He certainly took the families to town (humour wise) with his comic talents and I was able to enjoy the unfolding spectacle, secure in the knowledge that I was safe and sound... I was wrong!All I can say on that is that I hope he's at my next wedding and the next one and the next...",
+      "img": "assets/rv_jim.webp"
+    }
+  ],
+  "praise": [
+    {
+      "id": "billy_connolly",
+      "name": "Billy Connolly",
+      "text": "I heard Dave before I ever saw him, he spoke to me with my own voice and it was terrifying! He's a genuinely funny guy with the evil ability to mimic me and sound funnier!!! I then saw Dave in 'When Harvey Met Bob' playing 'me' - only this time, he looked like me too! Restraining order anybody?",
+      "img": "assets/av_billy_connolly.webp"
+    },
+    {
+      "id": "jonathan_ross",
+      "name": "Jonathan Ross",
+      "text": "Crazy, crazy, czazy... I never know what he's going to do at any one time! Unpredictable, incredibly funny and above all, totally natural!",
+      "img": "assets/av_jonathan_ross.webp"
+    },
+    {
+      "id": "miriam",
+      "name": "The Miriam Show (RTE)",
+      "text": "There is no one funnier that Dave Young! He's been both a guest and performer on my show and both myself and the audience have enjoyed his infectious humour many, many times.",
+      "img": "assets/av_miriam.webp"
+    },
+    {
+      "id": "westlife",
+      "name": "Westlife",
+      "text": "The man is crazy, his unique rendition of 'Mandy' is a show stopper, so funny - we had smiles on our faces for the night and well into the next day, the man's a genius!",
+      "img": "assets/av_westlife.webp"
+    },
+    {
+      "id": "pat_kenny",
+      "name": "Pat Kenny (NEWSTALK & UTV)",
+      "text": "Dave is a tour de force of Comedy, don't for a minute think I'm in control during an interview! I'm generally the one not able to speak for all the laughter... Do yourself, your spouse to-be and your families a service and book this man, he will make your day!",
+      "img": "assets/av_pat_kenny.webp"
+    },
+    {
+      "id": "michael_buble",
+      "name": "Michael Buble",
+      "text": "Not only can this man turn any room of people into a wobbling mess of laughter but he can also carry a tune nicely, almost too nicely... should i be worried?",
+      "img": "assets/av_michael_buble.webp"
+    },
+    {
+      "id": "saturday_night",
+      "name": "The Saturday Night Show (RTE)",
+      "text": "Dave has been part of The Saturday Night Show since it's launch in 2010. He has entertained the studio audience and guested on the show many times over the years and we look forward to many more years with him here, at RTE.",
+      "img": "assets/av_saturday_night.webp"
+    }
+  ],
+  "gallery": [
+    {
+      "img": "assets/gallery_2.webp",
+      "alt": "Dave Young with three opera singers",
+      "cap": "Funny guys... but of course, not as funny as me! They are better Opera singers than me though, I'll give them that... just!"
+    },
+    {
+      "img": "assets/gallery_3.webp",
+      "alt": "Dave Young with Donny Osmond",
+      "cap": "A truly original 'Crazy Horse' - Donny Osmond. Taken at a 'Point Theatre', no sorry, 'O2', no... em, '3 Area' or whatever it's called this week!!! We had a great time performing and an even better time post gig party!"
+    },
+    {
+      "img": "assets/gallery_4.webp",
+      "alt": "Dave Young with Westlife",
+      "cap": "Pleasure to work with there guys in Westlife! I had to leave the band... I was cramping their style and taking all the attention, it really was for the best guys!"
+    },
+    {
+      "img": "assets/gallery_5.webp",
+      "alt": "Dave Young at the Planet Hollywood launch, Germany 2010",
+      "cap": "Let him take the first punch... Here we are, attending the launch of 'Planet Hollywood' in Germany 2010 - A fantastic night!"
+    },
+    {
+      "img": "assets/gallery_6.webp",
+      "alt": "Dave Young with Michael Bublé",
+      "cap": "A fantastic Night with the Golden Voice of Michael Bublé! I've had the pleasure of both performing for and with Michael. What can i say, the man is a legend and a perfect gentleman too!"
+    }
+  ],
+  "galleryIntro": {
+    "text": "Here's just a small taste of some of the people I've worked and played with over the years! It's been a pleasure and honour to perform for and with some of the finest names in the entertainment industry. It's been a ride and it's only getting better!",
+    "img": "assets/gallery_1.webp",
+    "alt": "Dave Young in a red hat"
+  },
+  "clips": [
+    {
+      "id": "taste",
+      "vid": "HMX01IPn8Pc",
+      "title": "A little taste...",
+      "cap": "",
+      "thumb": "assets/yt_HMX01IPn8Pc.webp",
+      "place": "home"
+    },
+    {
+      "id": "fun",
+      "vid": "CaZVC3OfLpo",
+      "title": "It’s all about the fun",
+      "cap": "",
+      "thumb": "assets/yt_CaZVC3OfLpo.webp",
+      "place": "fun"
+    },
+    {
+      "id": "v1",
+      "vid": "1h0IttQTLRI",
+      "title": "You Found the Perfect Guy...",
+      "cap": "The Best Man in the funniest way...",
+      "thumb": "assets/yt_1h0IttQTLRI.webp",
+      "place": "videos"
+    },
+    {
+      "id": "v2",
+      "vid": "XmhCEtHtXkM",
+      "title": "Have the time of your life!",
+      "cap": "It’s all about the fun!",
+      "thumb": "assets/yt_XmhCEtHtXkM.webp",
+      "place": "videos"
+    },
+    {
+      "id": "v3",
+      "vid": "WL2Fnn3lwGA",
+      "title": "Oh Mandy!",
+      "cap": "4 men, 1 love song and some dance moves... what could go wrong?...",
+      "thumb": "assets/yt_WL2Fnn3lwGA.webp",
+      "place": "videos"
+    },
+    {
+      "id": "v4",
+      "vid": "AM0VQBR10wU",
+      "title": "Dave Young Laugh Harder",
+      "cap": "Always great fun with Dave Young...",
+      "thumb": "assets/yt_AM0VQBR10wU.webp",
+      "place": "videos"
+    },
+    {
+      "id": "v5",
+      "vid": "H6mMF-nWVpY",
+      "title": "Add a Little Laughter to Your Happily Ever After!",
+      "cap": "",
+      "thumb": "assets/yt_H6mMF-nWVpY.webp",
+      "place": "videos"
+    }
+  ],
+  "posts": [
+    {
+      "id": "weddings-online-awards-2019",
+      "title": "Weddings Online Awards 2019",
+      "by": "The Wedding Comedian Team",
+      "date": "2018-10-11",
+      "img": "",
+      "alt": "",
+      "body": "Hey guy’s, we are delighted to tell you Dave Young has been nominated for the Weddingsonline Awards 2019 in the Entertainer of the Year category.\n\nIf you would like Dave to win please give this funny guy a vote.\n\nIt’s really simple, just follow these 3 simple steps!\n\n1 Click on the link below & Fill in your name and email address\n\n2 scroll down to the Entertainer of the Year section and pick Dave Young - The Wedding Comedian\n\n3 check your email for validation and that’s it!\n\nWe would really appreciate it. Voting closes next Monday, 22nd October so please vote now.\n\nHere’s the link https://weddingsonlineawards.com/vote/"
+    },
+    {
+      "id": "fun-wedding-facts",
+      "title": "Fun Wedding Facts",
+      "by": "The Wedding Comedian",
+      "date": "2018-05-11",
+      "img": "assets/blog_reception_laughter.webp",
+      "alt": "Fun Wedding Facts",
+      "body": ""
+    },
+    {
+      "id": "xpose-comedian-at-your-wedding",
+      "title": "Should you have a comedian entertain at your wedding?",
+      "by": "XPOSÉ",
+      "date": "2017-10-25",
+      "img": "",
+      "alt": "",
+      "body": "#TBT to interview in XPOSÉ Magazine\n\nWhile bands and DJs have always been the mainstay of wedding entertainment, a new concept is set to become very popular over the coming years – namely comedy. And what could be more perfect than a comedian bringing a spark of life to the event?\n\nDave Young is a comedian who specialises in warming up guests for television programmes, and his latest venture is helping to transform wedding guests from a post-dinner slump into a relaxed party mode. He believes that making people laugh is a great way to break the ice between guests and get everyone in the mood for a fun night ahead.\n\n“I have been entertaining wedding guests for years and the concept is definitely becoming more popular. At the moment I think there is only myself and one other guy in the west of Ireland doing this because it is actually quite a difficult gig – it’s not the same as going out on stage to perform in front of a crowd who have paid to see you, instead you have to make sure your material is suitable for all age groups from kids right up to granny and granddad.\n\n“I always make sure that my appearance is a surprise to the guests as there is more of an impact that way – they are all sitting there feeling full and not ready to get up and move around on the dancefloor, so when I come out and blast them with a few laughs, they can kick off their shoes and relax for an hour.\n\n“I make a point of talking to the bride and groom beforehand and get the low-down on them and the crowd – so the bride might tell me something funny about the groom and vice-versa and sometimes I can throw in something referring to another member of the bridal party, which always gets a great cheer and gets everyone laughing.\n\n“I remember one bride telling me that once while they were on holiday they were given a bottle of mosquito repellent and told to ‘spray it everywhere’. When they woke up on the first morning, the brides’ skin was perfect while the groom was covered in bites. Apparently her husband thought ‘everywhere’ meant all over the doors, windows and bedroom – needless to say that gave the whole crowd a big laugh.\n\n“I do a lot of gigs in Vicar Street and places like that and they are very different to what I do for weddings or for RTÉ, but I really enjoy the challenge of making everyone laugh – I’m a little bit cheeky but don’t say anything which could offend. I couldn’t really say that there is any comedian which inspired me as there aren’t many which actually make me laugh. And to be honest I don’t even really see myself as a comedian, more like someone who is just having a laugh and I think this makes the crowd relax with me.\n\n“I think this is the key to a successful wedding as both the guests, and the bride and groom are having a great time and all the stress is taken out of wondering how to keep people amused between the dinner and the disco. Also when the event is videoed and the couple look back at it afterwards, it is lovely for them to be able to see the faces of their guests as they are crying with laughter – I have only ever had positive feedback and the idea is becoming more and more popular, so much so that I would encourage people to book a year in advance if possible – then with the booking sorted, they can relax in the knowledge that their guests will have a great time.”\n\nContact The Wedding Comedian today"
+    },
+    {
+      "id": "did-you-know",
+      "title": "Did You Know?",
+      "by": "The Wedding Comedian",
+      "date": "2017-10-06",
+      "img": "",
+      "alt": "",
+      "body": "Here's some interesting statistics:\n\n*(Sources include The Irish Times, RTE, Brides Magazine)*\n\nImportant: Read this before you plan your Wedding Reception.\n\n• 72% of brides say they would have spent more time choosing their reception entertainment.\n\n• Almost 100% say they would have spent more of their budget on the entertainment.\n\n• 78% of brides said they would have made the entertainment their highest priority.\n\n• 81% of guests say the thing they remember the most about a reception is the entertainment.\n\n• 100% of The Wedding Comedian clients said they would hire him again for future events.\n\nDo you need a interesting and fun way to keep your guests entertained and invollved during your wedding reception?\n\nWell look no further!\n\nSo avoid that dreaded after dinner lull, and have The Wedding Comedian give your guests\n\nFun, Incredible, Unique & Unforgettable after dinner show.\n\nFor more info contact us here"
+    },
+    {
+      "id": "unforgettable-and-fun",
+      "title": "\"Unforgettable & Fun!\"",
+      "by": "The Wedding Comedian",
+      "date": "2017-10-05",
+      "img": "assets/blog_unforgettable.webp",
+      "alt": "\"Unforgettable & Fun!\"",
+      "body": "The Wedding Comedian has been providing unique, memorable, elegant, intimate and sophisticated entertainment for your special day for many years.\n\nYou can be confident that your guests are in the BEST hands with this Extremely Professional Entertainer.\n\nContact The Wedding Comedian today for more details here"
+    },
+    {
+      "id": "wedding-journal-show-2017",
+      "title": "The Wedding Journal Show 2017",
+      "by": "The Wedding Comedian",
+      "date": "2017-09-21",
+      "img": "assets/blog_wedding_show.webp",
+      "alt": "The Wedding Journal Show 2017",
+      "body": "We are all looking forward to seeing you at the Citywest Wedding Fair on the 23rd & 24th of September.\n\nPlease drop in for a quick chat, more info and chances to win a great prize!\n\nSee you then!"
+    },
+    {
+      "id": "wedding-honeymoon-show",
+      "title": "The Wedding & Honeymoon Show",
+      "by": "The Wedding Comedian",
+      "date": "2017-09-07",
+      "img": "assets/blog_honeymoon_show.webp",
+      "alt": "The Wedding & Honeymoon Show",
+      "body": "Great fun hosting Irish Wedding Diary magazine Wedding & Honeymoon Show 2017 Rds over the weekend.\n\nThanks to all the lovely brides & grooms for taking part in the show & big thanks to the beautiful co-host Andrea Hayes for putting up with Dave 😂😃😃😃\n\nThis show just gets better and better every year and Dave Young The Wedding Comedian is thrilled and honoured to be involved."
+    },
+    {
+      "id": "brides-choice-awards",
+      "title": "Brides' Choice Awards",
+      "by": "The Wedding Comedian",
+      "date": "2017-06-29",
+      "img": "assets/blog_brides_choice_nominated.webp",
+      "alt": "Brides' Choice Awards",
+      "body": "I'm absolutely delighted with another Brides' Choice Awards Nomination 💌💌💌\n\nThank you all so much - if you only knew how much i love making you guys laugh and being a part of your special day.... well you wouldn't believe it... you'd think I was joking! 🤣 :D"
+    },
+    {
+      "id": "wedding-honeymoon-show-rds",
+      "title": "The Wedding & Honeymoon Show RDS",
+      "by": "The Wedding Comedian",
+      "date": "2017-06-08",
+      "img": "assets/blog_honeymoon_rds.webp",
+      "alt": "The Wedding & Honeymoon Show RDS",
+      "body": "Once again, Dave Young The Wedding Comedian will be hosting The Wedding and Honeymoon Show - Ireland’s largest autumn Wedding Showcase.\n\nThe RDS Wedding Shows are regarded as top quality shows with over 200 leading wedding exhibitors in attendance, covering all aspects of planning your wedding and honeymoon. The RDS Wedding Shows are the shows that all engaged couples talk about and remember.\n\nPop in to The Wedding Comedian stand - T3 and who knows he might have a little surprise for you there :)\n\nSee you on the 2nd & 3rd September 2017"
+    },
+    {
+      "id": "bride-of-the-year-show-rds",
+      "title": "The Bride of the Year Show RDS",
+      "by": "The Wedding Comedian",
+      "date": "2017-01-26",
+      "img": "assets/blog_bride_of_the_year.webp",
+      "alt": "The Bride of the Year Show RDS",
+      "body": "See you at the weekend guys where Dave's host this magical weekend of love...\n\nThe One Stop Wedding Show! The Bride Of The Year Show is Ireland’s largest winter Wedding Showcase and from the moment you enter the foyer you will know that you are attending something special.\n\nThe RDS Wedding Shows are regarded as top quality shows with over 200 leading wedding exhibitors in attendance, covering all aspects of planning your wedding and honeymoon. The RDS Wedding Shows are the shows that all engaged couples talk about and remember.\n\nWed Shows are a fun and exciting way to plan your wedding.\n\nYou will meet leading Irish Wedding Professionals and selected overseas Wedding Planners covering all areas for planning a wedding abroad.\n\nThe Bride Of The Year Show welcome all couples planning their wedding. It is the only Wedding Show you need."
+    },
+    {
+      "id": "forever-young",
+      "title": "Forever Young",
+      "by": "Confetti Magazine",
+      "date": "2016-10-02",
+      "img": "assets/blog_forever_young.webp",
+      "alt": "Forever Young",
+      "body": "How do you make your shows personal to the bride and groom?\n\n“For me, it’s like baking a cake. Anyone can bake a cake, but to make it good, really good, you need the right ingredients. So, here's my recipe for a great time: You takea tablespoon of fun, mix it with great jokes, add a little music, sprinkle it with audience participation, stir in 20 years experience and add a little love. Then pour in some stories about bride and groom, put it in the oven, let it set and what have you got? A memory for life of the funniest wedding you ever went to! Oh, and its all fat free too!\"\n\nHas anything ever gone wrong on stage? A joke gone down badly?\n\n“It’s amazing, every interview I do that's the question everyone wants to know! It’s like asking Bono did he ever forget the song, did Pacino ever forget his lines or a politician did he ever tell the truth! I remember telling an audience about my uncle being a contortionist in a Circus and one night during a performance, he took a massive heart attack and he died... but at least, he died in his own arms! Come on, that was good! (Go on, you’re grinning!)”\n\nAt what stage of the day do you perform?\n\n“I'm usually kept as a big surprise and, generally, straight after dessert is the perfect time. You don't want guests disappearing after the meal to their rooms or the bar! Sometimes the reception room can end up looking a little shabby and nobody wants to dance straight after a big meal anyway. So, as the guests are washing down those last few dessert calories with their teas and coffee...boom! My show starts and within minutes, I have them burning off those calories with laughter! “\n\nIs hiring a wedding comedian becoming more popular now?\n\n“The concept is still relatively new, but it’s quickly becoming the ‘norm’ these days, as it’s the perfect way to get everybody laughing together and in a great mood for the dancing! I like to give a full show with special guests (that’s you!) and laughter and lots of it! It should be the happiest day of your life and I’ll make sure you and your guest are having a great time!”\n\nWhat do couples look for when they hire you?\n\n“They start off looking for that “something special” to fill the void between the meal and the dancing, and on many occasions (I’m delighted to say) my show ends up being the highlight of the evening! I know that sounds very confidant but honestly, after you see the show, you’ll get it!”\n\nWhat’s the best wedding gig you’ve done?\n\n“It sounds like a cliché, but they are all great in their own way (check out the testimonials at theweddingcomedian.ie). You see, every wedding is different, simply because every bride and groom are different! If you see me at a wedding and then book me for yours, you can be sure that your show will be completely unique, because it will be your little memories, stories and anecdotes that will take centre stage as they are seamlessly woven into the show.”\n\nWhat does your show consist of?\n\n“Just over an hour of hilarious jokes, audience participation, song and surprises but most of all, it’s about breaking the ice between families and guests and reducing everyone to tears... of laughter! Hey, enough of these questions! I've a question for your readers: “Are you looking to make your wedding the best wedding anyone has ever been too”? Well, congratulations you just found the answer... me! And if you think that's cheeky, then wait until you both see the show and see your guests’ reactions; eyeliner will be running, tables will be slapped and the whole room will be filled with laughter. And we all know, that's one of the best sounds there is!”\n\nFinally, tell us a joke Dave!\n\n“Did you hear about the couple who booked The Wedding Comedian for their wedding?” Answer: Everyone died laughing! ...and that’s no joke!”"
+    },
+    {
+      "id": "citywest-wedding-fair",
+      "title": "Citywest Wedding Fair",
+      "by": "The Wedding Comedian",
+      "date": "2016-09-20",
+      "img": "assets/blog_citywest.webp",
+      "alt": "Citywest Wedding Fair",
+      "body": "We are all looking forward to seeing you at the Citywest Wedding Fair on the 24th & 25th of September.\n\nPlease drop in for a quick chat, more info and chances to win a great prize!\n\nSee you then!"
+    },
+    {
+      "id": "wedding-entertainment-winner-2016",
+      "title": "Wedding Entertainment Winner 2016",
+      "by": "The Wedding Comedian",
+      "date": "2016-09-01",
+      "img": "assets/blog_brides_choice_winner.webp",
+      "alt": "Wedding Entertainment Winner 2016",
+      "body": "We're pleased to announce that The Wedding Comedian is our 2016 winner of theMrs2Be Bride's Choice Award. This is the second time that The Wedding Comedian has won this prestiges award - previously in 2014 beating all the competition and in 2015 when he was choosen as a finalist.\n\nThe Mrs2Be Brides’ Choice Awards were launched in 2014. The awards are the first and only Irish wedding industry awards that are based on a detailed review process involving each entrant’s previous customers. Entrants are judged on a range of criteria including professionalism and quality.To win or to be shortlisted for a Mrs2Be Brides’ Choice is a real achievement. This awards cannot be bought and they are not your typical “click to vote” popularity contest.The Brides’ Choice Awards are open to all venues and registered businesses who offer a wedding-related service to Irish-based couples regardless of whether or not they are customers of Mrs2Be. This awards recognise excellent quality of service, professionalism and flexibility of wedding suppliers and venues."
+    }
+  ],
+  "site": {},
+  "pages": {},
+  "dims": {
+    "assets/av_billy_connolly.webp": [
+      160,
+      160
+    ],
+    "assets/av_jonathan_ross.webp": [
+      160,
+      160
+    ],
+    "assets/av_michael_buble.webp": [
+      160,
+      160
+    ],
+    "assets/av_miriam.webp": [
+      160,
+      160
+    ],
+    "assets/av_pat_kenny.webp": [
+      160,
+      160
+    ],
+    "assets/av_saturday_night.webp": [
+      160,
+      160
+    ],
+    "assets/av_westlife.webp": [
+      160,
+      160
+    ],
+    "assets/blog_bride_of_the_year.webp": [
+      454,
+      151
+    ],
+    "assets/blog_brides_choice_nominated.webp": [
+      454,
+      454
+    ],
+    "assets/blog_brides_choice_winner.webp": [
+      454,
+      340
+    ],
+    "assets/blog_citywest.webp": [
+      454,
+      454
+    ],
+    "assets/blog_forever_young.webp": [
+      454,
+      363
+    ],
+    "assets/blog_honeymoon_rds.webp": [
+      454,
+      454
+    ],
+    "assets/blog_honeymoon_show.webp": [
+      454,
+      451
+    ],
+    "assets/blog_reception_laughter.webp": [
+      454,
+      680
+    ],
+    "assets/blog_unforgettable.webp": [
+      454,
+      303
+    ],
+    "assets/blog_wedding_show.webp": [
+      454,
+      303
+    ],
+    "assets/car.webp": [
+      560,
+      550
+    ],
+    "assets/crowd.webp": [
+      600,
+      400
+    ],
+    "assets/frame.webp": [
+      640,
+      794
+    ],
+    "assets/gallery_1.webp": [
+      640,
+      480
+    ],
+    "assets/gallery_2.webp": [
+      640,
+      480
+    ],
+    "assets/gallery_3.webp": [
+      640,
+      480
+    ],
+    "assets/gallery_4.webp": [
+      640,
+      480
+    ],
+    "assets/gallery_5.webp": [
+      640,
+      480
+    ],
+    "assets/gallery_6.webp": [
+      640,
+      480
+    ],
+    "assets/hero_1200.webp": [
+      1200,
+      800
+    ],
+    "assets/hero_700.webp": [
+      700,
+      467
+    ],
+    "assets/og.jpg": [
+      1200,
+      630
+    ],
+    "assets/rings.webp": [
+      700,
+      933
+    ],
+    "assets/rv_connor.webp": [
+      120,
+      120
+    ],
+    "assets/rv_franc.webp": [
+      120,
+      120
+    ],
+    "assets/rv_geraldine.webp": [
+      120,
+      120
+    ],
+    "assets/rv_jeremy.webp": [
+      120,
+      120
+    ],
+    "assets/rv_jim.webp": [
+      120,
+      120
+    ],
+    "assets/rv_johnrita.webp": [
+      120,
+      120
+    ],
+    "assets/rv_kaya.webp": [
+      120,
+      120
+    ],
+    "assets/rv_mary.webp": [
+      120,
+      120
+    ],
+    "assets/rv_morris.webp": [
+      120,
+      120
+    ],
+    "assets/rv_sean.webp": [
+      120,
+      120
+    ],
+    "assets/rv_susan.webp": [
+      120,
+      120
+    ]
+  }
+}

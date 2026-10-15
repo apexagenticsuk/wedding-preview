@@ -13,7 +13,7 @@ h.classList.add('js-rv');
 var n=0,t=0;
 function showAll(){d.querySelectorAll('.rv:not(.in)').forEach(function(el){el.classList.add('in');});}
 function showSeen(){d.querySelectorAll('.rv:not(.in)').forEach(function(el){var r=el.getBoundingClientRect();if(r.top<innerHeight*1.2)el.classList.add('in');});}
-function tag(){t=0;d.querySelectorAll('main>section,main>.credits,main>.tagband,body>section,body>.credits,body>.tagband,.rcard,.svc,.tcard,.clip,.lite,.prod,.show,.card,.dchip').forEach(function(el){if(el.classList.contains('rv'))return;el.classList.add('rv');el.style.setProperty('--d',(n++%5)*70+'ms');io.observe(el);});}
+function tag(){t=0;d.querySelectorAll('main>section,.rev,.pr,.vid,.post,.qa,.card,.tcard,.fact').forEach(function(el){if(el.classList.contains('rv'))return;el.classList.add('rv');el.style.setProperty('--d',(n++%5)*70+'ms');io.observe(el);});}
 tag();new MutationObserver(function(){if(!t)t=requestAnimationFrame(tag);}).observe(d.body,{childList:true,subtree:true});
 addEventListener('resize',function(){setTimeout(showSeen,50);});addEventListener('load',function(){setTimeout(showSeen,300);});addEventListener('beforeprint',showAll);
 setTimeout(showSeen,1500);setTimeout(showAll,9000);
