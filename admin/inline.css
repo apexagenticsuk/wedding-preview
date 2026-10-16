@@ -65,3 +65,4 @@ body.dy-editing [contenteditable=true],body.dy-editing [contenteditable=true] *,
 /* an emptied heading/paragraph keeps a visible, clickable box with its hint */
 [data-bf]:empty{display:block;min-height:1.6em;min-width:6ch;outline:1px dashed rgba(255,255,255,.35);outline-offset:2px;border-radius:4px}
 [data-bf]:empty:before{content:attr(data-ph);opacity:.55;font-style:italic}
+.dy-editing header.top{z-index:30}
