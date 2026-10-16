@@ -110,7 +110,7 @@ if(SITE==='dave'){const e=await open('about');const n0=await e.F().locator('main
  ok('5 no faint "Text"/"Caption" placeholders',ph===0,String(ph));await e.ctx.close();}
 {const key=SITE==='dave'?'shows':'posts';const e=await open(SITE==='dave'?'live':'blog');await e.p.evaluate(k=>DYE.openShared(k),key);await e.p.waitForTimeout(500);
  await e.p.evaluate(()=>{const d=document.querySelectorAll('.shbody details');d[0].open=true;d[4].open=true;});await e.p.waitForTimeout(200);
- await e.p.evaluate(({d})=>{const dd=document.querySelectorAll('.shbody details')[4];const inp=[...dd.querySelectorAll('input')].find(x=>/^\d{4}-\d\d-\d\d$/.test(x.value));inp.value=d;inp.dispatchEvent(new Event('change'));},{d:SITE==='dave'?'2026-01-05':'2030-06-01'});
+ await e.p.evaluate(({d})=>{const dd=document.querySelectorAll('.shbody details')[4];const inp=[...dd.querySelectorAll('input')].find(x=>/^\d{4}-\d\d-\d\d$/.test(x.value));inp.value=d;inp.dispatchEvent(new Event('change'));setTimeout(()=>inp.dispatchEvent(new Event('change')),50);},{d:SITE==='dave'?'2026-01-05':'2030-06-01'});
  await e.p.waitForTimeout(800);const n=await e.p.evaluate(()=>[...document.querySelectorAll('.shbody details')].filter(d=>d.open).length);
  ok('2 after a date re-sort only the edited item stays open',n===1,'open '+n);await e.ctx.close();}
 if(SITE==='wedding'){const e=await open('index');ok('6 written hint above non-draggable gallery photos',await e.F().evaluate(()=>{const h=document.querySelector('.dy-ghint');return !!h&&/can.t be dragged/.test(h.textContent)&&h.getBoundingClientRect().height>10;}));await e.ctx.close();}

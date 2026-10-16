@@ -22,7 +22,7 @@ var DEFS={
  set:{title:'The set',note:'Used by the key facts and the FAQs.',path:'set',kind:'object',fields:[['length','How long the show is','text'],['kit','Sound and lighting','text'],['regions','Where Dave travels','text']]},
  contact:{title:'Contact details',note:'Used by the header buttons, the footer on every page, the Contact page and the structured data.',path:'contact',kind:'object',fields:[['phone','Phone','text'],['email','Email','text'],['org','Company name','text'],['brand','Brand name','text'],['person','Performer','text'],['base','Based in','text'],['tagline','Contact box line','text'],['website','Website','text'],['sayhello','Closing line on Contact','text']]},
 };
-var OPEN={};
+var OPEN={},GEN=0;
 var ORDER=['testimonials','clips','faqs','praise','gallery','posts','facts','set','contact'],cur='testimonials',modal=null;
 function get(o,p){return p.split('.').reduce(function(a,k){return a==null?a:a[k];},o);}
 function put(o,p,v){var a=p.split('.'),l=a.pop();a.forEach(function(k){o=o[k]=o[k]||{};});o[l]=v;}
@@ -58,11 +58,11 @@ function fieldEl(def,f,obj,onSet){var k=f[0],lab=f[1],ty=f[2],wrap=el('label','s
     pick.onchange=function(){if(pick.value){inp.value=pick.value;inp.onchange();}};drow.appendChild(inp);drow.appendChild(pick);wrap.appendChild(drow);wrap.appendChild(msg);return wrap;}
   inp=el('input');inp.maxLength=ty==='url'?500:(f[3]||160);inp.type=ty==='url'?'url':'text';inp.value=ty==='csv'?(v||[]).join(', '):(v||'');
   inp.onchange=function(){onSet(k,ty==='csv'?inp.value.split(',').map(function(s){return s.trim();}).filter(Boolean):inp.value.trim());};wrap.appendChild(inp);return wrap;}
-function render(keepIdx){var def=DEFS[cur],tabs=modal.querySelector('.shtabs'),body=modal.querySelector('.shbody');tabs.innerHTML='';var sc=modal.scrollTop,os=OPEN[cur]=OPEN[cur]||[];
+function render(keepIdx){var def=DEFS[cur],tabs=modal.querySelector('.shtabs'),body=modal.querySelector('.shbody');tabs.innerHTML='';var sc=modal.scrollTop,os=OPEN[cur]=OPEN[cur]||[],myGen=++GEN;
   ORDER.forEach(function(k){var b=el('button','shtab'+(k===cur?' on':''),esc(DEFS[k].title));b.type='button';b.setAttribute('role','tab');b.onclick=function(){cur=k;render();};tabs.appendChild(b);});
   body.innerHTML='';body.appendChild(el('p','hint',esc(def.note)));
   function change(fn){DYE.change(function(c){fn(c);},{reload:true});}
-  function set(path,idx,k,v,sort){var ni=idx;
+  function set(path,idx,k,v,sort){if(myGen!==GEN)return; /* a stale row (already re-drawn after a re-sort) must never edit another show */var ni=idx;
     change(function(c){var arr=idx==null?null:root(c,path),o=idx==null?root(c,path):arr[idx];put(o,k,v);
       if(sort&&k===sort&&arr){var dir=def.desc?-1:1,t=arr.map(function(x,n){return {x:x,n:n};});
         t.sort(function(a,b){var ka=String(a.x[sort]||(def.desc?'':'9999')),kb=String(b.x[sort]||(def.desc?'':'9999'));return ka<kb?-dir:ka>kb?dir:a.n-b.n;});

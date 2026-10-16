@@ -44,7 +44,7 @@ ok(M+': delete it again',(await p.locator('#sharedm details.shrow').count())===n
 await p.evaluate(()=>DYE.openShared('posts'));await p.waitForSelector('#sharedm:not([hidden])');
 await p.evaluate(()=>{document.querySelector('#sharedm details.shrow').open=true;});
 const de=p.locator('#sharedm details.shrow').first().locator('label.shf:has(span:text-is("Date")) input').first();
-if(await de.count()){await de.fill('4 Oct 2017');await de.dispatchEvent('change');await ready();const d=await p.evaluate(()=>DYE.state().content.posts[0].date);ok(M+': typed date is accepted and normalised',!!d&&/2017/.test(d),d);}else ok(M+': post date field present',false);
+if(await de.count()){await de.fill('4 Oct 2017');await de.dispatchEvent('change');await ready();const d=await p.evaluate(()=>DYE.state().content.posts.filter(x=>x.date==='2017-10-04').length+' / '+DYE.state().content.posts.map(x=>x.date).join());ok(M+': typed date is accepted and normalised',/^[1-9]/.test(d),d);}else ok(M+': post date field present',false);
 // 7 undo reverts shared edits
 await p.evaluate(()=>document.querySelector('#sharedm').hidden=true);
 for(let i=0;i<30&&await p.evaluate(()=>!document.querySelector('#undo').disabled);i++){await p.click('#undo');await p.waitForTimeout(250);}await ready();
