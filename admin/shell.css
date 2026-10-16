@@ -23,7 +23,7 @@ button{font-family:inherit;cursor:pointer}button.btn{border:0}.btn.ghost{border:
 .tbb.gold{background:var(--gold);color:#111;border-color:var(--gold)}.tbb.ghost{background:transparent;color:var(--mut)}
 .pub{background:var(--red);color:#fff;border:0;border-radius:999px;font-weight:800;font-size:17px;padding:10px 28px;box-shadow:0 3px 0 var(--red2)}.pub:disabled{opacity:.5;cursor:not-allowed;box-shadow:none}
 .pill{font-size:13px;font-weight:700;padding:6px 10px;border-radius:999px;background:#13261a;color:#7be38b;white-space:nowrap}.pill.dirty{background:#3a2c08;color:var(--gold)}.pill.err{background:#3a1010;color:#ff8080}
-.stage{flex:1;overflow:auto;background:#222226;display:flex;justify-content:center}
+.stage{position:relative;flex:1;overflow:auto;background:#222226;display:flex;justify-content:center}
 .stage iframe{border:0;width:100%;height:100%;background:#0b0b0c;display:block}
 .stage.phone{padding:6px 0}.stage.phone iframe{width:410px;height:calc(100% - 4px);min-height:700px;max-height:none;border-radius:28px;border:10px solid #000;box-shadow:0 10px 40px rgba(0,0,0,.6)}
 .toast{position:fixed;left:50%;bottom:22px;transform:translateX(-50%);background:#111;border:1px solid var(--gold);color:#fff;padding:12px 18px;border-radius:12px;font-weight:600;z-index:20;max-width:90vw}
@@ -124,3 +124,5 @@ button{font-family:inherit;cursor:pointer}button.btn{border:0}.btn.ghost{border:
 @media(min-width:761px){#page{max-width:150px}.pill{max-width:150px;overflow:hidden;text-overflow:ellipsis}}
 @media(min-width:761px){.tbb{padding:8px 9px;font-size:13.5px}.ib{padding:8px 10px;font-size:13.5px}}
 @media(max-width:760px){#demobadge{font-size:10px;padding:3px 5px}.tb select{max-width:80px}#publish{padding:7px 11px!important}.tb .ib{padding:6px 6px;font-size:12px}}
+
+.frameerr{position:absolute;inset:0;z-index:20;background:#17171a;color:#fff;display:flex;align-items:center;justify-content:center;text-align:center;padding:24px}.frameerr[hidden]{display:none}.frameerr h2{margin:0 0 10px;font:800 22px Inter,sans-serif}.frameerr p{max-width:420px;margin:0 auto 18px;color:#cfcfd4;line-height:1.5}

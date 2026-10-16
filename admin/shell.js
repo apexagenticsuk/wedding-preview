@@ -95,8 +95,20 @@ window.addEventListener('beforeunload',function(){persist();});
 
 /* ---- frame ---- */
 function src(){return new URL(pagePath(page,'edit=1'),location.href).href;}
-function setPage(p){closePanel(true);page=p;history.replaceState(null,'','?page='+encodeURIComponent(p));scrollKeep=null;renderPicker();frame.src=src();}
-function reload(){closePanel(true);try{scrollKeep=frame.contentWindow.scrollY;}catch(e){scrollKeep=null;}frame.contentWindow.location.replace(src());}
+function clearBars(){closePanel(true);var sb=$('#selbar');if(sb){sb.innerHTML='';sb.hidden=true;}}
+function setPage(p){clearBars();hideErr();page=p;history.replaceState(null,'','?page='+encodeURIComponent(p));scrollKeep=null;renderPicker();frame.src=src();watchFrame();}
+function reload(){clearBars();hideErr();try{scrollKeep=frame.contentWindow.scrollY;}catch(e){scrollKeep=null;}try{frame.contentWindow.location.replace(src());}catch(e){frame.src=src();}watchFrame();}
+/* offline / failed page loads: Chrome's own error page (the dinosaur) must never show in the canvas */
+var guard=null;
+function showErr(){clearTimeout(guard);clearBars();var e=$('#frameerr');if(e){e.hidden=false;var b=$('#frameretry');if(b)b.focus();}}
+function hideErr(){clearTimeout(guard);var e=$('#frameerr');if(e)e.hidden=true;}
+function frameOk(){try{var w=frame.contentWindow;void w.document.title;return !!w.DYI;}catch(x){return false;}}
+function watchFrame(){clearTimeout(guard);guard=setTimeout(function(){if(!frameOk())showErr();},12000);}
+frame.addEventListener('load',function(){try{void frame.contentWindow.document.title;}catch(x){showErr();return;}if(navigator.onLine===false&&!frameOk())showErr();});
+function retryFrame(){hideErr();frame.src=src();watchFrame();}
+if($('#frameretry'))$('#frameretry').onclick=retryFrame;
+window.addEventListener('online',function(){var e=$('#frameerr');if(e&&!e.hidden)retryFrame();});
+window.addEventListener('offline',function(){if(!frameOk())showErr();});
 /* put the page back exactly where it was (instant, not smooth), and again once late images/fonts have settled */
 frame.addEventListener('load',function(){if(scrollKeep==null)return;var y=scrollKeep,w=frame.contentWindow,moved=false;scrollKeep=null;
   function go(){if(moved)return;try{if(Math.abs(w.scrollY-y)>1)w.scrollTo({top:y,behavior:'instant'});}catch(e){}}
