@@ -101,7 +101,10 @@ function dupBlock(bid){var nid=LIB.uid('b');DYE.change(function(c){var f=findBlo
 function delBlock(bid){ask({title:'Delete this block?',text:'You can undo this with the ↶ button.',ok:'Delete',danger:true}).then(function(ok){if(ok)DYE.change(function(c){var f=findBlock(c,bid);f.list.splice(f.i,1);cleanIns(E(c,'page'));},{reload:true});});}
 function addToSection(s){var id=R.secId.get(s);if(isNew(s)){pickInto(function(c){var L=E(c,'page').secs[id].blocks;return {list:L,at:L.length};});return;}
   var last=endAnchor(s);
-  if(!last){DYE.toast('Blocks can\u2019t be added to this section. Add a new section below it instead.');return;}
+  if(!last){/* a banner can't hold blocks: put the new block in a fresh section straight below it */
+    finishEdit(true);DYE.pick('block').then(function(key){if(!key)return;var nb=LIB.makeBlock(key),nid=LIB.uid('n'),ns=LIB.makeSection('empty'),o=secOrder();ns.blocks=[nb];o.splice(o.indexOf(id)+1,0,nid);
+      DYE.toast('A banner can\u2019t hold blocks, so the new block went in a new section right below it.',5000);
+      DYE.change(function(c){var P=E(c,'page');P.secs=P.secs||{};P.secs[nid]=ns;P.order=o;},{reload:true,focus:nb.id});});return;}
   var aid=eid(last);pickInto(function(c){var P=E(c,'page');P.ins=P.ins||{};P.ins[aid]=P.ins[aid]||[];return {list:P.ins[aid],at:P.ins[aid].length};});}
 
 function endAnchor(s){var w=s.querySelector('.wrap')||s,last=null;if(w.parentElement===s&&/grid|flex/.test(getComputedStyle(w).display)&&eid(w))last=w;else [].slice.call(w.children).forEach(function(x){if(eid(x)&&!x.classList.contains('dy-ui')&&!x.classList.contains('blk-ins'))last=x;});return last;}
@@ -290,9 +293,9 @@ D.addEventListener('click',function(e){var t=e.target;if(Date.now()-(window.__dy
   if(a){var lk=linkOf(a);if(lk){linkPanel(lk);return;}if(a.classList.contains('btn')&&/^tel:/.test(a.getAttribute('href')||'')){fixedPanel(a);return;}}
   finishEdit();DYE.closePanel();var bh=t.closest('.bhero,.hero');if(bh){var bim=bh.querySelector('img[data-bi],img[data-dy-i]');if(bim){var hs=sectionOf(bh)||bh;if(hs.classList.contains('dy-secsel')){imgPanel(bim);return;}select(hs,t);return;}}var bl=blockOf(t);if(bl){select(bl);return;}var s=sectionOf(t);if(s)select(s,t);else clearSel();},true);
 D.addEventListener('submit',function(e){e.preventDefault();},true);
-D.addEventListener('keydown',function(e){if(e.key==='Escape'&&!editing){clearSel();DYE.closePanel();}if(!editing&&DYE.keyUndo)DYE.keyUndo(e);});
+D.addEventListener('keydown',function(e){if(e.key==='Escape'&&!editing){if(DYE.escape&&DYE.escape())return;clearSel();DYE.closePanel();}if(!editing&&DYE.keyUndo)DYE.keyUndo(e);});
 var plusFor=null;window.addEventListener('resize',function(){if(!plus.hidden&&plusFor){var r=plusFor.getBoundingClientRect();plus.style.left=(r.left+window.scrollX+r.width/2-17)+'px';plus.style.top=(r.bottom+window.scrollY-17)+'px';}});
-window.addEventListener('unload',function(){SB.hidden=true;SB.innerHTML='';});
+window.addEventListener('pagehide',function(){SB.hidden=true;SB.innerHTML='';});
 
 
 /* ---------- drag & drop on the page (engine: admin/drag.js). Every drop is one DYE.change, so one ↶ Undo step. ---------- */

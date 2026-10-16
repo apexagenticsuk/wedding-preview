@@ -61,9 +61,9 @@
 
 <div id="newpm" class="modal" hidden><div class="mc"><button class="x" data-close>✕</button>
 <h2 id="newpt">New page</h2>
-<label for="np-title">Page title</label><input id="np-title" placeholder="e.g. Venues we love">
-<label for="np-label">Name in the menu</label><input id="np-label" placeholder="e.g. Parties">
-<label for="np-slug">Web address</label><div class="slug"><span id="np-base"></span><input id="np-slug" placeholder="venues-we-love"><span>.html</span></div><p class="hint">Made from the title automatically. Letters, numbers and dashes only.</p>
+<label for="np-title">Page title</label><input id="np-title" maxlength="60" placeholder="e.g. Venues we love">
+<label for="np-label">Name in the menu</label><input id="np-label" maxlength="24" placeholder="e.g. Parties">
+<label for="np-slug">Web address</label><div class="slug"><span id="np-base"></span><input id="np-slug" maxlength="40" placeholder="venues-we-love"><span>.html</span></div><p class="hint">Made from the title automatically. Letters, numbers and dashes only.</p>
 <label for="np-tpl">Start from</label><select id="np-tpl"></select>
 <p id="np-msg" class="msg err"></p>
 <div class="row"><button class="btn red" id="np-go">Create page</button><button class="btn ghost" data-close>Cancel</button></div></div></div>
