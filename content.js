@@ -140,7 +140,7 @@ function blockHTML(b,group){var t=b.type,h='',cls='blk blk-'+t,tag='div';
   case 'quote':tag='blockquote';cls+=' tcard';h=F('b','','title',b.title,'Headline')+F('p','','text',b.text,'Quote')+F('cite','','who',b.who,'Who said it');break;
   case 'quotes':cls+=' tgrid';h=(b.items||[]).map(function(q,i){return '<blockquote class="tcard">'+F('b','','items.'+i+'.title',q.title,'Headline')+F('p','','items.'+i+'.text',q.text,'Quote')+F('cite','','items.'+i+'.who',q.who,'Who said it')+'</blockquote>';}).join('');break;
   case 'divider':h=b.kind==='line'?'<hr>':'';cls+=b.kind==='line'?' line':' space';break;
-  case 'cta':h='<div>'+F('h3','','title',b.title,'Heading')+F('p','','text',b.text,'Text')+'</div><div class="btnrow">'+BT('btnLabel','btnUrl',b.btnLabel,b.btnUrl,b.btnStyle||'gold','btnStyle')+'<a class="btn call" href="tel:'+telOf(((window.DY_C||{}).contact||{}).phone)+'">Call '+esc(((window.DY_C||{}).contact||{}).phone||'')+'</a></div>';break;
+  case 'cta':h='<div>'+F('h3','','title',T(b.title),'Heading')+F('p','','text',T(b.text),'Text')+'</div><div class="btnrow">'+BT('btnLabel','btnUrl',b.btnLabel,b.btnUrl,b.btnStyle||'gold','btnStyle')+'<a class="btn call" href="tel:'+telOf(((window.DY_C||{}).contact||{}).phone)+'">Call '+esc(((window.DY_C||{}).contact||{}).phone||'')+'</a></div>';break;
   case 'socials':h='<div class="socials" data-cms="socials"></div>';break;
   case 'logos':cls+=' logos';h=(b.images||[]).map(function(m,i){return '<div class="lg">'+IM('images.'+i,m)+'</div>';}).join('');break;
   case 'cards':cls+=' c'+(b.cols===2?2:3);h=(b.items||[]).map(function(it,i){var p='items.'+i+'.';return '<div class="card">'+(it.img&&it.img.src?IM(p+'img',it.img):'')+F('h3','',p+'title',it.title,'Title')+F('p','',p+'text',it.text,'Text')+((it.btnLabel||EDITING)?'<div class="btnrow">'+BT(p+'btnLabel',p+'btnUrl',it.btnLabel,it.btnUrl,it.btnStyle||'rose',p+'btnStyle',1)+'</div>':'')+'</div>';}).join('');break;
@@ -175,7 +175,7 @@ function buildNav(c){var items=c.nav;if(!items)return;var cur=PAGE;
   var f=document.querySelector('footer .flinks');if(f)f.innerHTML=items.filter(function(x){return x.show!=='none';}).map(function(x){return navLink(c,x,'');}).join('');}
 function seo(c){var s=(c.seo||{})[PAGE],cu=(c.custom||{})[PAGE];var title=(s&&s.title)||(cu&&cu.title?cu.title+' | The Wedding Comedian':'');if(title)document.title=title;
   if(s&&s.description!=null&&s.description!==''){var m=document.querySelector('meta[name=description]');if(!m){m=document.createElement('meta');m.name='description';document.head.appendChild(m);}m.content=s.description;}}
-function apply(c,R,res){
+function apply(c,R,res){window.DY_C=c;
   DIMS=c.dims||{};
   RES=res||function(s){return s;};
   var P=scopeEdits(c,'page'),lists=P.lists||{};
