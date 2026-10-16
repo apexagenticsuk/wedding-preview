@@ -195,3 +195,12 @@ html{scroll-padding-bottom:104px;scroll-padding-top:84px}summary,.qa,.rev,.pr,.p
 @media (max-width:1239px){main{padding-bottom:8px}body{padding-bottom:calc(86px + env(safe-area-inset-bottom))}}
 .qa-a a,.prose a,.big a,.lead a,.post a,.fine a,.cbox dd a,.pull a{display:inline-block;padding:12px 2px;margin:-12px 0}
 .pr img.wide{width:116px;height:83px;border-radius:14px;flex:0 0 auto;aspect-ratio:320/230}
+
+/* round 5: 8px between tap targets, 320px header fit, 12px logo subtext */
+.brand small{font-size:12px}
+.flinks{gap:8px 12px}
+.flinks a{margin:0}
+.fbrand .mail{display:flex;flex-direction:column;gap:8px;align-items:flex-start}
+@media(max-width:1239px){.flinks a{min-height:44px;padding:0 10px}.flinks{gap:8px}}
+@media(max-width:380px){.hrow{width:calc(100% - 24px);gap:8px}.brand{padding-left:36px}.brand .bn{font-size:17px}.brand small{letter-spacing:.08em}.rings{transform:translateY(-50%) scale(.85);transform-origin:left center}}
+.two>*{min-width:0}.two img{max-width:100%;height:auto}.sticky.dock>*{min-width:0;max-width:100%;box-sizing:border-box}.sticky.dock{overflow:hidden}
