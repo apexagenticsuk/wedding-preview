@@ -187,3 +187,4 @@ details.more summary::-webkit-details-marker{display:none}details.more summary:a
 details.more[open] summary{margin-bottom:6px}
 .fun details.more summary{color:#ffd7de}
 .pstrip{display:block;width:100%;max-width:900px;height:auto;margin:22px auto 0;border-radius:12px;box-shadow:0 6px 24px rgba(0,0,0,.12)}
+.blk-divider{max-width:100%;box-sizing:border-box}.blk-divider.space{height:36px}.blk-divider hr{border:0;border-top:2px solid var(--line);width:100%;max-width:720px;margin:0 auto}

@@ -122,7 +122,7 @@ window.addEventListener('offline',function(){if(!frameOk())showErr();});
 frame.addEventListener('load',function(){if(scrollKeep==null)return;var y=scrollKeep,w=frame.contentWindow,moved=false;scrollKeep=null;
   function go(){if(moved)return;try{if(Math.abs(w.scrollY-y)>1)w.scrollTo({top:y,behavior:'instant'});}catch(e){}}
   try{['wheel','touchstart','keydown','pointerdown'].forEach(function(t){w.addEventListener(t,function(){moved=true;},{once:true,capture:true});});}catch(e){}
-  go();w.requestAnimationFrame(go);setTimeout(go,120);});
+  go();w.requestAnimationFrame(go);setTimeout(go,120);setTimeout(go,450);setTimeout(go,1100);});
 
 function start(){
   $('#login').hidden=true;$('#app').hidden=false;$('#demobadge').hidden=mode!=='demo';

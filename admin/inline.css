@@ -40,7 +40,7 @@
 .dy-addsec:has(+ .dy-sec.dy-sel) button,.dy-sec.dy-sel + .dy-addsec.last button,.dy-addsec:has(+ .dy-emptypage) button,.dy-addsec:only-of-type button{opacity:1}
 @media(max-width:760px){body.dy-editing{padding-bottom:65vh}}
 .dy-rel{position:relative}
-.dy-dh{position:absolute;z-index:6;min-width:30px;height:30px;border-radius:8px;border:1px solid rgba(0,0,0,.55);background:#f6c343;color:#111;font:800 16px/1 Inter,sans-serif;cursor:grab;touch-action:none;-webkit-user-select:none;user-select:none;opacity:0;pointer-events:none;transition:opacity .12s;display:flex;align-items:center;justify-content:center;padding:0 6px;box-shadow:0 2px 8px rgba(0,0,0,.5)}
+.dy-dh{position:absolute;z-index:41;min-width:30px;height:30px;border-radius:8px;border:1px solid rgba(0,0,0,.55);background:#f6c343;color:#111;font:800 16px/1 Inter,sans-serif;cursor:grab;touch-action:none;-webkit-user-select:none;user-select:none;opacity:0;pointer-events:none;transition:opacity .12s;display:flex;align-items:center;justify-content:center;padding:0 6px;box-shadow:0 2px 8px rgba(0,0,0,.5)}
 .dy-dh.sec{top:10px;right:10px;background:#78aaff;font-size:13px;padding:0 12px}
 .dy-dh.blk{top:6px;right:6px}
 .dy-dh.itm{top:4px;left:4px;min-width:26px;height:26px;font-size:14px}
@@ -55,10 +55,13 @@
 .dy-editing [data-dy-cms]{position:relative}.dy-editing [data-dy-cms]:hover:after{content:attr(data-dy-label);position:absolute;left:0;top:-30px;z-index:20;background:#f6c343;color:#111;font:800 12px Inter,sans-serif;padding:5px 10px;border-radius:8px;white-space:nowrap;pointer-events:none}
 
 /* v3: section move buttons, no accidental text selection / sideways scroll while editing */
-.dy-mv{position:absolute;top:10px;right:112px;z-index:6;display:flex;gap:4px;opacity:0;pointer-events:none;transition:opacity .15s}
+.dy-mv{position:absolute;top:10px;right:112px;z-index:40;display:flex;gap:4px;opacity:0;pointer-events:none;transition:opacity .15s}
 .dy-mv button{height:30px;border-radius:8px;border:1px solid rgba(0,0,0,.55);background:#78aaff;color:#111;font:800 13px/1 Inter,sans-serif;padding:0 11px;cursor:pointer}
 .dy-mv button:disabled{opacity:.35;cursor:not-allowed}
 .dy-sec:hover>.dy-mv,.dy-secsel>.dy-mv,.dy-sel>.dy-mv,.dy-mv:focus-within{opacity:1;pointer-events:auto}
 @media(max-width:600px){.dy-mv{left:8px;right:auto;top:6px;bottom:auto}.dy-mv button{padding:0 9px}}
 body.dy-editing{-webkit-user-select:none;user-select:none}
 body.dy-editing [contenteditable=true],body.dy-editing [contenteditable=true] *,body.dy-editing input,body.dy-editing textarea{-webkit-user-select:text;user-select:text}
+/* an emptied heading/paragraph keeps a visible, clickable box with its hint */
+[data-bf]:empty{display:block;min-height:1.6em;min-width:6ch;outline:1px dashed rgba(255,255,255,.35);outline-offset:2px;border-radius:4px}
+[data-bf]:empty:before{content:attr(data-ph);opacity:.55;font-style:italic}
