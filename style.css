@@ -194,3 +194,4 @@ details.more[open] summary{margin-bottom:6px}
 html{scroll-padding-bottom:104px;scroll-padding-top:84px}summary,.qa,.rev,.pr,.post{scroll-margin-bottom:104px}
 @media (max-width:1239px){main{padding-bottom:8px}body{padding-bottom:calc(86px + env(safe-area-inset-bottom))}}
 .qa-a a,.prose a,.big a,.lead a,.post a,.fine a,.cbox dd a,.pull a{display:inline-block;padding:12px 2px;margin:-12px 0}
+.pr img.wide{width:116px;height:83px;border-radius:14px;flex:0 0 auto;aspect-ratio:320/230}

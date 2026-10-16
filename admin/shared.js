@@ -12,7 +12,7 @@ var DEFS={
  faqs:{title:'FAQs',note:'Questions and answers on the FAQs page. In an answer you can type {set.length}, {set.kit}, {set.regions}, {contact.phone}, {contact.email} or {contact.base} and the real value is filled in.',path:'faqs',kind:'list',label:function(q){return q.q||'New question';},blank:function(){return {q:'New question',a:'Answer'};},
   fields:[['q','Question','area'],['a','Answer (a new line starts a new paragraph)','area']]},
  praise:{title:'Quotes about Dave',note:'The “There’s something about Dave!” strip on the Home page.',path:'praise',kind:'list',label:function(p){return p.name||'New quote';},blank:function(){return {id:'p'+Date.now().toString(36),name:'Name',text:'',img:''};},
-  fields:[['name','Name','text'],['text','Quote','area'],['img','Round photo','img'],['pos','Face position in the circle (x% y%, e.g. 50% 30%; 0% = left or top, 100% = right or bottom)','text']]},
+  fields:[['name','Name','text'],['text','Quote','area'],['img','Photo','img'],['shape','Photo shape','select',[['','Round'],['wide','Wide (for a group photo, shows all of it)']]],['pos','Face position in the circle (x% y%, e.g. 50% 30%; 0% = left or top, 100% = right or bottom)','text']]},
  gallery:{title:'Photo gallery',note:'“Say Hello to my little friends…” on the Home page.',path:'gallery',kind:'list',label:function(g){return (g.cap||'New photo').slice(0,50);},blank:function(){return {img:'',alt:'',cap:''};},
   fields:[['img','Photo','img'],['alt','Picture description','text'],['cap','Caption','area']],
   extra:{title:'Gallery intro (picture and words)',path:'galleryIntro',fields:[['img','Picture','img'],['alt','Picture description','text'],['text','Words','area']]}},
