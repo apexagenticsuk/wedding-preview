@@ -204,3 +204,8 @@ html{scroll-padding-bottom:104px;scroll-padding-top:84px}summary,.qa,.rev,.pr,.p
 @media(max-width:1239px){.flinks a{min-height:44px;padding:0 10px}.flinks{gap:8px}}
 @media(max-width:380px){.hrow{width:calc(100% - 24px);gap:8px}.brand{padding-left:36px}.brand .bn{font-size:17px}.brand small{letter-spacing:.08em}.rings{transform:translateY(-50%) scale(.85);transform-origin:left center}}
 .two>*{min-width:0}.two img{max-width:100%;height:auto}.sticky.dock>*{min-width:0;max-width:100%;box-sizing:border-box}.sticky.dock{overflow:hidden}
+
+/* round 5: long menu names wrap between words, never mid-word */
+nav.main a,.mnav a{overflow-wrap:normal;word-break:normal;hyphens:none}
+.mnav a{white-space:normal}
+nav.main a{white-space:nowrap}

@@ -97,4 +97,21 @@ if(SITE==='dave'){const e=await open('about');const n0=await e.F().locator('main
 {const e=await open('index');await e.p.click('#publish');await e.p.waitForTimeout(400);const t=await e.p.evaluate(()=>!document.querySelector('#dlg').hidden);await e.p.keyboard.press('Escape');await e.p.waitForTimeout(300);
  ok('14 Escape closes the Publish dialog',t&&await e.p.evaluate(()=>document.querySelector('#dlg').hidden));
  const src=require('fs').readFileSync(__dirname+'/../admin/inline.js','utf8');ok('16 inline.js uses pagehide, not unload',!/addEventListener\('unload'/.test(src)&&/pagehide/.test(src));await e.ctx.close();}
+
+// round 5
+{const e=await open('index');
+ await e.p.click('#helpb');await e.p.waitForTimeout(400);
+ ok('5 Help opens with focus on a harmless control (not "Throw away")',await e.p.evaluate(()=>document.querySelector('#helpm').contains(document.activeElement)&&document.activeElement.id!=='discard'));
+ await e.p.keyboard.press('Escape');await e.p.waitForTimeout(300);
+ ok('5 Escape returns focus to the Help button',await e.p.evaluate(()=>document.activeElement&&document.activeElement.id==='helpb'));
+ await e.p.click('#pagesb');await e.p.waitForTimeout(300);await e.p.keyboard.press('Escape');await e.p.waitForTimeout(300);
+ ok('5 Escape returns focus to the Pages button',await e.p.evaluate(()=>document.activeElement&&document.activeElement.id==='pagesb'));
+ const ph=await e.F().evaluate(()=>[...document.querySelectorAll('[data-bf]')].filter(x=>/^(Text|Caption( \(optional\))?)$/.test(x.getAttribute('data-ph')||'')).length);
+ ok('5 no faint "Text"/"Caption" placeholders',ph===0,String(ph));await e.ctx.close();}
+{const key=SITE==='dave'?'shows':'posts';const e=await open(SITE==='dave'?'live':'blog');await e.p.evaluate(k=>DYE.openShared(k),key);await e.p.waitForTimeout(500);
+ await e.p.evaluate(()=>{const d=document.querySelectorAll('.shbody details');d[0].open=true;d[4].open=true;});await e.p.waitForTimeout(200);
+ await e.p.evaluate(({d})=>{const dd=document.querySelectorAll('.shbody details')[4];const inp=[...dd.querySelectorAll('input')].find(x=>/^\d{4}-\d\d-\d\d$/.test(x.value));inp.value=d;inp.dispatchEvent(new Event('change'));},{d:SITE==='dave'?'2026-01-05':'2030-06-01'});
+ await e.p.waitForTimeout(800);const n=await e.p.evaluate(()=>[...document.querySelectorAll('.shbody details')].filter(d=>d.open).length);
+ ok('2 after a date re-sort only the edited item stays open',n===1,'open '+n);await e.ctx.close();}
+if(SITE==='wedding'){const e=await open('index');ok('6 written hint above non-draggable gallery photos',await e.F().evaluate(()=>{const h=document.querySelector('.dy-ghint');return !!h&&/can.t be dragged/.test(h.textContent)&&h.getBoundingClientRect().height>10;}));await e.ctx.close();}
 await b.close();const f=res.filter(r=>!r[1]).length;console.log('SUMMARY '+(res.length-f)+'/'+res.length);process.exit(f?1:0);})();

@@ -28,4 +28,17 @@ ok('FAQ questions near the bottom edge never trigger the sticky dock',stolen===0
 // westlife wide
 await p.goto(B+'/index.html',{waitUntil:'networkidle'});const w=await p.evaluate(()=>{const i=document.querySelector('.pr img.wide');if(!i)return null;const r=i.getBoundingClientRect();return {w:r.width,h:r.height,br:getComputedStyle(i).borderRadius};});
 ok('Westlife group photo is a wide rounded rectangle (all four faces)',w&&w.w>w.h*1.3&&w.br!=='50%',JSON.stringify(w));
+
+// round 5: menu Escape, 320px, 12px subtext, 8px gaps between taps
+{const c2=await b.newContext({viewport:{width:320,height:700},isMobile:true,hasTouch:true});const q=await c2.newPage();
+ for(const pg of ['index','videos','faqs','blog','contact']){await q.goto(B+'/'+pg+'.html',{waitUntil:'networkidle'});
+  const r=await q.evaluate(()=>{const de=document.documentElement;const small=getComputedStyle(document.querySelector('.brand small')).fontSize;
+   const els=[...document.querySelectorAll('footer a, header a, header button')].filter(e=>e.offsetParent!==null&&!e.matches('.skip')&&getComputedStyle(e).position!=='fixed');let min=99;
+   for(let i=0;i<els.length;i++)for(let j=i+1;j<els.length;j++){const a=els[i],b=els[j];if(a.contains(b)||b.contains(a))continue;const x=a.getBoundingClientRect(),y=b.getBoundingClientRect();const dx=Math.max(x.left-y.right,y.left-x.right),dy=Math.max(x.top-y.bottom,y.top-x.bottom);if(dx<0&&dy<0)continue;const g=dx<0?dy:dy<0?dx:Math.max(dx,dy);if(g<min)min=g;}
+   return {sw:de.scrollWidth-de.clientWidth,small:parseFloat(small),min};});
+  ok(pg+' @320: no sideways scroll',r.sw<=0,'+'+r.sw);ok(pg+': logo subtext is 12px or more',r.small>=12,String(r.small));ok(pg+' @320: header/footer links are 8px+ apart',r.min>=7.5,String(r.min));}
+ await q.goto(B+'/index.html',{waitUntil:'networkidle'});await q.click('button.ham');await q.keyboard.press('Escape');await q.waitForTimeout(200);
+ const m=await q.evaluate(()=>({e:document.querySelector('button.ham').getAttribute('aria-expanded'),f:document.activeElement.className}));ok('Escape closes the menu with Menu button focused',m.e==='false',JSON.stringify(m));
+ await q.click('button.ham');await q.focus('button.ham');await q.keyboard.press('Escape');await q.waitForTimeout(200);ok('Escape closes the menu (focus on button)',await q.evaluate(()=>document.querySelector('button.ham').getAttribute('aria-expanded'))==='false');
+ await c2.close();}
 await b.close();const bad=res.filter(r=>!r[1]).length;console.log('SUMMARY '+(res.length-bad)+'/'+res.length);process.exit(bad?1:0);})();

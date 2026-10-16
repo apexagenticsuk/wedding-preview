@@ -136,18 +136,18 @@ function blockHTML(b,group){var t=b.type,h='',cls='blk blk-'+t,tag='div';
   switch(t){
   case 'heading':h=b.size==='small'?F('h3','sub','text',b.text,'Heading'):F('h2','sec','text',b.text,'Heading');break;
   case 'text':h=F('p',b.style==='big'?'big':'','text',b.text,'Type your text');break;
-  case 'image':h='<figure>'+IM('img',b.img)+F('figcaption','','caption',b.caption,'Caption (optional)')+'</figure>';break;
-  case 'imageText':cls+=' '+(b.side==='right'?'right':'left');h=IM('img',b.img)+'<div>'+F('h2','sec','title',b.title,'Heading')+F('p','big','text',b.text,'Text')+((b.btnLabel||EDITING)?'<div class="btnrow">'+BT('btnLabel','btnUrl',b.btnLabel,b.btnUrl,b.btnStyle||'rose','btnStyle')+'</div>':'')+'</div>';break;
+  case 'image':h='<figure>'+IM('img',b.img)+F('figcaption','','caption',b.caption,'')+'</figure>';break;
+  case 'imageText':cls+=' '+(b.side==='right'?'right':'left');h=IM('img',b.img)+'<div>'+F('h2','sec','title',b.title,'Heading')+F('p','big','text',b.text,'')+((b.btnLabel||EDITING)?'<div class="btnrow">'+BT('btnLabel','btnUrl',b.btnLabel,b.btnUrl,b.btnStyle||'rose','btnStyle')+'</div>':'')+'</div>';break;
   case 'button':cls+=' btnrow';h=BT('label','url',b.label,b.url,b.style,'style');break;
   case 'video':var id=ytId(b.url);h=id?'<div class="lite nothumb" data-yt="'+id+'" data-title="YouTube video"><button type="button" class="litebtn" aria-label="Play video"><span class="play" aria-hidden="true"></span></button></div>':'<p class="fine">Video link not recognised</p>';break;
-  case 'gallery':cls+=' gal';h=(b.images||[]).map(function(m,i){return '<figure>'+IM('images.'+i,m)+F('figcaption','','images.'+i+'.caption',m.caption,'Caption')+'</figure>';}).join('');break;
+  case 'gallery':cls+=' gal';h=(b.images||[]).map(function(m,i){return '<figure>'+IM('images.'+i,m)+F('figcaption','','images.'+i+'.caption',m.caption,'')+'</figure>';}).join('');break;
   case 'quote':tag='blockquote';cls+=' tcard';h=F('b','','title',b.title,'Headline')+F('p','','text',b.text,'Quote')+F('cite','','who',b.who,'Who said it');break;
   case 'quotes':cls+=' tgrid';h=(b.items||[]).map(function(q,i){return '<blockquote class="tcard">'+F('b','','items.'+i+'.title',q.title,'Headline')+F('p','','items.'+i+'.text',q.text,'Quote')+F('cite','','items.'+i+'.who',q.who,'Who said it')+'</blockquote>';}).join('');break;
   case 'divider':h=b.kind==='line'?'<hr>':'';cls+=b.kind==='line'?' line':' space';break;
-  case 'cta':h='<div>'+F('h3','','title',T(b.title),'Heading')+F('p','','text',T(b.text),'Text')+'</div><div class="btnrow">'+BT('btnLabel','btnUrl',b.btnLabel,b.btnUrl,b.btnStyle||'gold','btnStyle')+'<a class="btn call" href="tel:'+telOf(((window.DY_C||{}).contact||{}).phone)+'">Call '+esc(((window.DY_C||{}).contact||{}).phone||'')+'</a></div>';break;
+  case 'cta':h='<div>'+F('h3','','title',T(b.title),'Heading')+F('p','','text',T(b.text),'')+'</div><div class="btnrow">'+BT('btnLabel','btnUrl',b.btnLabel,b.btnUrl,b.btnStyle||'gold','btnStyle')+'<a class="btn call" href="tel:'+telOf(((window.DY_C||{}).contact||{}).phone)+'">Call '+esc(((window.DY_C||{}).contact||{}).phone||'')+'</a></div>';break;
   case 'socials':h='<div class="socials" data-cms="socials"></div>';break;
   case 'logos':cls+=' logos';h=(b.images||[]).map(function(m,i){return '<div class="lg">'+IM('images.'+i,m)+'</div>';}).join('');break;
-  case 'cards':cls+=' c'+(b.cols===2?2:3);h=(b.items||[]).map(function(it,i){var p='items.'+i+'.';return '<div class="card">'+(it.img&&it.img.src?IM(p+'img',it.img):'')+F('h3','',p+'title',it.title,'Title')+F('p','',p+'text',it.text,'Text')+((it.btnLabel||EDITING)?'<div class="btnrow">'+BT(p+'btnLabel',p+'btnUrl',it.btnLabel,it.btnUrl,it.btnStyle||'rose',p+'btnStyle',1)+'</div>':'')+'</div>';}).join('');break;
+  case 'cards':cls+=' c'+(b.cols===2?2:3);h=(b.items||[]).map(function(it,i){var p='items.'+i+'.';return '<div class="card">'+(it.img&&it.img.src?IM(p+'img',it.img):'')+F('h3','',p+'title',it.title,'Title')+F('p','',p+'text',it.text,'')+((it.btnLabel||EDITING)?'<div class="btnrow">'+BT(p+'btnLabel',p+'btnUrl',it.btnLabel,it.btnUrl,it.btnStyle||'rose',p+'btnStyle',1)+'</div>':'')+'</div>';}).join('');break;
   case 'faq':h=(b.items||[]).map(function(q,i){return '<details'+(EDITING?' open':'')+'>'+F('summary','','items.'+i+'.q',q.q,'Question')+F('p','','items.'+i+'.a',q.a,'Answer')+'</details>';}).join('');break;
   case 'hero':cls='bhero photo blk blk-hero';h=IM('img',b.img)+'<div class="txt"><div class="wrap">'+F('h1','','title',b.title,'Title')+F('p','','text',b.text,'Short line')+'</div></div>';break;
   default:return '';}

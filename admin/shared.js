@@ -67,7 +67,7 @@ function render(keepIdx){var def=DEFS[cur],tabs=modal.querySelector('.shtabs'),b
       if(sort&&k===sort&&arr){var dir=def.desc?-1:1,t=arr.map(function(x,n){return {x:x,n:n};});
         t.sort(function(a,b){var ka=String(a.x[sort]||(def.desc?'':'9999')),kb=String(b.x[sort]||(def.desc?'':'9999'));return ka<kb?-dir:ka>kb?dir:a.n-b.n;});
         t.forEach(function(e,n){arr[n]=e.x;});ni=arr.indexOf(o);}});
-    if(sort&&k===sort&&idx!=null){if(ni!==idx)os.splice(ni,0,!!os.splice(idx,1)[0]);os[ni]=true;render(ni);}}
+    if(sort&&k===sort&&idx!=null){if(ni!==idx)os.splice(ni,0,!!os.splice(idx,1)[0]);for(var q=0;q<os.length;q++)os[q]=false;os[ni]=true;render(ni);}}
   if(def.kind==='object'){var o=get(C(),def.path)||{},card=el('div','shrow');def.fields.forEach(function(f){card.appendChild(fieldEl(def,f,o,function(k,v){set(def.path,null,k,v);}));});body.appendChild(card);return;}
   var list=get(C(),def.path)||[];
   list.forEach(function(it,i){var d=el('details','shrow'),sm=el('summary','',esc(def.label(it)));d.open=!!os[i];d.addEventListener('toggle',function(){os[i]=d.open;});d.appendChild(sm);var tools=el('div','shtools','<button type="button" data-up title="Move up">↑</button><button type="button" data-dn title="Move down">↓</button><button type="button" data-del title="Delete">Delete</button>');
