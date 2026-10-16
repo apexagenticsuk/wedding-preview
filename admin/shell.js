@@ -262,14 +262,15 @@ function escapeTop(){
   return false;}
 DYE_escape=escapeTop;
 document.addEventListener('keydown',function(e){if(e.key==='Escape'&&!e.defaultPrevented){if(escapeTop())e.preventDefault();}});
-(function(){var lastFocus=null,openers=new Map();
-  var mo=new MutationObserver(function(ms){ms.forEach(function(r){var t=r.target;if(t.id==='dlg')return;
-    if(!t.hidden){var keep=(t.id==='newpm'||t.id==='seom')?$('#pagesm'):null;
-      document.querySelectorAll('.modal').forEach(function(m){if(m!==t&&m!==keep&&m.id!=='dlg'&&!m.hidden){m.hidden=true;if(m.id==='pickm')closePick();}});
-      closePanel(true);openers.set(t,lastFocus);var f=t.querySelector('input:not([type=hidden]),textarea,select,.btn,button:not(.x)');
-      setTimeout(function(){if(!t.hidden&&f&&!t.contains(document.activeElement))try{f.focus({preventScroll:true});}catch(e){}},40);}
-    else{var o=openers.get(t);openers.delete(t);setTimeout(function(){var a=document.activeElement;if(o&&o.isConnected&&(!a||a===document.body||t.contains(a)))try{o.focus({preventScroll:true});}catch(e){}},30);}});});
-  document.querySelectorAll('.modal').forEach(function(m){mo.observe(m,{attributes:true,attributeFilter:['hidden']});});
+(function(){var lastFocus=null,openers=new Map(),seen=new WeakSet();
+  function onOpen(t){var keep=(t.id==='newpm'||t.id==='seom')?$('#pagesm'):null;
+    document.querySelectorAll('.modal').forEach(function(m){if(m!==t&&m!==keep&&m.id!=='dlg'&&!m.hidden){m.hidden=true;if(m.id==='pickm')closePick();}});
+    closePanel(true);openers.set(t,lastFocus);var f=t.querySelector('input:not([type=hidden]),textarea,select,.btn,button:not(.x)');
+    setTimeout(function(){if(!t.hidden&&f&&!t.contains(document.activeElement))try{f.focus({preventScroll:true});}catch(e){}},40);}
+  function onClose(t){var o=openers.get(t);openers.delete(t);setTimeout(function(){var a=document.activeElement;if(o&&o.isConnected&&(!a||a===document.body||t.contains(a)))try{o.focus({preventScroll:true});}catch(e){}},30);}
+  var mo=new MutationObserver(function(ms){ms.forEach(function(r){var t=r.target;if(t.id==='dlg')return;if(t.hidden)onClose(t);else onOpen(t);});});
+  function attach(){document.querySelectorAll('.modal').forEach(function(m){if(seen.has(m))return;seen.add(m);mo.observe(m,{attributes:true,attributeFilter:['hidden']});if(!m.hidden&&m.id!=='dlg')onOpen(m);});}
+  attach();new MutationObserver(attach).observe(document.body,{childList:true});
   document.addEventListener('focusin',function(e){if(!e.target.closest('.modal'))lastFocus=e.target;},true);})();
 /* ---- wiring ---- */
 document.querySelectorAll('[data-close]').forEach(function(b){b.onclick=function(){b.closest('.modal').hidden=true;if(b.closest('#pickm'))closePick();};});

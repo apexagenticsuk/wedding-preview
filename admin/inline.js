@@ -153,7 +153,7 @@ function limFor(el){return /^H[1-6]$/.test(el.tagName)?120:(el.tagName==='A'||el
 function selLen(){try{return String(D.getSelection()).length;}catch(e){return 0;}}
 D.addEventListener('beforeinput',function(e){if(!editing||!/^insert/.test(e.inputType)||e.inputType==='insertParagraph'||e.inputType==='insertLineBreak')return;var lim=limFor(editing),room=lim-editing.textContent.length+selLen();
   if(e.inputType==='insertFromPaste'||e.inputType==='insertFromDrop')return; /* handled by the paste listener */
-  if(room<=0){e.preventDefault();DYE.toast('That\u2019s the longest this can be ('+lim+' letters). Please shorten it.',3500);}});
+  var dl=(e.data||'').length;if(room<=0||dl>room){e.preventDefault();if(room>0&&dl>room)D.execCommand('insertText',false,e.data.slice(0,room));DYE.toast('That\u2019s the longest this can be ('+lim+' letters). Please shorten it.',3500);}});
 D.addEventListener('paste',function(e){if(!editing)return;e.preventDefault();var t=(e.clipboardData||window.clipboardData).getData('text/plain').replace(/\s*\n+\s*/g,' ');var lim=limFor(editing),room=Math.max(0,lim-editing.textContent.length+selLen());
   if(t.length>room){t=t.slice(0,room);DYE.toast('Pasted text was trimmed to fit the limit of '+lim+' letters.',3500);}if(t)D.execCommand('insertText',false,t);},true);
 /* gallery photos are ordered in Shared content, not dragged: say so when someone tries */
@@ -169,7 +169,7 @@ D.addEventListener('input',function(){if(!editing)return;window.__dyTyping=true;
   window.__dyTyping=false;},900);},true);
 function finishEdit(keepBar){clearTimeout(typeT);window.__dyTyping=false;var el=editing;if(!el)return;editing=null;el.removeAttribute('contenteditable');saveText(el,window.DY_clean(el.innerHTML));if(!keepBar&&sel===el&&curBar===el)buildBar(el);}
 D.addEventListener('keydown',function(e){if(!editing)return;if(e.key==='Enter'){e.preventDefault();if(e.shiftKey)D.execCommand('insertLineBreak');else editing.blur();}if(e.key==='Escape')editing.blur();},true);
-D.addEventListener('paste',function(e){if(!editing)return;e.preventDefault();var t=(e.clipboardData||window.clipboardData).getData('text/plain');D.execCommand('insertText',false,t.replace(/\s*\n\s*/g,' '));},true);
+
 D.addEventListener('focusout',function(e){if(editing&&e.target===editing)setTimeout(function(){if(editing===e.target)finishEdit();},0);},true);
 window.addEventListener('blur',function(){if(editing)finishEdit();});
 D.addEventListener('drop',function(e){if(editing)e.preventDefault();},true);
