@@ -56,13 +56,13 @@ async function newPage(e,title,tpl){await e.p.evaluate(()=>{document.querySelect
  ok('14 Escape closes the Pages window',await e.p.evaluate(()=>document.querySelector('#pagesm').hidden));
  ok('16 no console errors',e.errs.length===0,JSON.stringify(e.errs.slice(0,2)));await e.ctx.close();}
 // 12b banner add-block (dave: banner can't hold blocks -> new section below)
-if(SITE==='dave'){const e=await open('about');const n0=await e.F().locator('main>.dy-sec, body>.dy-sec').count();
+if(SITE==='dave'){const e=await open('about');const n0=await e.F().locator('main>section,body>section,.sec').count();
  const bb=await e.F().locator('.bhero').first().boundingBox();const fr=await e.p.locator('#frame').boundingBox();
  await e.p.mouse.click(fr.x+bb.x+10,fr.y+bb.y+20);await e.p.waitForTimeout(300);
  await e.p.locator('#selbar button:has-text("+ Add block")').first().click();await e.p.waitForTimeout(400);
  ok('12 banner: + Add block opens the picker',await e.p.evaluate(()=>!document.querySelector('#pickm').hidden));
  await e.p.locator('#pickg .tile').first().click();await e.ready();
- const n1=await e.F().locator('main>.dy-sec, body>.dy-sec').count();ok('12 banner: block added in a new section below',n1===n0+1,n0+'→'+n1);await e.ctx.close();}
+ const n1=await e.F().locator('main>section,body>section,.sec').count();ok('12 banner: block added in a new section below',n1===n0+1,n0+'→'+n1);await e.ctx.close();}
 // 15 limits + 19 typed text kept
 {const e=await open(SITE==='dave'?'about':'index');const hsel='main h1, h1';const H=e.F().locator(hsel).first();
  await H.scrollIntoViewIfNeeded();await H.click();await e.p.waitForTimeout(250);await H.click();await e.p.waitForTimeout(250);
@@ -91,7 +91,7 @@ if(SITE==='dave'){const e=await open('about');const n0=await e.F().locator('main
   ok('18 an emptied blog title warns instead of silently becoming "New post"',await e.p.evaluate(()=>/no title/i.test(document.querySelector('#toast').textContent)&&!/New post/.test(document.querySelector('.shbody details[open] summary').textContent)));}
  ok('16 no console errors',e.errs.length===0,JSON.stringify(e.errs.slice(0,2)));await e.ctx.close();}
 // 17 move controls not covered
-{const e=await open('index');const sel='main>section,main>.hero,.hero';const info=await e.F().evaluate(()=>{const s=document.querySelector('main>section')||document.querySelector('.hero');s.scrollIntoView();s.classList.add('dy-secsel');const m=s.querySelector(':scope>.dy-mv');if(!m)return null;m.style.opacity=1;const r=m.querySelectorAll('button')[1].getBoundingClientRect();const el=document.elementFromPoint(r.x+r.width/2,r.y+r.height/2);return {on:el&&(el.closest('.dy-mv')?true:false)};});
+{const e=await open('index');const sel='main>section,main>.hero,.hero';const info=await e.F().evaluate(()=>{const s=document.querySelector('.dy-sec')||document.querySelector('main>section');s.scrollIntoView();s.classList.add('dy-secsel');const m=s.querySelector(':scope>.dy-mv');if(!m)return null;m.style.opacity=1;m.querySelectorAll('button')[1].scrollIntoView({block:'center'});const r=m.querySelectorAll('button')[1].getBoundingClientRect();const el=document.elementFromPoint(r.x+r.width/2,r.y+r.height/2);return {on:el&&(el.closest('.dy-mv')?true:false)};});
  ok('17 Move down sits on top (poster/banner can\'t cover it)',info&&info.on,JSON.stringify(info));await e.ctx.close();}
 // 14 focus after publish (demo dialog) + pagehide
 {const e=await open('index');await e.p.click('#publish');await e.p.waitForTimeout(400);const t=await e.p.evaluate(()=>!document.querySelector('#dlg').hidden);await e.p.keyboard.press('Escape');await e.p.waitForTimeout(300);
