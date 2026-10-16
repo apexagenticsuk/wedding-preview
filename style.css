@@ -188,3 +188,9 @@ details.more[open] summary{margin-bottom:6px}
 .fun details.more summary{color:#ffd7de}
 .pstrip{display:block;width:100%;max-width:900px;height:auto;margin:22px auto 0;border-radius:12px;box-shadow:0 6px 24px rgba(0,0,0,.12)}
 .blk-divider{max-width:100%;box-sizing:border-box}.blk-divider.space{height:36px}.blk-divider hr{border:0;border-top:2px solid var(--line);width:100%;max-width:720px;margin:0 auto}
+/* round 4: focus ring on the enquiry form, FAQ/inline links reachable above the phone dock, 44px inline link targets */
+.enq input:focus-visible,.enq textarea:focus-visible,.enq select:focus-visible{outline:3px solid var(--rose3);outline-offset:2px;border-color:var(--rose3)}
+.enq .btn:focus-visible,a:focus-visible,summary:focus-visible,button:focus-visible{outline:3px solid var(--rose3);outline-offset:2px}
+html{scroll-padding-bottom:104px;scroll-padding-top:84px}summary,.qa,.rev,.pr,.post{scroll-margin-bottom:104px}
+@media (max-width:1239px){main{padding-bottom:8px}body{padding-bottom:calc(86px + env(safe-area-inset-bottom))}}
+.qa-a a,.prose a,.big a,.lead a,.post a,.fine a,.cbox dd a,.pull a{display:inline-block;padding:12px 2px;margin:-12px 0}

@@ -160,7 +160,14 @@ D.addEventListener('paste',function(e){if(!editing)return;e.preventDefault();var
 (function(){var gd=null,hinted=0;D.addEventListener('pointerdown',function(e){var im=e.target.closest&&e.target.closest('.gal img,.ggrid img,.blk-gallery img');gd=im?{x:e.clientX,y:e.clientY}:null;},true);
   D.addEventListener('pointermove',function(e){if(!gd)return;if(Math.abs(e.clientX-gd.x)+Math.abs(e.clientY-gd.y)>14){gd=null;if(Date.now()-hinted>6000){hinted=Date.now();DYE.toast('Gallery photos can\u2019t be dragged. To change their order, open Shared content \u2192 Gallery and use the \u2191 \u2193 buttons.',6000);}}},true);
   D.addEventListener('pointerup',function(){gd=null;},true);})();
-function finishEdit(keepBar){var el=editing;if(!el)return;editing=null;el.removeAttribute('contenteditable');saveText(el,window.DY_clean(el.innerHTML));if(!keepBar&&sel===el&&curBar===el)buildBar(el);}
+/* typed text is saved a moment after you stop typing, so a reload or closed tab doesn't lose it; if something is still pending the browser warns first */
+var typeT=null;window.__dyTyping=false;
+D.addEventListener('input',function(){if(!editing)return;window.__dyTyping=true;clearTimeout(typeT);var el=editing;typeT=setTimeout(function(){if(editing!==el)return;var h=window.DY_clean(el.innerHTML);if(!/\S/.test(h.replace(/<br>/g,'')))return;
+  var keepSel=null;try{keepSel=D.getSelection().getRangeAt(0).cloneRange();}catch(e){}
+  if(el.hasAttribute('data-bf')){var bl=blockOf(el);if(bl){var bid=bl.dataset.bid,path=el.dataset.bf;DYE.change(function(c){var f=findBlock(c,bid);if(f)setP(f.b,path,h);});}}
+  else{var o=R.ids.get(el);if(o&&o.t){DYE.change(function(c){var t=bag(E(c,o.scope),'text');t[o.t]=h;});}}
+  window.__dyTyping=false;},900);},true);
+function finishEdit(keepBar){clearTimeout(typeT);window.__dyTyping=false;var el=editing;if(!el)return;editing=null;el.removeAttribute('contenteditable');saveText(el,window.DY_clean(el.innerHTML));if(!keepBar&&sel===el&&curBar===el)buildBar(el);}
 D.addEventListener('keydown',function(e){if(!editing)return;if(e.key==='Enter'){e.preventDefault();if(e.shiftKey)D.execCommand('insertLineBreak');else editing.blur();}if(e.key==='Escape')editing.blur();},true);
 D.addEventListener('paste',function(e){if(!editing)return;e.preventDefault();var t=(e.clipboardData||window.clipboardData).getData('text/plain');D.execCommand('insertText',false,t.replace(/\s*\n\s*/g,' '));},true);
 D.addEventListener('focusout',function(e){if(editing&&e.target===editing)setTimeout(function(){if(editing===e.target)finishEdit();},0);},true);
