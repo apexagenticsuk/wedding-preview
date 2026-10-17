@@ -108,7 +108,7 @@ section{padding:clamp(54px,9vw,104px) 0}
 .gal{background:var(--ivory)}.gintro{display:grid;gap:22px;align-items:center;margin:26px 0 32px}.gintro img{border-radius:var(--r);box-shadow:var(--sh);border:6px solid var(--paper);width:100%}
 .ggrid{columns:1;column-gap:20px}
 .ggrid figure{background:var(--paper);border:1px solid var(--line);border-radius:var(--r);overflow:hidden;box-shadow:var(--sh)}
-.ggrid img{width:100%;height:auto}.ggrid figure{break-inside:avoid;margin-bottom:20px}.ggrid figcaption{padding:16px 18px 20px;font-size:15.5px;color:var(--mut)}
+.ggrid img,.gintro img{width:100%;height:auto;object-fit:cover}.ggrid figure{break-inside:avoid;margin-bottom:20px}.ggrid figcaption{padding:16px 18px 20px;font-size:15.5px;color:var(--mut)}
 /* closing band */
 .band{background:linear-gradient(120deg,var(--rose3),var(--rose));color:#fff;text-align:center;position:relative;overflow:hidden}
 .band:before{content:"";position:absolute;inset:0;background:url(assets/glasses_800.webp) center/cover;opacity:.16;mix-blend-mode:luminosity}

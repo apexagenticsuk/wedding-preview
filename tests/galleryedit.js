@@ -1,0 +1,22 @@
+// Item 5 (editor): the per-image focus point is a field in Shared content > Photo gallery (like Face position), is saved in content.json state, applied in the preview, and survives undo/redo.
+const {chromium}=require('playwright');const BASE=process.argv[2]||'http://localhost:8765';let bad=0;const ok=(n,c,x)=>{console.log((c?'PASS ':'FAIL ')+n+(x?' '+x:''));if(!c)bad++;};
+(async()=>{const b=await chromium.launch({executablePath:process.env.CHROME||'/usr/bin/google-chrome',args:['--no-sandbox']});
+const ctx=await b.newContext({viewport:{width:1400,height:900}});await ctx.addInitScript(()=>{try{if(!sessionStorage.getItem('x')){localStorage.clear();localStorage.setItem('dy-mode','demo');sessionStorage.setItem('x','1');}}catch(e){}});
+const p=await ctx.newPage();const F=()=>p.frame({url:/edit=1/});
+const ready=async()=>{await p.waitForFunction(()=>{try{return !!document.querySelector('#frame').contentWindow.DYI&&document.querySelector('#frame').contentDocument.readyState==='complete';}catch(e){return false;}});await p.waitForTimeout(700);};
+await p.goto(BASE+'/admin/?page=index');await p.waitForFunction(()=>window.DYE&&window.DYE.state().content&&document.querySelector('#frame').contentWindow.DYI);await ready();
+const pos=()=>p.evaluate(()=>DYE.state().content.gallery.map(g=>g.pos));
+const before=await pos();ok('every gallery photo has a pos in content.json',before.every(v=>/^\d+% \d+%$/.test(v)),JSON.stringify(before));
+await F().evaluate(()=>document.querySelector('[data-dy-cms=gallery]').scrollIntoView({block:'center',behavior:'instant'}));await p.waitForTimeout(200);
+await F().click('[data-dy-cms=gallery] figure');await p.waitForSelector('#sharedm:not([hidden])');
+ok('gallery panel is open',await p.evaluate(()=>document.querySelector('#sharedm .shtab.on').textContent==='Photo gallery'));
+await p.evaluate(()=>{const d=document.querySelector('#sharedm details.shrow');d.open=true;d.setAttribute('data-t','1')});
+const row=p.locator('#sharedm details.shrow[data-t="1"]');const lab=row.locator('label',{hasText:'Focus point'});
+ok('gallery rows have a Focus point field',await lab.count()>0);
+const inp=lab.locator('input').first();await inp.fill('30% 10%');await inp.dispatchEvent('change');await ready();
+const after=await pos();ok('edit is stored in the state that is saved to content.json',after[0]==='30% 10%'||after.includes('30% 10%'),JSON.stringify(after));
+const st=await F().evaluate(()=>[...document.querySelectorAll('[data-dy-cms=gallery] img')].map(i=>i.style.objectPosition));
+ok('preview applies it as object-position',st.includes('30% 10%'),JSON.stringify(st));
+await p.evaluate(()=>document.querySelector('#sharedm').hidden=true);await p.click('#undo');await ready();ok('undo restores the old focus point',JSON.stringify(await pos())===JSON.stringify(before));
+await p.click('#redo');await ready();ok('redo brings it back',(await pos()).includes('30% 10%'));
+await b.close();console.log((bad?'FAIL':'PASS')+' galleryedit');process.exit(bad?1:0)})();

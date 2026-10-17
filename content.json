@@ -275,33 +275,39 @@
     {
       "img": "assets/gallery_2.webp",
       "alt": "Dave Young with three opera singers",
-      "cap": "Funny guys... but of course, not as funny as me! They are better Opera singers than me though, I'll give them that... just!"
+      "cap": "Funny guys... but of course, not as funny as me! They are better Opera singers than me though, I'll give them that... just!",
+      "pos": "50% 0%"
     },
     {
       "img": "assets/gallery_3.webp",
       "alt": "Dave Young with Donny Osmond",
-      "cap": "A truly original 'Crazy Horse' - Donny Osmond. Taken at a 'Point Theatre', no sorry, 'O2', no... em, '3 Area' or whatever it's called this week!!! We had a great time performing and an even better time post gig party!"
+      "cap": "A truly original 'Crazy Horse' - Donny Osmond. Taken at a 'Point Theatre', no sorry, 'O2', no... em, '3 Area' or whatever it's called this week!!! We had a great time performing and an even better time post gig party!",
+      "pos": "50% 0%"
     },
     {
       "img": "assets/gallery_4.webp",
       "alt": "Dave Young with Westlife",
-      "cap": "Pleasure to work with there guys in Westlife! I had to leave the band... I was cramping their style and taking all the attention, it really was for the best guys!"
+      "cap": "Pleasure to work with there guys in Westlife! I had to leave the band... I was cramping their style and taking all the attention, it really was for the best guys!",
+      "pos": "50% 20%"
     },
     {
       "img": "assets/gallery_5.webp",
       "alt": "Dave Young at the Planet Hollywood launch, Germany 2010",
-      "cap": "Let him take the first punch... Here we are, attending the launch of 'Planet Hollywood' in Germany 2010 - A fantastic night!"
+      "cap": "Let him take the first punch... Here we are, attending the launch of 'Planet Hollywood' in Germany 2010 - A fantastic night!",
+      "pos": "50% 0%"
     },
     {
       "img": "assets/gallery_6.webp",
       "alt": "Dave Young with Michael Bublé",
-      "cap": "A fantastic Night with the Golden Voice of Michael Bublé! I've had the pleasure of both performing for and with Michael. What can i say, the man is a legend and a perfect gentleman too!"
+      "cap": "A fantastic Night with the Golden Voice of Michael Bublé! I've had the pleasure of both performing for and with Michael. What can i say, the man is a legend and a perfect gentleman too!",
+      "pos": "50% 30%"
     }
   ],
   "galleryIntro": {
     "text": "Here's just a small taste of some of the people I've worked and played with over the years! It's been a pleasure and honour to perform for and with some of the finest names in the entertainment industry. It's been a ride and it's only getting better!",
     "img": "assets/gallery_1.webp",
-    "alt": "Dave Young in a red hat"
+    "alt": "Dave Young in a red hat",
+    "pos": "50% 30%"
   },
   "clips": [
     {
