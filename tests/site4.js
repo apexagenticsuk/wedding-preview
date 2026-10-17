@@ -25,9 +25,9 @@ ok('Send keeps the page where it is (opens the email app only)',/contact\.html/.
 await p.goto(B+'/faqs.html',{waitUntil:'networkidle'});let stolen=0,n=await p.locator('summary').count();
 for(let i=0;i<n;i++){const s=p.locator('summary').nth(i);await s.scrollIntoViewIfNeeded();const r=await s.boundingBox();await p.evaluate(y=>scrollBy(0,y),Math.max(0,r.y+r.height-(800-70)));const bb=await s.boundingBox();await p.touchscreen.tap(bb.x+30,bb.y+bb.height/2);await p.waitForTimeout(120);if(!/faqs\.html/.test(p.url())){stolen++;break;}}
 ok('FAQ questions near the bottom edge never trigger the sticky dock',stolen===0,'questions '+n);
-// westlife wide
-await p.goto(B+'/index.html',{waitUntil:'networkidle'});const w=await p.evaluate(()=>{const i=document.querySelector('.pr img.wide');if(!i)return null;const r=i.getBoundingClientRect();return {w:r.width,h:r.height,br:getComputedStyle(i).borderRadius};});
-ok('Westlife group photo is a wide rounded rectangle (all four faces)',w&&w.w>w.h*1.3&&w.br!=='50%',JSON.stringify(w));
+// westlife avatar is a circle like the others (item 2, round 6)
+await p.goto(B+'/index.html',{waitUntil:'networkidle'});const w=await p.evaluate(()=>{const i=document.querySelector('.pr img[src*=av_westlife]');if(!i)return null;const r=i.getBoundingClientRect();const cs=getComputedStyle(i);return {w:r.width,h:r.height,rad:parseFloat(cs.borderTopLeftRadius),fit:cs.objectFit,cls:i.className};});
+ok('Westlife avatar is a round circle crop (square box, 50% radius, cover)',w&&Math.abs(w.w-w.h)<0.6&&w.rad>=w.w/2-0.6&&w.fit==='cover'&&!/wide/.test(w.cls),JSON.stringify(w));
 
 // round 5: menu Escape, 320px, 12px subtext, 8px gaps between taps
 {const c2=await b.newContext({viewport:{width:320,height:700},isMobile:true,hasTouch:true});const q=await c2.newPage();
