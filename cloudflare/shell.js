@@ -227,8 +227,8 @@ function explain(e){var s=e.status;if(s===401||s===403)return 'your session has 
 
 /* ---- sign in ---- */
 function openEditor(){mode='live';start();}
-function probe(){var m=$('#loginmsg');
-  return api('/api/session').then(function(j){if(j.signedIn){openEditor();return;}$('#login').hidden=false;$('#pass').focus();}).catch(function(e){$('#login').hidden=false;
+function probe(){var m=$('#loginmsg');var pend=false;try{pend=sessionStorage.getItem('dy-out')==='1';}catch(e){}
+  return (pend?api('/api/logout',{method:'POST'}).catch(function(){}).then(function(){try{sessionStorage.removeItem('dy-out');}catch(e){}}):Promise.resolve()).then(function(){return api('/api/session');}).then(function(j){if(j.signedIn){openEditor();return;}$('#login').hidden=false;$('#pass').focus();}).catch(function(e){$('#login').hidden=false;
     m.className='msg err';m.textContent=e.status===503?'The saving service is not set up yet.':'The live editor is not available on this address. You can still look around in demo mode.';});}
 function signin(){var pw=$('#pass'),m=$('#loginmsg'),v=pw.value;if(!v){m.className='msg err';m.textContent='Please enter your passcode first.';return;}
   m.className='msg';m.textContent='Checking…';$('#signin').disabled=true;
@@ -283,7 +283,7 @@ $('#vphone').onclick=function(){$('#stage').classList.add('phone');this.classLis
 $('#undo').onclick=undo;$('#redo').onclick=redo;$('#pundo').onclick=undo;$('#predo').onclick=redo;$('#preview').onclick=preview;$('#publish').onclick=publish;
 $('#helpb').onclick=function(){$('#helpm').hidden=false;};$('#style').onclick=styleModal;
 $('#discard').onclick=function(){if(!dirty()){toast('There is nothing unpublished to throw away.');return;}dialog({title:'Throw away changes?',text:'All changes that are not published yet will be removed.',ok:'Throw away',danger:true}).then(function(r){if(!r.ok)return;c=clone(base);uploads={};record();localStorage.removeItem(DK());$('#helpm').hidden=true;if(!exists(page))page='index';reload();});};
-$('#out').onclick=function(){if(mode==='live'){persist();var ob=$('#out');ob.disabled=true;api('/api/logout',{method:'POST'}).then(function(){location.reload();}).catch(function(){ob.disabled=false;toast('Could not sign out. Please try again.');});return;}localStorage.removeItem(MK);location.reload();};
+$('#out').onclick=function(){if(mode==='live'){persist();var ob=$('#out');ob.disabled=true;try{sessionStorage.setItem('dy-out','1');}catch(e){}api('/api/logout',{method:'POST',keepalive:true}).then(function(){try{sessionStorage.removeItem('dy-out');}catch(e){}location.reload();}).catch(function(){ob.disabled=false;toast('Could not sign out. Please try again.');});return;}localStorage.removeItem(MK);location.reload();};
 $('#psettings').onclick=function(){pageSettings(page);};
 $('#signin').onclick=signin;$('#pass').onkeydown=function(e){if(e.key==='Enter')signin();};
 $('#demo').onclick=function(){mode='demo';localStorage.setItem(MK,'demo');start();};
