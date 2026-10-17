@@ -126,7 +126,7 @@ frame.addEventListener('load',function(){if(scrollKeep==null)return;var y=scroll
 function start(){
   $('#login').hidden=true;$('#app').hidden=false;$('#demobadge').hidden=mode!=='demo';
   var pub=$('#publish');pub.title=mode==='live'?'Put your changes on the real website':'Demo mode: shows what publishing would do';
-  $('#out').textContent=mode==='live'?'Sign out':'Exit demo';if($('#restorebox'))$('#restorebox').hidden=mode!=='live';
+  $('#out').textContent=mode==='live'?'Sign out':'Exit demo';var rb=$('#restorebox');if(rb)rb.remove();if(mode==='live'){var hm=$('#helpm .mc'),bx=document.createElement('div');bx.id='restorebox';bx.innerHTML='<button class="btn ghost" id="restore">Go back one version</button>';hm.appendChild(bx);$('#restore').onclick=goBack;}
   var p=$('#pill');p.textContent='Loading…';
   (mode==='live'?api('/api/export').then(function(j){if(!j.content)throw new Error('no content');return j.content;}):fetch('../content.json',{cache:'no-store'}).then(function(r){return r.json();}))
   .then(function(pub){base=norm(pub);var d=null;try{d=JSON.parse(localStorage.getItem(DK())||'null');}catch(e){}
@@ -277,7 +277,6 @@ $('#undo').onclick=undo;$('#redo').onclick=redo;$('#pundo').onclick=undo;$('#pre
 $('#helpb').onclick=function(){$('#helpm').hidden=false;};$('#style').onclick=styleModal;
 $('#discard').onclick=function(){if(!dirty()){toast('There is nothing unpublished to throw away.');return;}dialog({title:'Throw away changes?',text:'All changes that are not published yet will be removed.',ok:'Throw away',danger:true}).then(function(r){if(!r.ok)return;c=clone(base);uploads={};record();localStorage.removeItem(DK());$('#helpm').hidden=true;if(!exists(page))page='index';reload();});};
 $('#out').onclick=function(){if(mode==='live'){persist();api('/api/logout',{method:'POST'}).catch(function(){}).then(function(){location.reload();});return;}localStorage.removeItem(MK);location.reload();};
-if($('#restore'))$('#restore').onclick=goBack;
 $('#psettings').onclick=function(){pageSettings(page);};
 $('#signin').onclick=signin;$('#pass').onkeydown=function(e){if(e.key==='Enter')signin();};
 $('#demo').onclick=function(){mode='demo';localStorage.setItem(MK,'demo');start();};
