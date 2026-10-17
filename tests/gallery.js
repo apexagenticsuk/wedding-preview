@@ -12,6 +12,8 @@ for(const w of [390,1280]){const c=await b.newContext({viewport:{width:w,height:
   if(it.pos&&im.attr!==it.pos){console.log('FAIL @'+w+' '+im.src+' pos in content.json ('+it.pos+') not applied ('+im.attr+')');bad++}
   // visible rectangle of the natural image inside the displayed box
   let vx0=0,vy0=0,vx1=1,vy1=1;if(im.fit==='cover'){const s=Math.max(im.w/im.nw,im.h/im.nh);const cw=im.w/s/im.nw,ch=im.h/s/im.nh;const pp=im.pos.split(' ').map(v=>parseFloat(v)/100);vx0=(1-cw)*pp[0];vx1=vx0+cw;vy0=(1-ch)*pp[1];vy1=vy0+ch}
-  for(const [x,y,fw,fh] of f.main){n++;const ok=x>=vx0-0.005&&x+fw<=vx1+0.005&&y>=vy0-0.005&&y+fh<=vy1+0.005;if(!ok){console.log('FAIL @'+w+' face cut in',im.src,JSON.stringify([x,y,fw,fh]),'visible',[vx0,vy0,vx1,vy1].map(v=>+v.toFixed(2)).join(','));bad++}}}
+  let minHr=9;for(const [x,y,fw,fh] of f.main){n++;minHr=Math.min(minHr,(y-vy0)/fh);const ok=x>=vx0-0.005&&x+fw<=vx1+0.005&&y>=vy0-0.005&&y+fh<=vy1+0.005;if(!ok){console.log('FAIL @'+w+' face cut in',im.src,JSON.stringify([x,y,fw,fh]),'visible',[vx0,vy0,vx1,vy1].map(v=>+v.toFixed(2)).join(','));bad++}}
+  // headroom: space above the face box (forehead + hair + a margin) must be at least 0.25 face-heights, unless the original upload itself is clipped (faces.json _srcCut) or noted fine (_headOk)
+  const known=(F._srcCut&&F._srcCut[im.src])||(F._headOk&&F._headOk[im.src]);if(minHr<0.25){if(known){console.log('note @'+w+' '+im.src+' headroom '+minHr.toFixed(2)+' face-heights: '+known)}else{console.log('FAIL @'+w+' '+im.src+' too little headroom above the face: '+minHr.toFixed(2));bad++}}else if(process.env.V)console.log('headroom @'+w+' '+im.src+' '+minHr.toFixed(2));}
  await c.close()}
 await b.close();console.log((bad?'FAIL':'PASS')+' gallery: '+n+' face checks over phone+desktop renders');process.exit(bad?1:0)})();
