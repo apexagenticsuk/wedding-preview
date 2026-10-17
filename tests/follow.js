@@ -1,6 +1,6 @@
 const {chromium}=require('playwright');(async()=>{const b=await chromium.launch({executablePath:process.env.CHROME||'/usr/bin/google-chrome',args:['--no-sandbox']});
 const c=await b.newContext({viewport:{width:1400,height:900}});await c.addInitScript(()=>{if(!sessionStorage.x){localStorage.clear();localStorage.setItem('dy-mode','demo');sessionStorage.x=1}});
-const p=await c.newPage();await p.goto('http://localhost:8765/admin/?page=index');await p.waitForFunction(()=>{try{return document.querySelector('#frame').contentWindow.DYI}catch(e){}});await p.waitForTimeout(1500);
+const p=await c.newPage();await p.goto((process.argv[2]||'http://localhost:8765')+'/admin/?page=index');await p.waitForFunction(()=>{try{return document.querySelector('#frame').contentWindow.DYI}catch(e){}});await p.waitForTimeout(1500);
 const F=()=>p.frame({url:/edit=1/});
 for(const [i,lab] of [[6,'Move up'],[6,'Move down'],[3,'Move up']]){
 await F().evaluate(i=>{const s=document.querySelectorAll('main>.dy-sec')[i];scrollTo(0,s.getBoundingClientRect().top+scrollY-110)},i);await p.waitForTimeout(500);
