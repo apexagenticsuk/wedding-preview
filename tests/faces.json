@@ -44,34 +44,38 @@
 "assets/av_westlife.webp": {
 "main": [
 [
+0.206,
+0.11,
+0.088,
+0.154
+],
+[
 0.39,
 0.136,
 0.089,
 0.157
 ],
 [
-0.777,
-0.146,
-0.079,
-0.143
-],
-[
 0.528,
 0.087,
 0.083,
 0.15
-],
-[
-0.206,
-0.11,
-0.088,
-0.154
 ]
 ],
 "size": [
 532,
 383
+],
+"dropped": [
+[
+0.777,
+0.146,
+0.079,
+0.143
 ]
+],
+"note": "four faces cannot fit one 76px circle; the circle keeps the three left-hand faces (pos 21% 50%), the fourth (far right) is outside the circle",
+"circle": true
 },
 "assets/av_pat_kenny.webp": {
 "main": [

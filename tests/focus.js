@@ -5,7 +5,7 @@ let bad=0,n=0;
 for(const it of [...C.praise,...C.testimonials]){const f=F[it.img];if(!f){console.log('NO FACE DATA',it.img);bad++;continue;}
  const m=/^(\d+)% (\d+)%$/.exec(it.pos||'50% 50%');if(!m){console.log('FAIL bad pos',it.id,it.pos);bad++;continue;}
  const d=C.dims[it.img];const W=d?d[0]:f.size[0],H=d?d[1]:f.size[1];const a=it.shape==='wide'?116/83:1;let cw=Math.min(W,H*a),ch=cw/a;const x0=(W-cw)*m[1]/100/W,y0=(H-ch)*m[2]/100/H,x1=x0+cw/W,y1=y0+ch/H;
- for(const [x,y,w,h] of f.main){n++;const ok=x>=x0-0.005&&x+w<=x1+0.005&&y>=y0-0.005&&y+h<=y1+0.005;if(!ok){bad++;console.log('FAIL face cut',it.id,it.pos,JSON.stringify([x,y,w,h]));}}}
+ for(const [x,y,w,h] of f.main){n++;let ok=x>=x0-0.005&&x+w<=x1+0.005&&y>=y0-0.005&&y+h<=y1+0.005;if(ok&&a===1){let circ=true;const R=cw/2,cxp=(x0*W+x1*W)/2,cyp=(y0*H+y1*H)/2;const fx=(x+w/2)*W,fy=(y+h/2)*H,fr=0.5*Math.max(w*W,h*H);circ=Math.hypot(fx-cxp,fy-cyp)+fr*0.9<=R*1.02;if(!circ){if(f.circle){ok=false}else{console.log('note: round crop trims the edge of a face (not failing, square crop is complete)',it.id)}}}if(!ok){bad++;console.log('FAIL face cut',it.id,it.pos,JSON.stringify([x,y,w,h]));}}}
 
 // Gallery photos (home page gallery + intro): every item has a valid per-image focus point in content.json, and every detected face stays inside the displayed picture.
 // Gallery pictures are shown at their own aspect (no crop), so the visible area is the whole file; the focus point only applies if a frame crops them.
