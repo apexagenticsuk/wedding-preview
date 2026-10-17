@@ -45,7 +45,7 @@ r=await t.call('/api/session',{cookie:C});j=await r.json();ok('/api/session says
 // refusals without session
 for(const [p,o] of [['/api/publish',P(base)],['/api/upload',{method:'POST',body:jpg()}],['/api/restore',{method:'POST'}],['/api/export',{ed:true}]]){r=await t.call(p,o);ok('no cookie: '+p+' refused (401)',r.status===401);}
 r=await t.call('/api/export',{ed:true,cookie:'__Host-dy_session=garbage'});ok('garbage cookie refused (401)',r.status===401);
-r=await t.call('/api/export',{ed:true,cookie:C.replace(/.$/,x=>x==='A'?'B':'A')});ok('tampered signature refused (401)',r.status===401);
+r=await t.call('/api/export',{ed:true,cookie:C.replace(/\.(.)(?=[^.]*$)/,(m,x)=>'.'+(x==='A'?'B':'A'))});ok('tampered signature refused (401)',r.status===401);
 const parts=C.split('=')[1].split('.');
 r=await t.call('/api/export',{ed:true,cookie:'__Host-dy_session='+parts[0]+'.'+(Number(parts[1])+99999)+'.'+parts[2]});ok('tampered expiry refused (401)',r.status===401);
 const other=mk({EDITOR_PASSCODE:'another-secret-123456'});const oc=(await other.login('another-secret-123456')).cookie;
@@ -135,6 +135,23 @@ r=await t.call('/api/restore',{method:'POST',cookie:CS});j=await r.json();ok('re
 r=await t.call('/api/export',{ed:true,cookie:CS});j=await r.json();ok('after going back, the newer version is the "previous" one (press again to put it back)',j.content.version==='v1'&&j.previousSavedAt==='2026-10-18T11:30:00.000Z');
 r=await t.call('/admin/');ok('/admin/ is served no-store (no stale or back-button copies)',r.headers.get('Cache-Control')==='no-store');
 r=await t.call('/index');ok('ordinary pages are not forced to no-store',r.headers.get('Cache-Control')!=='no-store');
+// server-side overlay helpers (no-JS views): sanitiser, page mapping, which edits apply
+{const W=await import('../_worker.js');const {cleanHtml:cl,pageKeyFor:pk,overlayFor:of}=W;
+ok('cleanHtml keeps allowed inline markup',cl('Watch the <span class="r">magic TEST</span>')==='Watch the <span class="r">magic TEST</span>');
+ok('cleanHtml drops script with its content',cl('a<script>alert(1)</script>b')==='ab');
+ok('cleanHtml drops iframe, style, svg and comments',cl('x<iframe src=a></iframe><style>p{}</style><svg><g/></svg><!-- c -->y')==='xy');
+ok('cleanHtml unwraps tags that are not allowed',cl('<div><p>hi <b>there</b></p></div>')==='hi <b>there</b>');
+ok('cleanHtml removes javascript: and encoded javascript: hrefs',cl('<a href="javascript:x()">a</a>')==='<a>a</a>'&&cl('<a href="&#106;avascript:x()">a</a>')==='<a>a</a>'&&cl('<a href=" JaVa\tScript:x">a</a>')==='<a>a</a>');
+ok('cleanHtml keeps safe hrefs and drops event handlers',cl('<a href="contact.html" onclick="x()" target="_blank">c</a>')==='<a href="contact.html" target="_blank">c</a>');
+ok('cleanHtml drops style with url() and keeps plain style',cl('<span style="background:url(x)">a</span>')==='<span>a</span>'&&cl('<span style="color:red">a</span>')==='<span style="color:red">a</span>');
+ok('cleanHtml escapes stray < > & but keeps entities',cl('a < b & c &amp; d > e')==='a &lt; b &amp; c &amp; d &gt; e');
+ok('cleanHtml closes unclosed tags and handles br',cl('<b>bold<br>line')==='<b>bold<br>line</b>');
+ok('cleanHtml tolerates empty and null',cl('')===''&&cl(null)==='');
+ok('pageKeyFor maps clean and .html paths',pk('/')==='index'&&pk('/index')==='index'&&pk('/index.html')==='index');
+ok('pageKeyFor refuses unknown, admin, api and the page template',pk('/admin/')===null&&pk('/api/export')===null&&pk('/page')===null&&pk('/nope')===null&&pk('/content.json')===null);
+const oc=of({pages:{index:{text:{t1:'A'},img:{i1:{src:'/uploads/img-x.jpg'}},hidden:['s2']}},site:{text:{t9:'F'}},seo:{index:{title:'T',description:'D'}}},'index');
+ok('overlayFor splits page and site scope and carries hidden, title, description',oc.page.text.t1==='A'&&oc.page.img.i1.src==='/uploads/img-x.jpg'&&oc.site.text.t9==='F'&&oc.hidden[0]==='s2'&&oc.title==='T'&&oc.description==='D');
+ok('overlayFor survives empty or odd content',of({},'index').page.text&&of(null,'index').site.img&&of({pages:{index:{text:'x'}}},'index').page.text!==undefined);}
 // no bypass in production entry
 const real=(await import('../_worker.js')).default;
 r=await real.fetch(new Request('https://x.test/api/export',{headers:{'X-DY-Editor':'1','Cf-Access-Jwt-Assertion':'good-token','Authorization':'Bearer test-ok'}}),{CONTENT:fakeKV(),EDITOR_PASSCODE:PASS,ASSETS:fakeAssets({})});ok('production entry has no bypass: made-up headers do not sign anyone in (401)',r.status===401);

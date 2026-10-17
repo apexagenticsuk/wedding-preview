@@ -46,7 +46,7 @@ function closePanel(silent){var cb=panelClose;panelClose=null;var was=!$('#side'
   if(was&&!silent&&inside&&panelOpener){try{panelOpener.focus({preventScroll:true});}catch(e){}}panelOpener=null;}
 $('#sidex').onclick=function(){closePanel();};
 /* ---- API used by the page inside the frame ---- */
-window.DYE={
+window.DYE={niceTime:function(x){return niceTime(x);},
   state:function(){return {content:c,uploads:uploads};},
   page:function(){return page;},
   resolve:function(p){return uploads[p]||p;},
@@ -210,17 +210,20 @@ function doPublish(){
   c.version=new Date().toISOString().replace(/\.\d+Z$/,'Z');var imgs=used(),paths=Object.keys(imgs).filter(function(p){return !uploaded[p];});
   Promise.all(paths.map(function(p){return fetch(imgs[p]).then(function(r){return r.blob();}).then(function(bl){return api('/api/upload',{method:'POST',headers:{'Content-Type':bl.type||'image/jpeg'},body:bl});}).then(function(j){uploaded[p]=j.path;});}))
   .then(function(){var json=JSON.stringify(c);Object.keys(uploaded).forEach(function(p){json=json.split(p).join(uploaded[p]);});return api('/api/publish',{method:'POST',headers:{'Content-Type':'application/json'},body:json});})
-  .then(function(){base=clone(c);localStorage.removeItem(DK());ui();toast('Saved. Your site updates within a minute.',6000);watchLive(c.version);
+  .then(function(pj){base=clone(c);localStorage.removeItem(DK());ui();toast('Saved. Your site updates within a minute.',6000);watchLive(c.version,pj&&pj.savedAt);
   }).catch(function(e){dialog({title:'Publishing failed',text:explain(e),ok:'OK',cancel:false});}).then(function(){btn.disabled=false;btn.textContent='Publish';try{btn.focus({preventScroll:true});}catch(e){}});
 }
-function watchLive(want){var n=0;(function poll(){n++;fetch('/content.json?nocache='+Date.now(),{cache:'no-store'}).then(function(r){return r.json();}).then(function(j){
-  if(String(j.version)===String(want)){toast('Your site is updated.',6000);}else if(n<30)setTimeout(poll,3000);}).catch(function(){if(n<30)setTimeout(poll,3000);});})();}
-function niceTime(iso){if(!iso)return '';var d=new Date(iso);if(isNaN(d))return '';try{return d.toLocaleString('en-IE',{day:'numeric',month:'short',hour:'2-digit',minute:'2-digit'});}catch(e){return d.toString();}}
+function watchLive(want,at){var n=0;function again(){if(n<30)setTimeout(poll,3000);}
+  function poll(){n++;fetch('/content.json?nocache='+Date.now(),{cache:'no-store'}).then(function(r){var h=r.headers.get('X-Saved-At')||'';return r.json().then(function(j){return {j:j,h:h};});}).then(function(o){
+    if(String(o.j.version)!==String(want)||(at&&o.h&&o.h!==at)){again();return;}
+    return fetch('/?nocache='+Date.now(),{cache:'no-store'}).then(function(r){var h=r.headers.get('X-Content-Saved-At');if(h!==null&&at&&h!==at){again();return;}toast('Your site is updated.',6000);});
+  }).catch(again);}poll();}
+function niceTime(iso){if(!iso)return '';var d=new Date(iso);if(isNaN(d))return '';try{return d.toLocaleString('en-GB',{timeZone:'Europe/London',day:'numeric',month:'short',hour:'2-digit',minute:'2-digit',hour12:false})+' UK time';}catch(e){return d.toUTCString();}}
 function goBack(){api('/api/export').then(function(j){
   if(!j.hasPrevious){dialog({title:'Go back one version',text:'There is no earlier version to go back to yet.',ok:'OK',cancel:false});return;}
   var when=niceTime(j.previousSavedAt);
   dialog({title:'Go back one version?',text:'Go back to the version saved before your last publish?'+(when?' It was saved '+when+'.':'')+' Pressing Go back again later puts the newer version back.',ok:'Go back'}).then(function(r){if(!r.ok)return;
-    api('/api/restore',{method:'POST'}).then(function(rs){localStorage.removeItem(DK());$('#helpm').hidden=true;note='Went back one version. Your site updates within a minute.';toast(note+' Press Go back again to put the newer version back.',8000);start();watchLive(rs.content&&rs.content.version);})
+    api('/api/restore',{method:'POST'}).then(function(rs){localStorage.removeItem(DK());$('#helpm').hidden=true;note='Went back one version. Your site updates within a minute.';toast(note+' Press Go back again to put the newer version back.',8000);start();watchLive(rs.content&&rs.content.version,rs.savedAt);})
     .catch(function(e){dialog({title:'Could not go back',text:explain(e),ok:'OK',cancel:false});});});
 }).catch(function(e){dialog({title:'Could not go back',text:explain(e),ok:'OK',cancel:false});});}
 function explain(e){var s=e.status;if(s===401||s===403)return 'your session has ended. Reload this page and enter your passcode again.';if(s===413)return 'something is too big. Pictures can be up to 5 MB.';if(s===415)return 'a picture is not a JPEG, PNG or WebP.';if(s===400)return 'the website did not accept these changes ('+e.message+'). Please tell your web person.';if(s===409)return e.message;if(s===404||s===405||s===503)return 'publishing is not available on this address.';return 'something went wrong. Check your internet connection and try again.';}

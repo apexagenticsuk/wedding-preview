@@ -8,6 +8,7 @@ const SITE_NAME_SUFFIX = ' | The Wedding Comedian';
 const BUILTIN = ['index', 'videos', 'testimonials', 'faqs', 'blog', 'contact', 'page'];
 const REQUIRED_KEYS = ['version', '_help', 'siteUrl', 'theme', 'contact', 'set', 'socials', 'facts', 'faqs', 'testimonials', 'praise', 'gallery', 'galleryIntro', 'clips', 'posts', 'site', 'pages', 'dims'];
 const OPTIONAL_KEYS = ['nav', 'custom', 'seo', 'contactSocials'];
+const BSTY = ['rose', 'gold', 'ghost', 'call'];
 /* ---- end of per-site settings ---- */
 const RESERVED = BUILTIN.concat(['admin', 'content', 'assets', 'style', 'site', 'robots', 'weddings', '404', 'tools', 'api', 'uploads', 'cloudflare']);
 const MAX_JSON = 1024 * 1024;
@@ -91,6 +92,87 @@ function validate(c) {
     for (const k of Object.keys(c.custom)) if (!SLUG_RE.test(k) || RESERVED.indexOf(k) > -1) return 'The page address "' + k + '" is not allowed.';
   }
   return '';
+}
+
+/* ---- server-side overlay: saved text, pictures, links and button styles are written into the page HTML the Function serves,
+   so curl, search engines, link previews and no-JS visitors see the same as the browser overlay (content.js) after publish.
+   Structural edits (added/moved sections, lists, menus, shared collections) still need JavaScript. ---- */
+const OK_TAGS = { SPAN: 1, B: 1, I: 1, EM: 1, STRONG: 1, SMALL: 1, BR: 1, A: 1, CITE: 1, SUP: 1 };
+const OK_ATTRS = /^(class|href|target|rel|style|title)$/;
+const DROP_TAGS = /^(SCRIPT|STYLE|IFRAME|OBJECT|EMBED|SVG|TEMPLATE|NOSCRIPT)$/;
+function escAttr(s) { return String(s).replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/</g, '&lt;').replace(/>/g, '&gt;'); }
+function decodeEntities(s) {
+  return String(s).replace(/&#x([0-9a-f]+);?/gi, (m, h) => String.fromCodePoint(Math.min(parseInt(h, 16), 0x10ffff)))
+    .replace(/&#(\d+);?/g, (m, d) => String.fromCodePoint(Math.min(parseInt(d, 10), 0x10ffff)))
+    .replace(/&(colon|tab|newline);?/gi, (m, n) => ({ colon: ':', tab: '\t', newline: '\n' }[n.toLowerCase()]));
+}
+function unsafeUrl(v) { return /^(javascript|data|vbscript):/i.test(decodeEntities(v).replace(/[\u0000-\u0020\u007f-\u009f]+/g, '')); }
+/* Same allow-list as content.js clean(): a few inline tags and attributes, everything else unwrapped or dropped. */
+export function cleanHtml(html) {
+  const src = String(html == null ? '' : html), re = /<!--[\s\S]*?-->|<\/?([a-zA-Z][a-zA-Z0-9]*)((?:"[^"]*"|'[^']*'|[^>"'])*)>|[^<]+|</g;
+  let out = '', m, skip = null, depth = 0; const stack = [];
+  while ((m = re.exec(src))) {
+    const tok = m[0];
+    if (tok.slice(0, 4) === '<!--') continue;
+    if (!m[1]) { if (!skip) out += tok === '<' ? '&lt;' : tok.replace(/&(?!#?\w+;)/g, '&amp;').replace(/>/g, '&gt;'); continue; }
+    const name = m[1].toUpperCase(), closing = tok.charAt(1) === '/';
+    if (skip) { if (name === skip) { if (closing) { if (--depth === 0) skip = null; } else if (tok.slice(-2) !== '/>') depth++; } continue; }
+    if (DROP_TAGS.test(name)) { if (!closing && tok.slice(-2) !== '/>') { skip = name; depth = 1; } continue; }
+    if (!OK_TAGS[name]) continue;
+    const tag = name.toLowerCase();
+    if (closing) { const i = stack.lastIndexOf(tag); if (i > -1 && tag !== 'br') { while (stack.length > i) out += '</' + stack.pop() + '>'; } continue; }
+    let attrs = '', am; const are = /([^\s=\/"'<>]+)(?:\s*=\s*("[^"]*"|'[^']*'|[^\s"'>]+))?/g;
+    while ((am = are.exec(m[2] || ''))) {
+      const nm = am[1].toLowerCase(); let v = am[2] == null ? '' : am[2];
+      if (v.charAt(0) === '"' || v.charAt(0) === "'") v = v.slice(1, -1);
+      if (!OK_ATTRS.test(nm)) continue;
+      if (nm === 'href' && unsafeUrl(v)) continue;
+      if (nm === 'style' && /url\(|expression/i.test(decodeEntities(v))) continue;
+      attrs += ' ' + nm + '="' + escAttr(decodeEntities(v)) + '"';
+    }
+    out += '<' + tag + attrs + '>';
+    if (tag !== 'br') stack.push(tag);
+  }
+  while (stack.length) out += '</' + stack.pop() + '>';
+  return out;
+}
+export function pageKeyFor(path) {
+  const k = String(path || '/').replace(/^\/+/, '').replace(/\.html$/, '').replace(/\/$/, '') || 'index';
+  return BUILTIN.indexOf(k) > -1 && k !== 'page' ? k : null;
+}
+function safeHref(u) { u = String(u == null ? '' : u); return /^\s*(javascript|data):/i.test(u) ? '#' : u; }
+/* Which saved edits apply to which element, mirroring apply() in content.js for text, picture, link and button-style edits. */
+export function overlayFor(c, pageKey) {
+  const P = (c && c.pages && c.pages[pageKey]) || {}, S = (c && c.site) || {};
+  const pick = (E, k) => (E && typeof E[k] === 'object' && E[k]) || {};
+  const seo = (c && c.seo && c.seo[pageKey]) || {};
+  return { site: { text: pick(S, 'text'), img: pick(S, 'img'), link: pick(S, 'link'), style: pick(S, 'style') },
+    page: { text: pick(P, 'text'), img: pick(P, 'img'), link: pick(P, 'link'), style: pick(P, 'style') },
+    hidden: Array.isArray(P.hidden) ? P.hidden : [], title: typeof seo.title === 'string' ? seo.title : '', description: typeof seo.description === 'string' ? seo.description : '' };
+}
+function has(o, k) { return Object.prototype.hasOwnProperty.call(o, k); }
+export function rewriteWithContent(resp, c, pageKey, savedAt) {
+  const ov = overlayFor(c, pageKey); let depth = 0;
+  const rw = new HTMLRewriter()
+    .on('header.top, footer, .sticky', { element(el) { depth++; if (el.onEndTag) el.onEndTag(() => { depth--; }); } })
+    .on('[data-dy]', { element(el) {
+      const E = depth > 0 ? ov.site : ov.page;
+      const ids = String(el.getAttribute('data-dy') || '').split(' ').filter(Boolean);
+      ids.forEach((id) => {
+        if (id.charAt(0) === 's' && ov.hidden.indexOf(id) > -1) el.setAttribute('style', (el.getAttribute('style') ? el.getAttribute('style') + ';' : '') + 'display:none');
+        if (has(E.text, id) && typeof E.text[id] === 'string') el.setInnerContent(cleanHtml(E.text[id]), { html: true });
+        const im = E.img[id];
+        if (im && typeof im === 'object') { if (im.src) { el.setAttribute('src', String(im.src)); el.removeAttribute('srcset'); } if (im.alt != null) el.setAttribute('alt', String(im.alt)); }
+        if (has(E.link, id) && E.link[id] != null) { const h = String(E.link[id]); el.setAttribute('href', safeHref(h)); if (/^https?:/.test(h)) { el.setAttribute('target', '_blank'); el.setAttribute('rel', 'noopener'); } else el.removeAttribute('target'); }
+        const st = E.style[id];
+        if (typeof st === 'string' && BSTY.indexOf(st) > -1) el.setAttribute('class', (el.getAttribute('class') || '').split(/\s+/).filter((x) => x && BSTY.indexOf(x) < 0).concat(st).join(' '));
+      });
+    } });
+  if (ov.title) rw.on('title', { element(el) { el.setInnerContent(ov.title); } });
+  if (ov.description) rw.on('meta[name="description"]', { element(el) { el.setAttribute('content', ov.description); } });
+  const h = new Headers(resp.headers);
+  h.set('Cache-Control', 'no-cache'); h.set('X-Content-Saved-At', savedAt || '');
+  return rw.transform(new Response(resp.body, { status: resp.status, statusText: resp.statusText, headers: h }));
 }
 
 export function makeWorker(deps) {
@@ -247,6 +329,23 @@ export function makeWorker(deps) {
         }
       } catch (e) {
         return err(500, 'Something went wrong on the server.');
+      }
+      const pk = (request.method === 'GET' || request.method === 'HEAD') && env.CONTENT && typeof HTMLRewriter !== 'undefined' ? pageKeyFor(path) : null;
+      if (pk) {
+        try {
+          const saved = await env.CONTENT.getWithMetadata('content.json');
+          if (saved && saved.value) {
+            const c = JSON.parse(saved.value), hd = new Headers(request.headers);
+            hd.delete('If-None-Match'); hd.delete('If-Modified-Since');
+            const page = await env.ASSETS.fetch(new Request(request, { headers: hd }));
+            if (page.status === 200 && /text\/html/i.test(page.headers.get('Content-Type') || '')) {
+              const out = rewriteWithContent(page, c, pk, (saved.metadata && saved.metadata.savedAt) || '');
+              out.headers.delete('ETag'); out.headers.delete('Last-Modified');
+              return withHeaders(out);
+            }
+            return withHeaders(page);
+          }
+        } catch (e) { /* fall through to the page exactly as built */ }
       }
       const asset = await env.ASSETS.fetch(request);
       if (path === '/admin' || path.startsWith('/admin/')) return withHeaders(asset, { 'Cache-Control': 'no-store' });

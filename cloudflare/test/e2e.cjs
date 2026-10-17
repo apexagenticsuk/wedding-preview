@@ -38,6 +38,7 @@ const up=await p.evaluate(async()=>{const cv=document.createElement('canvas');cv
 ok('picture upload made a local draft path',/^assets\/uploads\/img-/.test(up),up);
 await pubClick(p);await p.waitForFunction(()=>/Saved\.|Your site is updated/.test(document.querySelector('#toast').textContent),null,{timeout:15000});
 ok('success text is exactly: Saved. Your site updates within a minute.',/^(Saved. Your site updates within a minute.|Your site is updated.)/.test(await p.textContent('#toast')),await p.textContent('#toast'));
+{const nt=await p.evaluate(()=>[DYE.niceTime('2026-10-17T19:26:00Z'),DYE.niceTime('2026-01-15T10:05:00Z'),DYE.niceTime('2026-10-17T23:30:00.000Z'),DYE.niceTime('')]);ok('saved times show in UK time from the server timestamp (BST and GMT, not the browser clock)',nt[0]==='17 Oct, 20:26 UK time'&&nt[1]==='15 Jan, 10:05 UK time'&&nt[2]==='18 Oct, 00:30 UK time'&&nt[3]==='',JSON.stringify(nt));}
 await p.waitForFunction(()=>/Your site is updated\./.test(document.querySelector('#toast').textContent),null,{timeout:20000}).then(()=>ok('after Saved, the editor confirms "Your site is updated." once the live site matches',true)).catch(()=>ok('after Saved, the editor confirms "Your site is updated." once the live site matches',false));
 // 3. the public site (no session) shows it straight away
 const pub=await mk();
