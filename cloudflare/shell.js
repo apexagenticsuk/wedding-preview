@@ -1,7 +1,7 @@
 /* Visual editor shell: draft, history, pages, pickers, preview and publishing. The page itself is edited in the iframe (inline.js). */
 (function(){
 /* Cloudflare Pages edition: publishes through the site's own Function (/api/*), protected by a passcode login. No keys, no GitHub. */
-var MK='dy-mode',uploaded={};
+var MK='dy-mode',uploaded={},note='';
 var $=function(s){return document.querySelector(s);};
 var LIB=window.DY_LIB,BUILTIN=LIB.BUILTIN,RESERVED=BUILTIN.concat(['page','admin','content','assets','style','site','robots','weddings','404','tools']);
 var mode=localStorage.getItem(MK)==='demo'?'demo':'';
@@ -86,7 +86,7 @@ function used(){var s=JSON.stringify(c),o={};Object.keys(uploads).forEach(functi
 function dirty(){return c&&base&&JSON.stringify(c)!==JSON.stringify(base);}
 function persist(){try{if(dirty())localStorage.setItem(DK(),JSON.stringify({content:c,uploads:used(),base:base.version}));else localStorage.removeItem(DK());}catch(e){toast('This device is out of space for unpublished pictures. Publish, or use smaller photos.',6000);}}
 function record(){var s=JSON.stringify(c);if(hist[pos]===s)return;hist=hist.slice(0,pos+1);hist.push(s);if(hist.length>200)hist.shift();pos=hist.length-1;persist();ui();}
-function ui(){var d=dirty(),p=$('#pill');$('#publish').classList.toggle('ready',!!d);p.className='pill'+(d?' dirty':'');p.textContent=d?'● You have unpublished changes':'✓ Everything is published';
+function ui(){var d=dirty(),p=$('#pill');$('#publish').classList.toggle('ready',!!d);p.className='pill'+(d?' dirty':'');if(d)note='';p.textContent=d?'● You have unpublished changes':(note||'✓ Everything is published');
   if(mode==='demo')p.textContent=d?'● Demo changes (this device only)':'Demo: nothing changed yet';
   $('#undo').disabled=$('#pundo').disabled=pos<=0;$('#redo').disabled=$('#predo').disabled=pos>=hist.length-1;renderPicker();}
 function after(){persist();ui();if(!exists(page)){page='index';history.replaceState(null,'','?page=index');}renderPicker();reload();if(!$('#pagesm').hidden)pagesModal();}
@@ -126,7 +126,7 @@ frame.addEventListener('load',function(){if(scrollKeep==null)return;var y=scroll
 function start(){
   $('#login').hidden=true;$('#app').hidden=false;$('#demobadge').hidden=mode!=='demo';
   var pub=$('#publish');pub.title=mode==='live'?'Put your changes on the real website':'Demo mode: shows what publishing would do';
-  $('#out').textContent=mode==='live'?'Sign out':'Exit demo';var rb=$('#restorebox');if(rb)rb.remove();if(mode==='live'){var hm=$('#helpm .mc'),bx=document.createElement('div');bx.id='restorebox';bx.innerHTML='<button class="btn ghost" id="restore">Go back one version</button>';hm.appendChild(bx);$('#restore').onclick=goBack;}
+  $('#out').textContent=mode==='live'?'Sign out':'Exit demo';var rb=$('#restorebox');if(rb)rb.remove();if(mode==='live'){var hm=$('#helpm .mc'),bx=document.createElement('div');bx.id='restorebox';bx.innerHTML='<button class="btn ghost" id="restore">Go back one version</button>';hm.insertBefore(bx,hm.querySelector('.steps')||hm.lastChild);$('#restore').onclick=goBack;}
   var p=$('#pill');p.textContent='Loading…';
   (mode==='live'?api('/api/export').then(function(j){if(!j.content)throw new Error('no content');return j.content;}):fetch('../content.json',{cache:'no-store'}).then(function(r){return r.json();}))
   .then(function(pub){base=norm(pub);var d=null;try{d=JSON.parse(localStorage.getItem(DK())||'null');}catch(e){}
@@ -210,12 +210,19 @@ function doPublish(){
   c.version=new Date().toISOString().replace(/\.\d+Z$/,'Z');var imgs=used(),paths=Object.keys(imgs).filter(function(p){return !uploaded[p];});
   Promise.all(paths.map(function(p){return fetch(imgs[p]).then(function(r){return r.blob();}).then(function(bl){return api('/api/upload',{method:'POST',headers:{'Content-Type':bl.type||'image/jpeg'},body:bl});}).then(function(j){uploaded[p]=j.path;});}))
   .then(function(){var json=JSON.stringify(c);Object.keys(uploaded).forEach(function(p){json=json.split(p).join(uploaded[p]);});return api('/api/publish',{method:'POST',headers:{'Content-Type':'application/json'},body:json});})
-  .then(function(){base=clone(c);localStorage.removeItem(DK());ui();toast('Saved. Your site updates within a minute.',6000);
+  .then(function(){base=clone(c);localStorage.removeItem(DK());ui();toast('Saved. Your site updates within a minute.',6000);watchLive(c.version);
   }).catch(function(e){dialog({title:'Publishing failed',text:explain(e),ok:'OK',cancel:false});}).then(function(){btn.disabled=false;btn.textContent='Publish';try{btn.focus({preventScroll:true});}catch(e){}});
 }
-function goBack(){dialog({title:'Go back one version?',text:'The website goes back to how it was before your last Publish.',ok:'Go back'}).then(function(r){if(!r.ok)return;
-  api('/api/restore',{method:'POST'}).then(function(){localStorage.removeItem(DK());$('#helpm').hidden=true;toast('Saved. Your site updates within a minute.',6000);start();})
-  .catch(function(e){dialog({title:'Could not go back',text:explain(e),ok:'OK',cancel:false});});});}
+function watchLive(want){var n=0;(function poll(){n++;fetch('/content.json?nocache='+Date.now(),{cache:'no-store'}).then(function(r){return r.json();}).then(function(j){
+  if(String(j.version)===String(want)){toast('Your site is updated.',6000);}else if(n<30)setTimeout(poll,3000);}).catch(function(){if(n<30)setTimeout(poll,3000);});})();}
+function niceTime(iso){if(!iso)return '';var d=new Date(iso);if(isNaN(d))return '';try{return d.toLocaleString('en-IE',{day:'numeric',month:'short',hour:'2-digit',minute:'2-digit'});}catch(e){return d.toString();}}
+function goBack(){api('/api/export').then(function(j){
+  if(!j.hasPrevious){dialog({title:'Go back one version',text:'There is no earlier version to go back to yet.',ok:'OK',cancel:false});return;}
+  var when=niceTime(j.previousSavedAt);
+  dialog({title:'Go back one version?',text:'Go back to the version saved before your last publish?'+(when?' It was saved '+when+'.':'')+' Pressing Go back again later puts the newer version back.',ok:'Go back'}).then(function(r){if(!r.ok)return;
+    api('/api/restore',{method:'POST'}).then(function(rs){localStorage.removeItem(DK());$('#helpm').hidden=true;note='Went back one version. Your site updates within a minute.';toast(note+' Press Go back again to put the newer version back.',8000);start();watchLive(rs.content&&rs.content.version);})
+    .catch(function(e){dialog({title:'Could not go back',text:explain(e),ok:'OK',cancel:false});});});
+}).catch(function(e){dialog({title:'Could not go back',text:explain(e),ok:'OK',cancel:false});});}
 function explain(e){var s=e.status;if(s===401||s===403)return 'your session has ended. Reload this page and enter your passcode again.';if(s===413)return 'something is too big. Pictures can be up to 5 MB.';if(s===415)return 'a picture is not a JPEG, PNG or WebP.';if(s===400)return 'the website did not accept these changes ('+e.message+'). Please tell your web person.';if(s===409)return e.message;if(s===404||s===405||s===503)return 'publishing is not available on this address.';return 'something went wrong. Check your internet connection and try again.';}
 
 /* ---- sign in ---- */
@@ -276,10 +283,11 @@ $('#vphone').onclick=function(){$('#stage').classList.add('phone');this.classLis
 $('#undo').onclick=undo;$('#redo').onclick=redo;$('#pundo').onclick=undo;$('#predo').onclick=redo;$('#preview').onclick=preview;$('#publish').onclick=publish;
 $('#helpb').onclick=function(){$('#helpm').hidden=false;};$('#style').onclick=styleModal;
 $('#discard').onclick=function(){if(!dirty()){toast('There is nothing unpublished to throw away.');return;}dialog({title:'Throw away changes?',text:'All changes that are not published yet will be removed.',ok:'Throw away',danger:true}).then(function(r){if(!r.ok)return;c=clone(base);uploads={};record();localStorage.removeItem(DK());$('#helpm').hidden=true;if(!exists(page))page='index';reload();});};
-$('#out').onclick=function(){if(mode==='live'){persist();api('/api/logout',{method:'POST'}).catch(function(){}).then(function(){location.reload();});return;}localStorage.removeItem(MK);location.reload();};
+$('#out').onclick=function(){if(mode==='live'){persist();var ob=$('#out');ob.disabled=true;api('/api/logout',{method:'POST'}).then(function(){location.reload();}).catch(function(){ob.disabled=false;toast('Could not sign out. Please try again.');});return;}localStorage.removeItem(MK);location.reload();};
 $('#psettings').onclick=function(){pageSettings(page);};
 $('#signin').onclick=signin;$('#pass').onkeydown=function(e){if(e.key==='Enter')signin();};
 $('#demo').onclick=function(){mode='demo';localStorage.setItem(MK,'demo');start();};
 
 if(mode==='demo')start();else probe();
+window.addEventListener('pageshow',function(e){if(e.persisted)location.reload();});
 })();

@@ -7,6 +7,7 @@
   <label for="pass">Enter your passcode</label>
   <input id="pass" type="password" autocomplete="current-password" maxlength="256">
   <div class="row"><button class="btn red" id="signin">Sign in</button><button class="btn ghost" id="demo">Just look around (demo mode)</button></div>
+  <p class="hint">Try the editor without changing the real site.</p>
   <p id="loginmsg" class="msg"></p>
 </div></div>
 
@@ -37,7 +38,7 @@
 <div><h3>Check, then publish</h3><p><b>📱 Phone</b> shows how it looks on a mobile. <b>Preview</b> opens the site with your changes. When you're happy, tap the big red <b>Publish</b>. The real website updates in about a minute.</p></div>
 <div><h3>Add something new</h3><p>Click any heading or paragraph and tap the yellow <b>+</b> under it (or <b>+ Add below</b>) to add a heading, text, picture, button, video, gallery, quote, cards and more. Use the blue <b>+ Add section</b> lines between sections for ready-made layouts.</p></div>
 <div><h3>Add or change pages</h3><p>Tap <b>Pages</b> at the top. <b>+ New page</b> makes a new page from a ready-made layout and adds it to the menu. From there you can also rename, copy, delete, hide from the menu, change the menu order and the Google title and description.</p></div>
-<div><h3>Made a mistake?</h3><p>Use <b>↶ Undo</b>. Unpublished changes are kept even if you close the page. Every published version is saved, so your web person can always roll back.</p>
+<div><h3>Made a mistake?</h3><p>Use <b>↶ Undo</b>. Unpublished changes are kept even if you close the page. After you publish, the version before it is kept. To undo a publish, open <b>Help</b> and press <b>Go back one version</b> at the top.</p>
 <button class="btn ghost sm" id="discard">Throw away all unpublished changes</button></div>
 </div></div></div>
 
@@ -75,6 +76,6 @@
 <p class="hint">This preview site is hidden from Google on purpose; these details apply when the real site goes live.</p>
 <div class="row"><button class="btn red" id="seo-save">Save</button><button class="btn ghost" data-close>Cancel</button></div></div></div>
 
-<div id="dlg" class="modal dlg" hidden><div class="mc"><h2 id="dlg-t"></h2><p id="dlg-x" class="dlgtext"></p><div id="dlg-f"></div><p id="dlg-e" class="msg err"></p><div class="row" id="dlg-b"></div></div></div>
+<div id="dlg" class="modal dlg" role="dialog" aria-modal="true" aria-labelledby="dlg-t" hidden><div class="mc"><h2 id="dlg-t"></h2><p id="dlg-x" class="dlgtext"></p><div id="dlg-f"></div><p id="dlg-e" class="msg err"></p><div class="row" id="dlg-b"></div></div></div>
 <script>window.DY_SHELL=true;</script><script src="../content.js"></script><script src="drag.js"></script><script src="shell.js"></script><script src="shared.js"></script>
 </body></html>

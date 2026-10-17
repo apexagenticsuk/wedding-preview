@@ -62,9 +62,6 @@ r=await t.call('/api/export',{cookie:C});ok('session without the editor header r
 r=await t.call('/api/export',{cookie:C,ed:true,headers:{Origin:'https://evil.test'}});ok('session from another origin refused (403)',r.status===403);
 r=await t.call('/api/publish',{...P(base,C),ed:false});ok('publish without the editor header refused (403)',r.status===403);
 r=await t.call('/api/publish',{...P(base,C),headers:{Origin:'https://evil.test'}});ok('publish from another origin refused (403)',r.status===403);
-// logout
-r=await t.call('/api/logout',{method:'POST',cookie:C});ok('logout clears the cookie (Max-Age=0)',r.status===200&&/Max-Age=0/.test(r.headers.get('Set-Cookie'))&&/^__Host-dy_session=;/.test(r.headers.get('Set-Cookie')));
-r=await t.call('/api/logout',{method:'POST',ed:false});ok('logout without the editor header refused (403)',r.status===403);
 // publish refusals with session
 r=await t.call('/api/publish',P('{broken',C));ok('broken JSON refused (400)',r.status===400);
 const w1=Object.assign({},base);delete w1.contact;r=await t.call('/api/publish',P(w1,C));ok('missing key refused (400)',r.status===400);
@@ -117,6 +114,27 @@ t=mk();for(let i=0;i<4;i++)await t.login('bad');t.clock.t+=16*60*1000;r=await t.
 t=mk();for(let i=0;i<3;i++)await t.login('bad');r=await t.login(PASS);ok('a good login still works before the limit',r.r.status===200);
 r=await t.login('bad');r=await t.login('bad');r=await t.login('bad');ok('a good login clears the failure count (3 more wrong is not a lock)',r.r.status===401);
 t=mk();let hit=false;for(let i=0;i<30;i++){t.clock.t+=4*60*1000;r=await t.login('bad'+i);if(r.r.status===429){hit=true;break;}}ok('slow guessing is capped per hour (10 an hour then locked)',hit);
+// logout, revoke, savedAt, no-store
+t=mk();let LC=(await t.login()).cookie;
+r=await t.call('/api/logout',{method:'POST',ed:false,cookie:LC});ok('logout without the editor header refused (403)',r.status===403);
+r=await t.call('/api/export',{ed:true,cookie:LC});ok('session still fine after a refused logout',r.status===200);
+r=await t.call('/api/logout',{method:'POST',cookie:LC});const sc2=r.headers.get('Set-Cookie');ok('logout clears the cookie with the same attributes (name, Path=/, Secure, HttpOnly, SameSite=Strict, Max-Age=0)',r.status===200&&/^__Host-dy_session=;/.test(sc2)&&/Path=\//.test(sc2)&&/Secure/.test(sc2)&&/HttpOnly/.test(sc2)&&/SameSite=Strict/.test(sc2)&&/Max-Age=0/.test(sc2),sc2);
+ok('logout response is no-store',r.headers.get('Cache-Control')==='no-store');
+r=await t.call('/api/export',{ed:true,cookie:LC});ok('the old cookie is refused after logout even if a browser kept it (401)',r.status===401);
+r=await t.call('/api/session',{cookie:LC});j=await r.json();ok('/api/session says signed out for the old cookie, and is no-store',j.signedIn===false&&r.headers.get('Cache-Control')==='no-store');
+r=await t.call('/api/publish',P(base,LC));ok('the old cookie cannot publish after logout (401)',r.status===401);
+t.clock.t+=2000;const l2=await t.login();r=await t.call('/api/export',{ed:true,cookie:l2.cookie});ok('signing in again after logout works',r.status===200);
+r=await t.call('/api/export',{ed:true,cookie:LC});ok('and the old cookie stays refused',r.status===401);
+const t9=mk();r=await t9.call('/api/logout',{method:'POST'});ok('logout with no session writes no revoke marker',!t9.kv.m.has('revoked'));
+// savedAt and previous time
+t=mk();const CS=(await t.login()).cookie;t.clock.t=Date.parse('2026-10-18T10:00:00Z');
+await t.call('/api/publish',P(Object.assign({},base,{version:'v1'}),CS));t.clock.t=Date.parse('2026-10-18T11:30:00Z');await t.call('/api/publish',P(Object.assign({},base,{version:'v2'}),CS));
+r=await t.call('/api/export',{ed:true,cookie:CS});j=await r.json();ok('export reports savedAt and previousSavedAt',j.savedAt==='2026-10-18T11:30:00.000Z'&&j.previousSavedAt==='2026-10-18T10:00:00.000Z',JSON.stringify([j.savedAt,j.previousSavedAt]));
+r=await t.call('/content.json');ok('/content.json carries X-Saved-At for diagnosing which version a location serves',r.headers.get('X-Saved-At')==='2026-10-18T11:30:00.000Z');
+r=await t.call('/api/restore',{method:'POST',cookie:CS});j=await r.json();ok('restore says which version time it went back to and which it replaced',j.savedAt==='2026-10-18T10:00:00.000Z'&&j.previousSavedAt==='2026-10-18T11:30:00.000Z');
+r=await t.call('/api/export',{ed:true,cookie:CS});j=await r.json();ok('after going back, the newer version is the "previous" one (press again to put it back)',j.content.version==='v1'&&j.previousSavedAt==='2026-10-18T11:30:00.000Z');
+r=await t.call('/admin/');ok('/admin/ is served no-store (no stale or back-button copies)',r.headers.get('Cache-Control')==='no-store');
+r=await t.call('/index');ok('ordinary pages are not forced to no-store',r.headers.get('Cache-Control')!=='no-store');
 // no bypass in production entry
 const real=(await import('../_worker.js')).default;
 r=await real.fetch(new Request('https://x.test/api/export',{headers:{'X-DY-Editor':'1','Cf-Access-Jwt-Assertion':'good-token','Authorization':'Bearer test-ok'}}),{CONTENT:fakeKV(),EDITOR_PASSCODE:PASS,ASSETS:fakeAssets({})});ok('production entry has no bypass: made-up headers do not sign anyone in (401)',r.status===401);

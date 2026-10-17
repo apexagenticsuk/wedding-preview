@@ -36,7 +36,7 @@ async function signKey(env) {
   return crypto.subtle.importKey('raw', raw, { name: 'HMAC', hash: 'SHA-256' }, false, ['sign', 'verify']);
 }
 async function makeSession(env, nowMs) {
-  const id = b64u(crypto.getRandomValues(new Uint8Array(16))), exp = Math.floor(nowMs / 1000) + SESSION_SECONDS;
+  const id = Math.floor(nowMs).toString(36).padStart(9, '0') + b64u(crypto.getRandomValues(new Uint8Array(12))), exp = Math.floor(nowMs / 1000) + SESSION_SECONDS;
   const body = id + '.' + exp;
   const sig = await crypto.subtle.sign('HMAC', await signKey(env), enc.encode(body));
   return body + '.' + b64u(sig);
@@ -49,9 +49,14 @@ function readCookie(request, name) {
 async function sessionValid(request, env, nowMs) {
   if (!configured(env)) return false;
   const v = readCookie(request, COOKIE), parts = v.split('.');
-  if (parts.length !== 3 || !/^[A-Za-z0-9_-]{16,32}$/.test(parts[0]) || !/^\d{1,12}$/.test(parts[1])) return false;
+  if (parts.length !== 3 || !/^[0-9a-z]{9}[A-Za-z0-9_-]{16}$/.test(parts[0]) || !/^\d{1,12}$/.test(parts[1])) return false;
   if (Number(parts[1]) <= Math.floor(nowMs / 1000)) return false;
-  try { return await crypto.subtle.verify('HMAC', await signKey(env), b64uToBytes(parts[2]), enc.encode(parts[0] + '.' + parts[1])); } catch (e) { return false; }
+  try {
+    if (!(await crypto.subtle.verify('HMAC', await signKey(env), b64uToBytes(parts[2]), enc.encode(parts[0] + '.' + parts[1])))) return false;
+    /* signing out revokes every session issued up to that second, even if a browser kept its cookie */
+    const revoked = Number(await env.CONTENT.get('revoked')) || 0, issued = parseInt(parts[0].slice(0, 9), 36);
+    return issued > revoked;
+  } catch (e) { return false; }
 }
 function cookieHeader(value, maxAge) { return COOKIE + '=' + value + '; HttpOnly; Secure; SameSite=Strict; Path=/; Max-Age=' + maxAge; }
 
@@ -144,15 +149,19 @@ export function makeWorker(deps) {
     if (path === '/api/session') return json({ ok: true, signedIn: await sessionValid(request, env, now()) });
     if (path === '/api/login' || path === '/api/logout') {
       if (!csrfOk(request)) return err(403, 'This request was refused.');
-      if (path === '/api/logout') return json({ ok: true }, 200, { 'Set-Cookie': cookieHeader('', 0) });
+      if (path === '/api/logout') {
+        if (await sessionValid(request, env, now())) await env.CONTENT.put('revoked', String(Math.floor(now())));
+        return json({ ok: true }, 200, { 'Set-Cookie': cookieHeader('', 0) });
+      }
       return await login(request, env);
     }
     if (!(await sessionValid(request, env, now()))) return err(401, 'You are not signed in.');
     if (!csrfOk(request)) return err(403, 'This request was refused.');
 
     if (path === '/api/export') {
-      const cur = await currentJson(env);
-      return json({ ok: true, content: cur ? JSON.parse(cur) : null, images: await listImages(env), hasPrevious: !!(await env.CONTENT.get('previous.json')) });
+      const cur = await currentJson(env), now0 = await env.CONTENT.getWithMetadata('content.json'), prev0 = await env.CONTENT.getWithMetadata('previous.json');
+      return json({ ok: true, content: cur ? JSON.parse(cur) : null, images: await listImages(env), hasPrevious: !!(prev0 && prev0.value),
+        savedAt: (now0 && now0.metadata && now0.metadata.savedAt) || '', previousSavedAt: (prev0 && prev0.metadata && prev0.metadata.savedAt) || '' });
     }
     if (path === '/api/publish') {
       const len = Number(request.headers.get('Content-Length') || 0);
@@ -163,18 +172,20 @@ export function makeWorker(deps) {
       try { c = JSON.parse(text); } catch (e) { return err(400, 'The content is not valid JSON.'); }
       const bad = validate(c);
       if (bad) return err(400, bad);
-      const cur = await env.CONTENT.get('content.json');
-      if (cur) await env.CONTENT.put('previous.json', cur);
-      await env.CONTENT.put('content.json', JSON.stringify(c));
-      return json({ ok: true, version: c.version });
+      const cur = await env.CONTENT.getWithMetadata('content.json');
+      if (cur && cur.value) await env.CONTENT.put('previous.json', cur.value, { metadata: { savedAt: (cur.metadata && cur.metadata.savedAt) || '' } });
+      const savedAt = new Date(now()).toISOString();
+      await env.CONTENT.put('content.json', JSON.stringify(c), { metadata: { savedAt } });
+      return json({ ok: true, version: c.version, savedAt });
     }
     if (path === '/api/restore') {
-      const prev = await env.CONTENT.get('previous.json');
-      if (!prev) return err(409, 'There is no earlier version to go back to.');
-      const cur = await env.CONTENT.get('content.json');
-      await env.CONTENT.put('content.json', prev);
-      if (cur) await env.CONTENT.put('previous.json', cur); else await env.CONTENT.delete('previous.json');
-      return json({ ok: true, content: JSON.parse(prev) });
+      const prev = await env.CONTENT.getWithMetadata('previous.json');
+      if (!prev || !prev.value) return err(409, 'There is no earlier version to go back to.');
+      const cur = await env.CONTENT.getWithMetadata('content.json');
+      const pAt = (prev.metadata && prev.metadata.savedAt) || '';
+      await env.CONTENT.put('content.json', prev.value, { metadata: { savedAt: pAt } });
+      if (cur && cur.value) await env.CONTENT.put('previous.json', cur.value, { metadata: { savedAt: (cur.metadata && cur.metadata.savedAt) || '' } }); else await env.CONTENT.delete('previous.json');
+      return json({ ok: true, content: JSON.parse(prev.value), savedAt: pAt, previousSavedAt: (cur && cur.metadata && cur.metadata.savedAt) || '' });
     }
     if (path === '/api/upload') {
       const len = Number(request.headers.get('Content-Length') || 0);
@@ -218,8 +229,8 @@ export function makeWorker(deps) {
         if (path.startsWith('/api/')) return await api(request, env, path);
         if (request.method === 'GET' || request.method === 'HEAD') {
           if (env.CONTENT && path === '/content.json') {
-            const saved = await env.CONTENT.get('content.json');
-            if (saved) return withHeaders(new Response(request.method === 'HEAD' ? null : saved, { headers: { 'Content-Type': 'application/json; charset=utf-8', 'Cache-Control': 'no-store' } }));
+            const saved = await env.CONTENT.getWithMetadata('content.json');
+            if (saved && saved.value) return withHeaders(new Response(request.method === 'HEAD' ? null : saved.value, { headers: { 'Content-Type': 'application/json; charset=utf-8', 'Cache-Control': 'no-store', 'X-Saved-At': (saved.metadata && saved.metadata.savedAt) || '' } }));
           }
           if (path.startsWith('/uploads/')) {
             const name = path.slice(9);
@@ -237,7 +248,9 @@ export function makeWorker(deps) {
       } catch (e) {
         return err(500, 'Something went wrong on the server.');
       }
-      return withHeaders(await env.ASSETS.fetch(request));
+      const asset = await env.ASSETS.fetch(request);
+      if (path === '/admin' || path.startsWith('/admin/')) return withHeaders(asset, { 'Cache-Control': 'no-store' });
+      return withHeaders(asset);
     }
   };
 }

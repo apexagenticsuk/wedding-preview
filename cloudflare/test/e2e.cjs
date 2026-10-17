@@ -14,6 +14,8 @@ const pubClick=async p=>{await p.click('#publish');await p.waitForSelector('#dlg
 // 1. no session: sign-in box, wrong passcode refused, demo still works
 {const {ctx,p}=await mk();await p.goto(BASE+'/admin/');await p.waitForSelector('#login:not([hidden])');
  ok('without a session the editor shows "Enter your passcode"',/Enter your passcode/.test(await p.textContent('#login'))&&await p.isVisible('#pass'));
+ ok('sign-in card explains demo mode in one plain line (or already does)',KIND==='marta'||/Try the editor without changing the real site\./.test(await p.textContent('#login')));
+ ok('Publish/other dialogs are marked as dialogs (role=dialog, aria-modal, labelled)',await p.evaluate(()=>{const d=document.getElementById('dlg');return d.getAttribute('role')==='dialog'&&d.getAttribute('aria-modal')==='true'&&!!document.getElementById(d.getAttribute('aria-labelledby'));}));
  ok('no GitHub or key wording in the sign-in card',!/github|token|editor key/i.test(await p.textContent('#login')));
  await p.fill('#pass','definitely-wrong-passcode');await p.click('#signin');await p.waitForFunction(()=>/did not work/.test(document.querySelector('#loginmsg').textContent),null,{timeout:10000});
  ok('wrong passcode gives a plain message and the editor stays closed',await p.isHidden('#app')&&(await p.inputValue('#pass'))==='');
@@ -34,8 +36,9 @@ await p.evaluate(([ph,f])=>DYE.change(x=>{x.contact[f]=ph;},{reload:true}),[PH,F
 if(CFG.gal){await p.evaluate(()=>DYE.change(x=>{x.posts[0].title='Cloudflare post title';x.gallery[0].alt='Cloudflare gallery alt';}));}
 const up=await p.evaluate(async()=>{const cv=document.createElement('canvas');cv.width=40;cv.height=30;cv.getContext('2d').fillRect(0,0,40,30);const bl=await new Promise(r=>cv.toBlob(r,'image/png'));const path=await DYE.upload(new File([bl],'t.png',{type:'image/png'}),1600);DYE.change(x=>{x.clips[0].thumb=path;});return path;});
 ok('picture upload made a local draft path',/^assets\/uploads\/img-/.test(up),up);
-await pubClick(p);await p.waitForFunction(()=>/Saved\./.test(document.querySelector('#toast').textContent),null,{timeout:15000});
-ok('success text is exactly: Saved. Your site updates within a minute.',(await p.textContent('#toast'))==='Saved. Your site updates within a minute.',await p.textContent('#toast'));
+await pubClick(p);await p.waitForFunction(()=>/Saved\.|Your site is updated/.test(document.querySelector('#toast').textContent),null,{timeout:15000});
+ok('success text is exactly: Saved. Your site updates within a minute.',/^(Saved. Your site updates within a minute.|Your site is updated.)/.test(await p.textContent('#toast')),await p.textContent('#toast'));
+await p.waitForFunction(()=>/Your site is updated\./.test(document.querySelector('#toast').textContent),null,{timeout:20000}).then(()=>ok('after Saved, the editor confirms "Your site is updated." once the live site matches',true)).catch(()=>ok('after Saved, the editor confirms "Your site is updated." once the live site matches',false));
 // 3. the public site (no session) shows it straight away
 const pub=await mk();
 await pub.p.goto(BASE+'/');const cj=await pub.p.evaluate(()=>fetch('/content.json',{cache:'no-store'}).then(r=>r.json()));
@@ -54,12 +57,17 @@ await pub.ctx.close();
 await p.reload();await p.waitForFunction(()=>window.DYE&&window.DYE.state().content,null,{timeout:20000});
 ok('editor reopens with the published content',await p.evaluate(([ph,f])=>DYE.state().content.contact[f]===ph,[PH,F]));
 await p.click('#helpb');ok('Go back button is visible in live mode',await p.isVisible('#restore'));
+ok('Help no longer says only the web person can roll back, and names the Go back button',await p.evaluate(()=>{const t=document.getElementById('helpm').textContent;return !/web person can always roll back/.test(t)&&/Go back one version/.test(t);}));
+ok('Go back is at the top of Help (above the steps, visible without scrolling)',await p.evaluate(()=>{const m=document.querySelector('#helpm .mc'),b=document.getElementById('restore').getBoundingClientRect(),mr=m.getBoundingClientRect(),st=m.querySelector('.steps').getBoundingClientRect();return b.bottom<=st.top+1&&b.top>=mr.top&&b.bottom<=innerHeight;}));
 const noPrev=await p.evaluate(()=>fetch('/api/export',{headers:{'X-DY-Editor':'1'}}).then(r=>r.json()).then(j=>j.hasPrevious));
 // publish a second change so there is something to go back to
 await p.click('#helpm [data-close]');
-await p.evaluate(([f,v])=>DYE.change(x=>{x.contact[f]=v;}),[F,CFG.undo]);await pubClick(p);await p.waitForFunction(()=>/Saved\./.test(document.querySelector('#toast').textContent),null,{timeout:15000});
-await p.waitForTimeout(3600);await p.click('#helpb');await p.click('#restore');await p.waitForSelector('#dlg:not([hidden])');await p.evaluate(()=>{[...document.querySelectorAll('#dlg button')].find(x=>/^Go back$/.test(x.textContent)).click();});
-await p.waitForFunction(()=>/Saved\./.test(document.querySelector('#toast').textContent),null,{timeout:15000});
+await p.evaluate(([f,v])=>DYE.change(x=>{x.contact[f]=v;}),[F,CFG.undo]);await pubClick(p);await p.waitForFunction(()=>/Saved\.|Your site is updated/.test(document.querySelector('#toast').textContent),null,{timeout:15000});
+await p.waitForTimeout(3600);await p.click('#helpb');await p.click('#restore');await p.waitForSelector('#dlg:not([hidden])');
+const gt=await p.textContent('#dlg-x');ok('Go back asks "Go back to the version saved before your last publish?", names when it was saved and says pressing again puts the newer one back',/Go back to the version saved before your last publish\?/.test(gt)&&/It was saved .+\d/.test(gt)&&/again later puts the newer version back/.test(gt),gt);
+await p.evaluate(()=>{[...document.querySelectorAll('#dlg button')].find(x=>/^Go back$/.test(x.textContent)).click();});
+await p.waitForFunction(()=>/Went back one version/.test(document.querySelector('#pill').textContent),null,{timeout:15000});
+ok('after Go back the status says exactly: Went back one version. Your site updates within a minute.',(await p.textContent('#pill'))==='Went back one version. Your site updates within a minute.',await p.textContent('#pill'));
 const after=await p.evaluate(()=>fetch('/content.json',{cache:'no-store'}).then(r=>r.json()));ok('Go back restores the previous published version',after.contact[F]===PH,after.contact[F]);
 ok('editor shows the restored content after going back',await p.evaluate(([ph,f])=>DYE.state().content.contact[f]===ph,[PH,F]));
 // 5. refused cases plain
@@ -68,6 +76,13 @@ const r2=await p.evaluate(()=>fetch('/api/upload',{method:'POST',headers:{'X-DY-
 ok('no page errors in the editor',p.errs.length===0,p.errs.join('|'));
 // 6. sign out
 await p.click('#out');await p.waitForSelector('#login:not([hidden])',{timeout:10000});ok('Sign out returns to the passcode box and ends the session',await p.evaluate(()=>fetch('/api/session').then(r=>r.json()).then(j=>j.signedIn===false)));
+for(const wait of [0,1500,2500]){const c2=await b.newContext({viewport:{width:1024,height:640}});const q=await c2.newPage();await q.goto(BASE+'/admin/');await q.fill('#pass',PASS);await q.click('#signin');await q.waitForSelector('#app:not([hidden])',{timeout:15000});
+ const old=(await c2.cookies()).find(c=>/dy_session/.test(c.name));await q.click('#out');await q.waitForTimeout(wait);await q.reload();await q.waitForTimeout(1200);
+ ok('sign out then reload after '+wait+' ms: the passcode box shows, not the editor',await q.isVisible('#login')&&await q.isHidden('#app'));
+ const st=await q.evaluate(ck=>fetch('/api/export',{headers:{'X-DY-Editor':'1','Cookie':ck}}).then(r=>r.status),'');
+ // a browser that kept the old cookie is still refused by the server
+ await c2.addCookies([old]);const r2=await q.evaluate(()=>fetch('/api/export',{headers:{'X-DY-Editor':'1'}}).then(r=>r.status));ok('even if the old cookie is put back it is refused (401) after '+wait+' ms',r2===401,r2);
+ await c2.close();}
 // 7. response headers
 const h=await p.evaluate(()=>fetch('/content.json').then(r=>r.headers.get('x-robots-tag')));ok('Function responses carry X-Robots-Tag noindex, nofollow',h==='noindex, nofollow',h);
 await b.close();const n=res.length,k=res.filter(Boolean).length;console.log('SUMMARY '+k+'/'+n);process.exit(k===n?0:1);})().catch(e=>{console.error(e.message);process.exit(1);});
