@@ -4,7 +4,7 @@
   "description": "Static preview site. Tests run against a local static server.",
   "scripts": {
     "serve": "python3 -m http.server 8765",
-    "test": "for t in snap drag fix shared editor2 dupes links layout pill follow picker focus btns contrast gallery galleryedit; do node tests/$t.js ${BASE:-http://localhost:8765} || exit 1; done"
+    "test": "for t in snap drag fix shared editor2 dupes links layout pill follow picker focus btns contrast gallery galleryedit tapgap; do node tests/$t.js ${BASE:-http://localhost:8765} || exit 1; done"
   },
   "devDependencies": { "playwright": "^1.48.0" }
 }
