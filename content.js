@@ -97,11 +97,31 @@ function contactHTML(c,view){var ct=c.contact||{},tel='tel:'+telOf(ct.phone),mai
   if(view==='foot')return '<b>'+esc(ct.brand)+'</b><a href="'+esc(tel)+'">'+esc(ct.phone)+'</a><a href="'+esc(mail)+'">'+esc(ct.email)+'</a>';
   if(view==='legal')return '&copy; 2026 '+esc(ct.org)+' · Preview of a rebuild of '+esc(ct.website);
   return '<h3>'+esc(ct.brand)+'</h3><p class="tag">'+esc(ct.tagline)+'</p><dl><dt>Tel</dt><dd><a href="'+esc(tel)+'">'+esc(ct.phone)+'</a></dd><dt>E-mail</dt><dd><a href="'+esc(mail)+'">'+esc(ct.email)+'</a></dd><dt>Website</dt><dd>'+esc(ct.website)+'</dd></dl>';}
-function enquiryHTML(c){var ct=c.contact||{};return '<form class="enq" data-mailto="'+esc(ct.email)+'" data-subject="'+esc('Wedding enquiry: The Wedding Comedian')+'"><label><span>Name <abbr title="required">*</abbr></span><input name="Name" required autocomplete="name"></label><label><span>Email</span><input name="Email" type="email" autocomplete="email"></label><label><span>Phone</span><input name="Phone" type="tel" autocomplete="tel"></label><label><span>Wedding date <abbr title="required">*</abbr></span><input name="Wedding date" type="date" required></label><label class="wide"><span>Wedding location</span><input name="Wedding location"></label><label class="wide"><span>Message <abbr title="required">*</abbr></span><textarea name="Message" rows="5" required></textarea></label><button class="btn rose" type="submit">Send</button><p class="fine">Sending opens your email app with these details, addressed to <a href="mailto:'+esc(ct.email)+'">'+esc(ct.email)+'</a>. Nothing is sent from this page itself.</p></form>';}
-/* The enquiry form has no action URL: on Send it opens the visitor's email app with the details filled in (a mailto link built on submit). */
+function enquiryHTML(c){var ct=c.contact||{};return '<form class="enq" data-mailto="'+esc(ct.email)+'" data-subject="'+esc('Wedding enquiry: The Wedding Comedian')+'"><label><span>Name <abbr title="required">*</abbr></span><input name="Name" required autocomplete="name"></label><label><span>Email</span><input name="Email" type="email" autocomplete="email"></label><label><span>Phone</span><input name="Phone" type="tel" autocomplete="tel"></label><label><span>Wedding date <abbr title="required">*</abbr></span><input name="Wedding date" type="date" required></label><label class="wide"><span>Wedding location</span><input name="Wedding location"></label><label class="wide"><span>Message <abbr title="required">*</abbr></span><textarea name="Message" rows="5" required></textarea></label><button class="btn rose" type="submit">Send</button><p class="fine enq-note">'+esc(MAIL_PRIVACY)+' <a href="privacy.html">Privacy notice</a></p><p class="fine enq-fallback"><span class="enq-lead">If nothing opens, email</span> <a class="enq-addr" href="mailto:'+esc(ct.email)+'">'+esc(ct.email)+'</a> <button type="button" class="btn ghost sm enq-copy">Copy address</button></p><p class="enq-msg" role="status" tabindex="-1" hidden></p></form>';}
+/* ---- Enquiry form: opens the visitor's email app (mailto) with the details filled in. Nothing is sent from, or stored on, this site. ----
+   MAIL_PRIVACY is the short privacy note shown beside the form and on privacy.html (one place to change it); privacy.html also shows MAIL_PRIVACY_CONTROLLER.
+   [Square brackets] are placeholders still to be filled in by Dave/Ben. */
+var MAIL_PRIVACY="This opens your email app; nothing is stored on this site. Your email is handled by your own email provider and the business.";
+var MAIL_PRIVACY_CONTROLLER="Data controller: [Dave Young / business name, address, email]. Questions about your details: [contact email].";
+function enqClean(s){return String(s==null?'':s).replace(/\r\n?/g,'\n').replace(/[\u0000-\u0008\u000b\u000c\u000e-\u001f\u007f\u2028\u2029]/g,'').trim();}
+function enqLine(s,max){return enqClean(s).replace(/\s*\n\s*/g,' ').slice(0,max||200);}
+/* Builds the mailto link. Subject is one line; body uses CRLF line breaks; everything is percent-encoded; the whole link is kept under about 1900 characters by shortening the message (flag short). */
+function enqMailHref(to,base,rows){var e=enqLine(to,254);if(!/^[^\s@<>,;:"()\[\]\\]+@[^\s@<>,;:"()\[\]\\]+$/.test(e))e='';
+  var name='';rows.forEach(function(r){if(r[0]==='Name')name=enqLine(r[1],60);});
+  var subject=enqLine(base,120)+(name?' - '+name:'');var msgIdx=-1;rows.forEach(function(r,i){if(r[0]==='Message')msgIdx=i;});
+  function build(msgMax){var lines=[];rows.forEach(function(r,i){var v=i===msgIdx?enqClean(r[1]).slice(0,msgMax):enqLine(r[1]);if(!v)return;lines.push(i===msgIdx?r[0]+':\n'+v:r[0]+': '+v);});
+    return 'mailto:'+encodeURIComponent(e).replace(/%40/g,'@')+'?subject='+encodeURIComponent(subject)+'&body='+encodeURIComponent(lines.join('\n').replace(/\n/g,'\r\n'));}
+  var max=5000,h=build(max),short=false;while(h.length>1900&&max>100){max=Math.max(100,Math.floor(max*0.8));h=build(max);short=true;}
+  return {href:h,short:short};}
+function enqNote(f,t){var m=f.querySelector('.enq-msg');if(!m)return;m.textContent=t;m.hidden=!t;}
 document.addEventListener('submit',function(e){var f=e.target;if(!f||!f.classList||!f.classList.contains('enq'))return;e.preventDefault();if(document.body.classList.contains('dy-editing'))return;
-  var to=f.getAttribute('data-mailto')||'',lines=[];[].slice.call(f.elements).forEach(function(x){if(x.name&&x.value&&x.type!=='submit')lines.push(x.name+': '+x.value);});
-  location.href='mailto:'+encodeURIComponent(to).replace(/%40/g,'@')+'?subject='+encodeURIComponent(f.getAttribute('data-subject')||'Enquiry')+'&body='+encodeURIComponent(lines.join('\n'));});
+  var rows=[];[].slice.call(f.elements).forEach(function(x){if(x.name&&x.type!=='submit'&&x.type!=='button'&&x.value)rows.push([x.name,x.value]);});
+  var r=enqMailHref(f.getAttribute('data-mailto')||'',f.getAttribute('data-subject')||'Enquiry',rows);
+  enqNote(f,r.short?'Your message was long, so it was shortened in the email. Please check it before you send.':'');
+  location.href=r.href;});
+document.addEventListener('click',function(e){var b=e.target.closest&&e.target.closest('.enq-copy');if(!b)return;e.preventDefault();var f=b.closest('form'),a=f.querySelector('.enq-addr'),txt=a?a.textContent:'';
+  var done=function(t){enqNote(f,t);},fallback=function(){try{var rg=document.createRange();rg.selectNodeContents(a);var sl=window.getSelection();sl.removeAllRanges();sl.addRange(rg);done('The address is selected. Press Ctrl+C (or Cmd+C) to copy it.');}catch(x){done('Please copy the address shown.');}};
+  if(navigator.clipboard&&navigator.clipboard.writeText)navigator.clipboard.writeText(txt).then(function(){done('Address copied.');},fallback);else fallback();});
 function shared(c,root){root=root||document;window.DY_C=c;
   root.querySelectorAll('[data-cms]').forEach(function(el){var k=el.getAttribute('data-cms'),v=ATTR(el,'view',''),h=null;
     if(k==='socials')h=socialHTML(c[ATTR(el,'set','socials')]);

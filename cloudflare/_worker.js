@@ -10,7 +10,7 @@ const REQUIRED_KEYS = ['version', '_help', 'siteUrl', 'theme', 'contact', 'set',
 const OPTIONAL_KEYS = ['nav', 'custom', 'seo', 'contactSocials'];
 const BSTY = ['rose', 'gold', 'ghost', 'call'];
 /* ---- end of per-site settings ---- */
-const RESERVED = BUILTIN.concat(['admin', 'content', 'assets', 'style', 'site', 'robots', 'weddings', '404', 'tools', 'api', 'uploads', 'cloudflare']);
+const RESERVED = BUILTIN.concat(['admin', 'content', 'assets', 'style', 'site', 'robots', 'weddings', '404', 'tools', 'api', 'uploads', 'cloudflare', 'privacy']);
 const MAX_JSON = 1024 * 1024;
 const MAX_IMG = 5 * 1024 * 1024;
 const NAME_RE = /^img-[a-z0-9]{8,40}\.(jpg|png|webp)$/;

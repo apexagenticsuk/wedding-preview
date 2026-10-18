@@ -1,0 +1,41 @@
+// Unit checks of the mailto builder and privacy text (no browser): node tests/mailto-unit.js
+const fs=require('fs');const js=fs.readFileSync(__dirname+'/../content.js','utf8');
+const res=[];const ok=(n,c,x)=>{res.push(!!c);console.log((c?'PASS ':'FAIL ')+n+(x&&!c?' '+String(x).slice(0,300):''));};
+const a=js.indexOf('function enqClean'),b=js.indexOf('function enqNote');const {enqMailHref,enqClean}=new Function(js.slice(a,b)+';return {enqMailHref,enqClean};')();
+const parse=h=>{const m=/^mailto:([^?]*)\?subject=([^&]*)&body=(.*)$/.exec(h);return m&&{to:decodeURIComponent(m[1]),subject:decodeURIComponent(m[2]),body:decodeURIComponent(m[3]),raw:h};};
+const rows=(o)=>Object.keys(o).map(k=>[k,o[k]]);
+let r=enqMailHref('info@example.com','Enquiry: Test',rows({Name:'Aoife Murphy',Email:'a@example.com',Phone:'087 123 4567',Message:'Hello\nSecond line'}));let p=parse(r.href);
+ok('link is mailto:<address>?subject=…&body=…',!!p&&p.to==='info@example.com',r.href);
+ok('subject is the form subject plus the name',p.subject==='Enquiry: Test - Aoife Murphy',p.subject);
+ok('body has each filled field on its own line, CRLF line breaks',p.body==='Name: Aoife Murphy\r\nEmail: a@example.com\r\nPhone: 087 123 4567\r\nMessage:\r\nHello\r\nSecond line',JSON.stringify(p.body));
+ok('the link has no raw space, newline or quote',!/[\s"<>]/.test(r.href));
+ok('not shortened when short',r.short===false);
+const nasty='Zoë "Z" O\'Brien & <Co> 100% #1 =x ?y; ,z 😀';
+r=enqMailHref('info@example.com','Enquiry',rows({Name:nasty,Message:'a&b=c?d#e%f\r\nline2\rline3\n\nline5 "q" <b>x</b> 😀 é'}));p=parse(r.href);
+ok('special characters survive encoding in subject and body',p&&p.subject==='Enquiry - '+nasty.slice(0,60)&&p.body.indexOf('Name: '+nasty)>-1&&p.body.indexOf('a&b=c?d#e%f')>-1&&p.body.indexOf('😀 é')>-1,JSON.stringify(p&&p.subject));
+ok('the link still has exactly one ? and one &body=',(r.href.match(/\?/g)||[]).length===1&&(r.href.match(/&/g)||[]).length===1,r.href);
+ok('every line break in the body is CRLF (%0D%0A), none bare',/%0D%0A/.test(r.href)&&!/%0A/.test(r.href.replace(/%0D%0A/g,''))&&!/%0D/.test(r.href.replace(/%0D%0A/g,'')));
+r=enqMailHref('info@example.com','Enquiry',rows({Name:'Bob\r\nBcc: evil@example.com\nX: y',Email:'b@example.com\r\nBcc: e@example.com',Message:'m'}));p=parse(r.href);
+ok('CR/LF in name cannot add header lines: subject is one line',p.subject.indexOf('\n')<0&&p.subject.indexOf('\r')<0&&/^Enquiry - Bob Bcc: evil@example.com X: y$/.test(p.subject),p.subject);
+ok('CR/LF in a single-line field is flattened to spaces in the body',/Email: b@example.com Bcc: e@example.com\r\n/.test(p.body));
+ok('control characters are removed',enqClean('a\u0000b\u0007c\u001fd')==='abcd');
+const long=enqMailHref('info@example.com','Enquiry',rows({Name:'N',Message:'word '.repeat(2000)}));
+ok('very long message: link kept under 1900 characters and flagged as shortened',long.href.length<=1900&&long.short===true&&parse(long.href).body.indexOf('Message:\r\nword word')>-1,long.href.length);
+const worst=enqMailHref('info@example.com','Enquiry',rows({Name:'N',Message:'😀é&'.repeat(3000)}));
+ok('worst-case characters still fit',worst.href.length<=1900,worst.href.length);
+ok('long message is cut on a whole character, never mid-encoding',!/%[0-9A-F]?$/.test(worst.href)&&(()=>{try{decodeURIComponent(worst.href.split('&body=')[1]);return true;}catch(e){return false;}})());
+for(const bad of ['','not an address','a@b c.com','a@b.com\r\nBcc:x@y.com','<a@b.com>','a@b.com,c@d.com']){const q=enqMailHref(bad,'Enquiry',rows({Name:'N',Message:'m'}));ok('a bad/injected address is not put in the link: '+JSON.stringify(bad),/^mailto:\?subject=/.test(q.href),q.href);}
+ok('empty fields are left out',!/Phone/.test(parse(enqMailHref('a@b.co','E',rows({Name:'N',Phone:'',Message:'m'})).href).body));
+// text and code checks
+const priv=(js.match(/var MAIL_PRIVACY="((?:[^"\\]|\\.)*)";/)||[])[1],ctrl=(js.match(/var MAIL_PRIVACY_CONTROLLER="((?:[^"\\]|\\.)*)";/)||[])[1];
+ok('short privacy note is the agreed wording',priv==='This opens your email app; nothing is stored on this site. Your email is handled by your own email provider and the business.',priv);
+ok('controller line keeps visible placeholders',/\[Dave Young \/ business name, address, email\]/.test(ctrl)&&/\[contact email\]/.test(ctrl));
+const pv=fs.readFileSync(__dirname+'/../privacy.html','utf8');const main=pv.slice(pv.indexOf('<main'),pv.indexOf('</main>')).replace(/<!--[\s\S]*?-->/g,'').replace(/<[^>]+>/g,'').replace(/&amp;/g,'&').replace(/\s+/g,' ');
+ok('privacy.html shows the same note and controller line',main.indexOf(priv)>-1&&main.indexOf(ctrl)>-1);
+ok('privacy.html is noindex, marked DRAFT with placeholders in a comment',/name="robots" content="noindex/.test(pv)&&/DRAFT/.test(pv)&&/PLACEHOLDERS/.test(pv));
+ok('privacy page makes no claim about server sending, Cloudflare, Resend or Turnstile',!/Resend|Turnstile|Cloudflare|mailing list|12 months/i.test(main+priv+ctrl));
+ok('content.js has no server enquiry code, honeypot or Turnstile',!/api\/enquiry|turnstile|honeypot|enq-hp|siteverify|resend/i.test(js));
+const w=fs.existsSync(__dirname+'/../cloudflare/_worker.js')?fs.readFileSync(__dirname+'/../cloudflare/_worker.js','utf8'):'';
+ok('Worker has no enquiry endpoint, Resend or Turnstile code',!/api\/enquiry|enquiryRoute|RESEND_|TURNSTILE|siteverify/i.test(w));
+ok('no enquiry setup doc or enquiry tests are left',!fs.existsSync(__dirname+'/../cloudflare/ENQUIRY-SETUP.md')&&!fs.existsSync(__dirname+'/../cloudflare/test/enquiry-unit.mjs')&&!fs.existsSync(__dirname+'/../cloudflare/test/enquiry-e2e.cjs'));
+const n=res.length,pp=res.filter(Boolean).length;console.log('SUMMARY '+pp+'/'+n);process.exit(pp===n?0:1);

@@ -212,3 +212,13 @@ nav.main a{white-space:nowrap}
 
 /* round 6: >= 10px (12px here) between neighbouring tap targets on phones; tests/tapgap.js */
 @media(max-width:1239px){.flinks{gap:12px}.fbrand .mail{gap:12px}.hact,.top .wrap{gap:12px}}
+
+/* enquiry form (mailto): note, fallback line, status; privacy page */
+.enq .enq-note,.enq .enq-fallback{margin:0}
+.enq .enq-fallback{display:flex;flex-wrap:wrap;align-items:center;gap:8px 12px}
+.enq-addr{font-weight:700;user-select:all;overflow-wrap:anywhere}
+.enq .enq-copy.btn{min-height:44px}
+.enq-msg{margin:0;padding:12px 14px;border-radius:14px;font-weight:600;color:var(--rose3);border:2px solid var(--rose)}
+.enq-msg:focus{outline:3px solid var(--rose3);outline-offset:2px}
+.ph{background:#fff1b8;color:#4a3a00;padding:0 3px;border-radius:3px}
+.legalp{max-width:70ch}.legalp p{font-size:17px;line-height:1.6}
