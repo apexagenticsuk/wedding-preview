@@ -222,3 +222,21 @@ nav.main a{white-space:nowrap}
 .enq-msg:focus{outline:3px solid var(--rose3);outline-offset:2px}
 .ph{background:#fff1b8;color:#4a3a00;padding:0 3px;border-radius:3px}
 .legalp{max-width:70ch}.legalp p{font-size:17px;line-height:1.6}
+
+/* ===== full-screen mobile menu ===== */
+.mnav{position:fixed;left:0;right:0;top:0;bottom:auto;z-index:100;height:100vh;height:100dvh;overflow-y:auto;overscroll-behavior:contain;padding:calc(92px + env(safe-area-inset-top)) 22px calc(36px + env(safe-area-inset-bottom));gap:12px;align-content:start;box-shadow:none;border:0;background:var(--paper)}
+.mnav.open{display:grid}
+.mnav a{display:flex;align-items:center;min-height:58px;padding:12px 20px;font-size:26px;line-height:1.2;border-radius:16px;white-space:normal;color:var(--ink);background:var(--blush)}
+.mnav a.cur{color:var(--rose);background:var(--blush);outline:2px solid var(--rose)}
+.mclose{display:none;position:fixed;z-index:101;top:calc(14px + env(safe-area-inset-top));right:16px;width:54px;height:54px;border-radius:16px;align-items:center;justify-content:center;cursor:pointer;padding:0;background:var(--paper);color:var(--ink);border:1px solid var(--line)}
+.mclose:before,.mclose:after{content:"";position:absolute;left:15px;right:15px;top:25px;height:4px;border-radius:4px;background:currentColor}
+.mclose:before{transform:rotate(45deg)}.mclose:after{transform:rotate(-45deg)}
+html.menu-open .mclose{display:flex}
+html.menu-open header.top{backdrop-filter:none;-webkit-backdrop-filter:none}
+html.menu-open .sticky{display:none}
+@keyframes mnfade{from{opacity:0}to{opacity:1}}
+@media (prefers-reduced-motion:no-preference){.mnav.open{animation:mnfade .18s ease-out}}
+@media (min-width:1240px){.mnav,.mclose{display:none!important}}
+html.mclassic .mnav{position:absolute;top:100%;height:auto;overflow:visible;padding:8px 14px 16px;gap:0;border-bottom:1px solid var(--line)}html.mclassic .mnav a{min-height:0;font-size:17px;padding:13px 12px;background:none}html.mclassic .mclose{display:none!important}html.menu-open{overflow:hidden}
+/* no JavaScript: the menu links are simply shown under the header */
+@media (scripting:none){.mnav{display:grid!important;position:static!important;height:auto!important;padding:10px 14px!important}.ham,.mclose{display:none!important}.mnav a{min-height:48px}}
