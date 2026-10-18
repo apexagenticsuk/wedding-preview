@@ -29,6 +29,7 @@ ok('body has every field with its label and the message with CRLF breaks',m&&bod
 ok('the URL itself has no raw space, quote, angle bracket or newline',u&&!/[\s"<>]/.test(u));
 ok('no network request was made by pressing Send (no /api, no third party)',!reqs.some(r=>/\/api\/|challenges\.cloudflare|resend/.test(r))&&reqs.length===0,reqs.join());
 ok('page stayed where it was and shows no error state',p.url().indexOf(page0.replace('.html',''))>-1&&!(await p.locator('text=could not be sent').count()));
+{const cm=await p.evaluate(()=>{const m=document.querySelector('form.enq .enq-msg'),b=document.querySelector('form.enq button[type=submit]');return {t:m&&!m.hidden&&m.textContent,after:!!(m&&b&&(b.compareDocumentPosition(m)&4)),adj:!!(m&&b&&b.nextElementSibling===m)};});ok('after Send a short plain line says the email app should open, otherwise copy the address, right after the button',/^Your email app should open; if not, copy the address\.$/.test(cm.t)&&cm.adj,JSON.stringify(cm));}
 // long message
 navs.length=0;await fill('word '.repeat(2000));await p.click('form.enq button[type=submit]');await p.waitForTimeout(1000);
 const u2=navs.find(x=>x.startsWith('mailto:'));const vis=await p.evaluate(()=>{const m=document.querySelector('form.enq .enq-msg');return !m.hidden&&m.textContent;});

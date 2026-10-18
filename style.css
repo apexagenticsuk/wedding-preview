@@ -218,7 +218,7 @@ nav.main a{white-space:nowrap}
 .enq .enq-fallback{display:flex;flex-wrap:wrap;align-items:center;gap:8px 12px}
 .enq-addr{font-weight:700;user-select:all;overflow-wrap:anywhere}
 .enq .enq-copy.btn{min-height:44px}
-.enq-msg{margin:0;padding:12px 14px;border-radius:14px;font-weight:600;color:var(--rose3);border:2px solid var(--rose)}
+.enq-msg{margin:10px 0 0;padding:0;font-weight:400;font-size:15px}
 .enq-msg:focus{outline:3px solid var(--rose3);outline-offset:2px}
 .ph{background:#fff1b8;color:#4a3a00;padding:0 3px;border-radius:3px}
 .legalp{max-width:70ch}.legalp p{font-size:17px;line-height:1.6}
