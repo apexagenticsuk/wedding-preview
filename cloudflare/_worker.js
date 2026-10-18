@@ -9,12 +9,8 @@ const BUILTIN = ['index', 'videos', 'testimonials', 'faqs', 'blog', 'contact', '
 const REQUIRED_KEYS = ['version', '_help', 'siteUrl', 'theme', 'contact', 'set', 'socials', 'facts', 'faqs', 'testimonials', 'praise', 'gallery', 'galleryIntro', 'clips', 'posts', 'site', 'pages', 'dims'];
 const OPTIONAL_KEYS = ['nav', 'custom', 'seo', 'contactSocials'];
 const BSTY = ['rose', 'gold', 'ghost', 'call'];
-const ENQUIRY_LABEL = 'Website enquiry';
-const ENQUIRY_FROM_NAME = 'The Wedding Comedian website';
-const ENQUIRY_DEFAULT_TO = 'info@theweddingcomedian.ie';
-const ENQUIRY_EXTRA = [{ label: 'Wedding date', max: 40, required: true }, { label: 'Wedding location', max: 200 }];
 /* ---- end of per-site settings ---- */
-const RESERVED = BUILTIN.concat(['admin', 'content', 'assets', 'style', 'site', 'robots', 'weddings', '404', 'tools', 'api', 'uploads', 'cloudflare', 'privacy']);
+const RESERVED = BUILTIN.concat(['admin', 'content', 'assets', 'style', 'site', 'robots', 'weddings', '404', 'tools', 'api', 'uploads', 'cloudflare']);
 const MAX_JSON = 1024 * 1024;
 const MAX_IMG = 5 * 1024 * 1024;
 const NAME_RE = /^img-[a-z0-9]{8,40}\.(jpg|png|webp)$/;
@@ -179,127 +175,9 @@ export function rewriteWithContent(resp, c, pageKey, savedAt) {
   return rw.transform(new Response(resp.body, { status: resp.status, statusText: resp.statusText, headers: h }));
 }
 
-/* ---- enquiry form: POST /api/enquiry sends the visitor's message by email through Resend; GET /api/enquiry-config tells the form
-   whether sending is set up. Secrets (RESEND_API_KEY, TURNSTILE_SECRET) are Pages secrets; ENQUIRY_FROM, ENQUIRY_TO and
-   TURNSTILE_SITEKEY are plain variables. Nothing is stored except a per-IP-hash counter, and message text is never logged. ---- */
-const RESEND_URL = 'https://api.resend.com/emails';
-const TURNSTILE_URL = 'https://challenges.cloudflare.com/turnstile/v0/siteverify';
-const ENQ_MAX_BODY = 20000, ENQ_MIN_AGE_MS = 3000, ENQ_MAX_AGE_MS = 24 * 3600 * 1000, ENQ_PER_HOUR = 5;
-const ENQ_LIMITS = { name: 100, email: 254, phone: 40, message: 5000 };
-const ENQ_MEM = new Map();
-const EMAIL_RE = /^[^\s@<>,;:"()\[\]\\]+@[^\s@<>,;:"()\[\]\\]+\.[^\s@<>,;:"()\[\]\\]{2,}$/;
-function enqTo(env) { return String((env && env.ENQUIRY_TO) || ENQUIRY_DEFAULT_TO).trim(); }
-function enqConfigured(env) {
-  return !!(env && typeof env.RESEND_API_KEY === 'string' && env.RESEND_API_KEY.length > 8 && typeof env.TURNSTILE_SECRET === 'string' && env.TURNSTILE_SECRET.length > 8
-    && typeof env.TURNSTILE_SITEKEY === 'string' && env.TURNSTILE_SITEKEY.length > 4 && typeof env.ENQUIRY_FROM === 'string' && env.ENQUIRY_FROM.length > 5 && EMAIL_RE.test(enqTo(env)));
-}
-async function enqKey(env) { return crypto.subtle.importKey('raw', await sha256('dy-enquiry-stamp-v1|' + env.TURNSTILE_SECRET), { name: 'HMAC', hash: 'SHA-256' }, false, ['sign', 'verify']); }
-export async function makeStamp(env, nowMs) {
-  const body = Math.floor(nowMs).toString(36), sig = b64u(await crypto.subtle.sign('HMAC', await enqKey(env), enc.encode(body)));
-  return body + '.' + sig;
-}
-async function stampAge(env, stamp, nowMs) {
-  const m = /^([0-9a-z]{6,12})\.([A-Za-z0-9_-]{20,60})$/.exec(String(stamp || ''));
-  if (!m) return null;
-  let ok = false; try { ok = await crypto.subtle.verify('HMAC', await enqKey(env), b64uToBytes(m[2]), enc.encode(m[1])); } catch (e) { ok = false; }
-  return ok ? nowMs - parseInt(m[1], 36) : null;
-}
-function oneLine(v) { return typeof v === 'string' && !/[\r\n\u0000-\u0008\u000b\u000c\u000e-\u001f\u2028\u2029]/.test(v); }
-export function safeName(name) { return String(name || '').replace(/[\u0000-\u001f\u007f\u2028\u2029<>]/g, '').replace(/\s+/g, ' ').trim().slice(0, 40) || 'a visitor'; }
-/* Returns {ok:true, v:{name,email,phone,message,fields:[[label,value]]}} or {ok:false, field, message}. */
-export function validateEnquiry(b) {
-  const bad = (field, message) => ({ ok: false, field, message });
-  const check = (val, max, required, label, single) => {
-    let v = val == null ? '' : val; if (typeof v !== 'string') return bad(label, 'Please check ' + label.toLowerCase() + '.');
-    v = single ? v.trim() : v.replace(/\r\n/g, '\n').trim();
-    if (single ? !oneLine(v) : /[\u0000-\u0008\u000b\u000c\u000e-\u001f]/.test(v)) return bad(label, 'Please check ' + label.toLowerCase() + '.');
-    if (required && !v) return bad(label, 'Please fill in ' + label.toLowerCase() + '.');
-    if (v.length > max) return bad(label, label + ' is too long.');
-    return { ok: true, v };
-  };
-  const out = {};
-  for (const [k, max, req, label, single] of [['name', ENQ_LIMITS.name, true, 'Name', true], ['email', ENQ_LIMITS.email, true, 'Email', true], ['phone', ENQ_LIMITS.phone, false, 'Phone', true], ['message', ENQ_LIMITS.message, true, 'Message', false]]) {
-    const r = check(b[k], max, req, label, single); if (!r.ok) return r; out[k] = r.v;
-  }
-  if (!EMAIL_RE.test(out.email)) return bad('Email', 'Please check your email address.');
-  if (out.phone && !/^[0-9+()\-.\s]{5,40}$/.test(out.phone)) return bad('Phone', 'Please check your phone number.');
-  const fb = b.fields && typeof b.fields === 'object' && !Array.isArray(b.fields) ? b.fields : {};
-  out.fields = [];
-  for (const f of ENQUIRY_EXTRA) {
-    const r = check(fb[f.label], f.max, !!f.required, f.label, true); if (!r.ok) return r;
-    if (r.v) out.fields.push([f.label, r.v]);
-  }
-  return { ok: true, v: out };
-}
-export function buildEmail(v, env) {
-  const rows = [['Name', v.name], ['Email', v.email]].concat(v.phone ? [['Phone', v.phone]] : []).concat(v.fields);
-  const text = 'New website enquiry\n\n' + rows.map((r) => r[0] + ': ' + r[1]).join('\n') + '\n\nMessage:\n' + v.message + '\n\n--\nSent from the website enquiry form. Reply to this email to reply to ' + v.name + '.\n';
-  const html = '<div style="font-family:Arial,sans-serif;font-size:15px;color:#222"><h2 style="margin:0 0 12px">New website enquiry</h2><table cellpadding="6" style="border-collapse:collapse">'
-    + rows.map((r) => '<tr><th align="left" style="vertical-align:top">' + escAttr(r[0]) + '</th><td>' + escAttr(r[1]) + '</td></tr>').join('') + '</table><h3 style="margin:16px 0 6px">Message</h3><p style="margin:0;white-space:pre-wrap">'
-    + escAttr(v.message) + '</p><p style="color:#666;font-size:13px;margin-top:18px">Sent from the website enquiry form. Reply to this email to reply to ' + escAttr(v.name) + '.</p></div>';
-  const from = /</.test(env.ENQUIRY_FROM) ? env.ENQUIRY_FROM : ENQUIRY_FROM_NAME + ' <' + env.ENQUIRY_FROM + '>';
-  return { from, to: [enqTo(env)], reply_to: v.email, subject: ENQUIRY_LABEL + ' from ' + safeName(v.name), html, text };
-}
-async function ipHash(env, request) {
-  const ip = request.headers.get('CF-Connecting-IP') || 'unknown';
-  const d = await sha256('dy-enq-ip|' + (env.ENQUIRY_SALT || env.TURNSTILE_SECRET) + '|' + ip);
-  return Array.from(d.slice(0, 8)).map((x) => x.toString(16).padStart(2, '0')).join('');
-}
-async function rateCheck(env, request, nowMs) {
-  const key = 'enq:' + (await ipHash(env, request)) + ':' + Math.floor(nowMs / 3600000);
-  if (env.CONTENT) {
-    const n = parseInt(await env.CONTENT.get(key), 10) || 0;
-    if (n >= ENQ_PER_HOUR) return false;
-    await env.CONTENT.put(key, String(n + 1), { expirationTtl: 7200 });
-    return true;
-  }
-  for (const [k] of ENQ_MEM) if (k.split(':')[2] !== String(Math.floor(nowMs / 3600000))) ENQ_MEM.delete(k);
-  const n = ENQ_MEM.get(key) || 0; if (n >= ENQ_PER_HOUR) return false; ENQ_MEM.set(key, n + 1); return true;
-}
-function enqJson(obj, status) { return withHeaders(new Response(JSON.stringify(obj), { status: status || 200, headers: { 'Content-Type': 'application/json; charset=utf-8', 'Cache-Control': 'no-store' } })); }
-async function enquiryRoute(request, env, path, d) {
-  if (path === '/api/enquiry-config') {
-    if (request.method !== 'GET') return enqJson({ ok: false, error: 'method' }, 405);
-    const c = enqConfigured(env);
-    return enqJson({ ok: true, configured: c, sitekey: c ? env.TURNSTILE_SITEKEY : '', stamp: c ? await makeStamp(env, d.now()) : '' });
-  }
-  if (request.method !== 'POST') return enqJson({ ok: false, error: 'method' }, 405);
-  const origin = request.headers.get('Origin');
-  if (origin && origin !== new URL(request.url).origin) return enqJson({ ok: false, error: 'origin' }, 403);
-  if (!/^application\/json/i.test(request.headers.get('Content-Type') || '')) return enqJson({ ok: false, error: 'type' }, 415);
-  if (!enqConfigured(env)) return enqJson({ ok: false, error: 'not_set_up' }, 503);
-  const raw = await request.text();
-  if (raw.length > ENQ_MAX_BODY) return enqJson({ ok: false, error: 'too_big', message: 'Your message is too long.' }, 413);
-  let b; try { b = JSON.parse(raw); } catch (e) { b = null; }
-  if (!b || typeof b !== 'object' || Array.isArray(b)) return enqJson({ ok: false, error: 'invalid', message: 'Please check the form and try again.' }, 400);
-  if (typeof b.website === 'string' && b.website.trim() !== '') return enqJson({ ok: true }); // honeypot: pretend, send nothing
-  const val = validateEnquiry(b);
-  if (!val.ok) return enqJson({ ok: false, error: 'invalid', field: val.field, message: val.message }, 400);
-  const age = await stampAge(env, b.stamp, d.now());
-  if (age === null || age > ENQ_MAX_AGE_MS || age < 0) return enqJson({ ok: false, error: 'stamp', message: 'Please reload the page and try again.' }, 400);
-  if (age < ENQ_MIN_AGE_MS) return enqJson({ ok: false, error: 'too_fast', message: 'Please try again in a few seconds.' }, 400);
-  if (typeof b.token !== 'string' || b.token.length < 5 || b.token.length > 4096) return enqJson({ ok: false, error: 'verification' }, 400);
-  let tv;
-  try {
-    const fd = new URLSearchParams(); fd.set('secret', env.TURNSTILE_SECRET); fd.set('response', b.token);
-    const ip = request.headers.get('CF-Connecting-IP'); if (ip) fd.set('remoteip', ip);
-    const r = await d.fetch(String(env.TURNSTILE_VERIFY_URL || TURNSTILE_URL), { method: 'POST', body: fd });
-    tv = r.ok ? await r.json() : null;
-  } catch (e) { tv = null; }
-  if (tv === null) return enqJson({ ok: false, error: 'verify_unavailable' }, 502);
-  if (!tv || tv.success !== true) return enqJson({ ok: false, error: 'verification' }, 400);
-  if (!(await rateCheck(env, request, d.now()))) return enqJson({ ok: false, error: 'rate_limited' }, 429);
-  try {
-    const r = await d.fetch(String(env.RESEND_API_URL || RESEND_URL), { method: 'POST', headers: { Authorization: 'Bearer ' + env.RESEND_API_KEY, 'Content-Type': 'application/json' }, body: JSON.stringify(buildEmail(val.v, env)) });
-    if (!r.ok) return enqJson({ ok: false, error: 'send_failed' }, 502);
-  } catch (e) { return enqJson({ ok: false, error: 'send_failed' }, 502); }
-  return enqJson({ ok: true });
-}
-
 export function makeWorker(deps) {
   deps = deps || {};
   const now = deps.now || (() => Date.now());
-  const outFetch = deps.fetch || ((u, o) => fetch(u, o));
   const sleep = deps.sleep || (ms => new Promise(r => setTimeout(r, ms)));
 
   function csrfOk(request) {
@@ -430,7 +308,6 @@ export function makeWorker(deps) {
       const url = new URL(request.url);
       const path = url.pathname;
       try {
-        if (path === '/api/enquiry' || path === '/api/enquiry-config') return await enquiryRoute(request, env, path, { now, fetch: outFetch });
         if (path.startsWith('/api/')) return await api(request, env, path);
         if (request.method === 'GET' || request.method === 'HEAD') {
           if (env.CONTENT && path === '/content.json') {

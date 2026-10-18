@@ -212,16 +212,3 @@ nav.main a{white-space:nowrap}
 
 /* round 6: >= 10px (12px here) between neighbouring tap targets on phones; tests/tapgap.js */
 @media(max-width:1239px){.flinks{gap:12px}.fbrand .mail{gap:12px}.hact,.top .wrap{gap:12px}}
-
-/* enquiry form: send-by-email states (Function present) */
-.enq-hp{position:absolute;left:-9999px;top:auto;width:1px;height:1px;overflow:hidden}
-.enq-ts{min-height:0}
-.enq-msg{margin:0;padding:14px 16px;border-radius:14px;font-weight:600;color:var(--rose3);background:var(--blush);border:1.5px solid var(--rose)}
-.enq-msg:focus{outline:3px solid var(--rose3);outline-offset:2px}
-.enq-msg a{color:var(--rose3);text-decoration:underline}
-.enq-thanks{background:var(--blush);border-radius:var(--r);padding:26px 24px;box-shadow:var(--sh)}
-.enq-thanks:focus{outline:3px solid var(--rose3);outline-offset:2px}
-.enq-thanks-t{margin:0;font-family:var(--serif);font-size:clamp(20px,3.6vw,26px);color:var(--rose3)}
-.enq .enq-privacy{margin:0}
-.ph{background:#fff1b8;color:#4a3a00;padding:0 3px;border-radius:3px}
-.legalp{max-width:70ch}.legalp p{font-size:17px;line-height:1.6}

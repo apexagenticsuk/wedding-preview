@@ -98,62 +98,10 @@ function contactHTML(c,view){var ct=c.contact||{},tel='tel:'+telOf(ct.phone),mai
   if(view==='legal')return '&copy; 2026 '+esc(ct.org)+' · Preview of a rebuild of '+esc(ct.website);
   return '<h3>'+esc(ct.brand)+'</h3><p class="tag">'+esc(ct.tagline)+'</p><dl><dt>Tel</dt><dd><a href="'+esc(tel)+'">'+esc(ct.phone)+'</a></dd><dt>E-mail</dt><dd><a href="'+esc(mail)+'">'+esc(ct.email)+'</a></dd><dt>Website</dt><dd>'+esc(ct.website)+'</dd></dl>';}
 function enquiryHTML(c){var ct=c.contact||{};return '<form class="enq" data-mailto="'+esc(ct.email)+'" data-subject="'+esc('Wedding enquiry: The Wedding Comedian')+'"><label><span>Name <abbr title="required">*</abbr></span><input name="Name" required autocomplete="name"></label><label><span>Email</span><input name="Email" type="email" autocomplete="email"></label><label><span>Phone</span><input name="Phone" type="tel" autocomplete="tel"></label><label><span>Wedding date <abbr title="required">*</abbr></span><input name="Wedding date" type="date" required></label><label class="wide"><span>Wedding location</span><input name="Wedding location"></label><label class="wide"><span>Message <abbr title="required">*</abbr></span><textarea name="Message" rows="5" required></textarea></label><button class="btn rose" type="submit">Send</button><p class="fine">Sending opens your email app with these details, addressed to <a href="mailto:'+esc(ct.email)+'">'+esc(ct.email)+'</a>. Nothing is sent from this page itself.</p></form>';}
-/* ---- Enquiry form ----
-   With the Cloudflare Function present (/api/enquiry-config answers) the form sends by email through /api/enquiry, with a Cloudflare Turnstile
-   spam check, a hidden honeypot field and a server-set time stamp. Without it (the GitHub Pages copy) the original behaviour stays: Send opens the
-   visitor's email app (mailto). Turnstile is only loaded when the visitor first clicks into the form. */
-/* PRIVACY TEXT: final wording from Ben. Keep identical to privacy.html (a test checks this). [Square brackets] are placeholders still to be filled in by Dave/Ben. */
-var ENQ_PRIVACY="We use your name, email, phone number, event date and place, and message to reply to your enquiry. We do this because it is needed to answer your request, and for our legitimate interest in running our business. We keep enquiries for 12 months after our last contact, then delete them. We don't add you to any mailing list unless you ask. Your message is sent by email through Cloudflare (which hosts this site and its spam check) and Resend (our email service). Resend is based in the US and processes the data in the EU. If data leaves the EU or UK, it is protected by the legal safeguards those companies use for transfers. You can ask to see, correct or delete your data, or object to how we use it, by emailing [contact email]. You can complain to the Data Protection Commission (dataprotection.ie) in Ireland, or the ICO (ico.org.uk) in the UK. Data controller: [Dave Young / business name, address, email].";
-var ENQ={cfg:null,p:null,n:0};
-function enqCfg(){if(ENQ.p)return ENQ.p;
-  ENQ.p=(/^https?:$/.test(location.protocol)&&!EDITING&&!PREV?fetch('/api/enquiry-config',{cache:'no-store',credentials:'same-origin'}).then(function(r){return r.ok?r.json():null;}).catch(function(){return null;}):Promise.resolve(null))
-    .then(function(j){ENQ.cfg=j&&j.ok===true&&typeof j.configured==='boolean'?j:null;if(ENQ.cfg)enqScan();return ENQ.cfg;});return ENQ.p;}
-function enqMail(f){var m=f.getAttribute('data-mailto')||'';return m;}
-function enqScan(){if(!ENQ.cfg)return;[].slice.call(document.querySelectorAll('form.enq:not([data-enq-ok])')).forEach(enqEnhance);}
-function enqEnhance(f){if(document.body.classList.contains('dy-editing'))return;f.setAttribute('data-enq-ok','1');ENQ.n++;var id='enq-msg-'+ENQ.n;
-  var em=f.querySelector('input[name="Email"]');if(em){em.required=true;var sp=em.parentNode.querySelector('span');if(sp&&!sp.querySelector('abbr'))sp.insertAdjacentHTML('beforeend',' <abbr title="required">*</abbr>');}
-  var hp=document.createElement('div');hp.className='enq-hp';hp.setAttribute('aria-hidden','true');hp.innerHTML='<label>Leave this empty<input type="text" name="website" tabindex="-1" autocomplete="off"></label>';
-  var btn=f.querySelector('button[type="submit"]');f.insertBefore(hp,btn);
-  var ts=document.createElement('div');ts.className='enq-ts';f.insertBefore(ts,btn);
-  var msg=document.createElement('p');msg.className='enq-msg';msg.id=id;msg.tabindex=-1;msg.setAttribute('tabindex','-1');msg.hidden=true;btn.parentNode.insertBefore(msg,btn.nextSibling);
-  var fine=f.querySelector('.fine');if(!fine){fine=document.createElement('p');fine.className='fine';f.appendChild(fine);}
-  fine.className='fine enq-privacy';fine.textContent=ENQ_PRIVACY+' ';var a=document.createElement('a');a.href='privacy.html';a.textContent='Read the full privacy notice.';fine.appendChild(a);
-  f.addEventListener('focusin',function(){enqTurnstile(f);},{once:true});}
-function enqTurnstile(f){var cfg=ENQ.cfg;if(!cfg||!cfg.configured||f.getAttribute('data-ts'))return;f.setAttribute('data-ts','1');
-  enqLoadTS(function(){var box=f.querySelector('.enq-ts');try{f._tsId=window.turnstile.render(box,{sitekey:cfg.sitekey,appearance:'interaction-only',theme:'light'});}catch(e){f.removeAttribute('data-ts');}});}
-function enqLoadTS(cb){if(window.turnstile&&window.turnstile.render){cb();return;}ENQ.q=ENQ.q||[];ENQ.q.push(cb);if(ENQ.loading)return;ENQ.loading=1;
-  var s=document.createElement('script');s.src='https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit';s.async=true;s.defer=true;s.onload=function(){ENQ.q.splice(0).forEach(function(x){x();});};s.onerror=function(){ENQ.loading=0;};document.head.appendChild(s);}
-function enqShow(f,kind,parts,field){var msg=f.querySelector('.enq-msg');if(!msg)return;msg.hidden=false;msg.className='enq-msg '+kind;msg.setAttribute('role',kind==='err'?'alert':'status');msg.textContent='';
-  parts.forEach(function(p){if(typeof p==='string')msg.appendChild(document.createTextNode(p));else msg.appendChild(p);});
-  [].slice.call(f.querySelectorAll('[aria-invalid]')).forEach(function(x){x.removeAttribute('aria-invalid');x.removeAttribute('aria-describedby');});
-  if(field){var inp=f.querySelector('[name="'+field.replace(/"/g,'')+'"]');if(inp){inp.setAttribute('aria-invalid','true');inp.setAttribute('aria-describedby',msg.id);}}
-  var ta=f.querySelector('textarea');if(kind==='err'&&ta&&!field)ta.setAttribute('aria-describedby',msg.id);
-  msg.focus();}
-function enqFail(f,status,j){var to=enqMail(f),btn=f.querySelector('button[type="submit"]');btn.disabled=false;btn.textContent=btn.getAttribute('data-label')||'Send';
-  try{if(window.turnstile&&f._tsId!=null)window.turnstile.reset(f._tsId);}catch(e){}
-  if(status===400&&j&&j.error==='invalid'&&j.message){enqShow(f,'err',[j.message],j.field);return;}
-  if(status===400&&j&&(j.error==='too_fast'||j.error==='stamp')){if(j.error==='stamp'){ENQ.p=null;enqCfg().then(function(c){if(c)f.setAttribute('data-stamp-new',c.stamp);});}enqShow(f,'err',[j.message||'Please try again in a few seconds.']);return;}
-  if(status===429){var l0=document.createElement('a');l0.href='mailto:'+to;l0.textContent=to;enqShow(f,'err',['Too many messages have been sent from this connection. Please try again later, or email ',l0,' directly.']);return;}
-  var l=document.createElement('a');l.href='mailto:'+to;l.textContent=to;
-  enqShow(f,'err',['Sorry, your message could not be sent. Please try again, or email ',l,' directly.']);}
-function enqOk(f){var d=document.createElement('div');d.className='enq-thanks';d.setAttribute('role','status');d.tabIndex=-1;
-  var h=document.createElement('p');h.className='enq-thanks-t';h.textContent="Thank you, your message has been sent. We'll reply by email.";d.appendChild(h);
-  f.textContent='';f.appendChild(d);d.focus();}
-function enqSend(f,cfg){var btn=f.querySelector('button[type="submit"]'),v={},fields={},tok='';
-  [].slice.call(f.elements).forEach(function(x){if(!x.name||x.type==='submit')return;if(x.name==='cf-turnstile-response'){tok=x.value;return;}
-    if(x.name==='Name')v.name=x.value;else if(x.name==='Email')v.email=x.value;else if(x.name==='Phone')v.phone=x.value;else if(x.name==='Message')v.message=x.value;else if(x.name==='website')v.website=x.value;else fields[x.name]=x.value;});
-  if(cfg.configured&&!tok){enqTurnstile(f);enqShow(f,'err',['Please wait a moment while the spam check finishes, then press Send again.']);return;}
-  if(!btn.getAttribute('data-label'))btn.setAttribute('data-label',btn.textContent);btn.disabled=true;btn.textContent='Sending…';
-  var stamp=f.getAttribute('data-stamp-new')||cfg.stamp;
-  fetch('/api/enquiry',{method:'POST',credentials:'same-origin',headers:{'Content-Type':'application/json'},body:JSON.stringify({name:v.name,email:v.email,phone:v.phone,message:v.message,fields:fields,website:v.website||'',stamp:stamp,token:tok})})
-    .then(function(r){return r.json().catch(function(){return {};}).then(function(j){return {r:r,j:j};});})
-    .then(function(o){if(o.r.ok&&o.j.ok===true)enqOk(f);else enqFail(f,o.r.status,o.j);})
-    .catch(function(){enqFail(f,0,null);});}
-function enqMailto(f){var to=f.getAttribute('data-mailto')||'',lines=[];[].slice.call(f.elements).forEach(function(x){if(x.name&&x.value&&x.type!=='submit')lines.push(x.name+': '+x.value);});
-  location.href='mailto:'+encodeURIComponent(to).replace(/%40/g,'@')+'?subject='+encodeURIComponent(f.getAttribute('data-subject')||'Enquiry')+'&body='+encodeURIComponent(lines.join('\n'));}
+/* The enquiry form has no action URL: on Send it opens the visitor's email app with the details filled in (a mailto link built on submit). */
 document.addEventListener('submit',function(e){var f=e.target;if(!f||!f.classList||!f.classList.contains('enq'))return;e.preventDefault();if(document.body.classList.contains('dy-editing'))return;
-  enqCfg().then(function(cfg){if(!cfg||!f.getAttribute('data-enq-ok'))enqMailto(f);else enqSend(f,cfg);});});
-if(!EDITING&&!PREV){var enqGo=function(){enqCfg();if(window.MutationObserver)new MutationObserver(function(){enqScan();}).observe(document.body,{childList:true,subtree:true});};if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',enqGo);else enqGo();}
+  var to=f.getAttribute('data-mailto')||'',lines=[];[].slice.call(f.elements).forEach(function(x){if(x.name&&x.value&&x.type!=='submit')lines.push(x.name+': '+x.value);});
+  location.href='mailto:'+encodeURIComponent(to).replace(/%40/g,'@')+'?subject='+encodeURIComponent(f.getAttribute('data-subject')||'Enquiry')+'&body='+encodeURIComponent(lines.join('\n'));});
 function shared(c,root){root=root||document;window.DY_C=c;
   root.querySelectorAll('[data-cms]').forEach(function(el){var k=el.getAttribute('data-cms'),v=ATTR(el,'view',''),h=null;
     if(k==='socials')h=socialHTML(c[ATTR(el,'set','socials')]);

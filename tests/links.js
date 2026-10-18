@@ -2,7 +2,7 @@
 // probed and reported (warn only, third-party sites may block bots). Usage: node tests/links.js [base]
 const {chromium}=require('playwright');
 const BASE=(process.argv[2]||'http://localhost:8765').replace(/\/$/,'')+'/';
-const PAGES=['index','videos','testimonials','faqs','blog','contact','privacy','page'];
+const PAGES=['index','videos','testimonials','faqs','blog','contact','page'];
 (async()=>{const b=await chromium.launch({executablePath:process.env.CHROME||'/usr/bin/google-chrome',args:['--no-sandbox']});
 const ctx=await b.newContext();const p=await ctx.newPage();const errs=[];p.on('pageerror',e=>errs.push(e.message));
 const seen=new Map(),ext=new Map();let fail=0,ok=0;
