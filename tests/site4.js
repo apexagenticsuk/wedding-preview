@@ -11,7 +11,7 @@ for(const pg of ['index','videos','testimonials','faqs','blog','contact']){await
 await p.goto(B+'/index.html');await p.keyboard.press('Tab');await p.keyboard.press('Enter');await p.waitForTimeout(200);ok('skip link moves focus to #main',await p.evaluate(()=>document.activeElement&&document.activeElement.id==='main'));
 // form
 await p.goto(B+'/contact.html',{waitUntil:'networkidle'});
-const f=await p.evaluate(()=>{const f=document.querySelector('form.enq');return {action:f.getAttribute('action'),mt:f.getAttribute('data-mailto'),vis:!!document.querySelector('form.enq .fine a[href^="mailto:"]')};});
+const f=await p.evaluate(()=>{const f=document.querySelector('form.enq');return {action:f.getAttribute('action'),mt:f.getAttribute('data-mailto'),vis:!!document.querySelector('form.enq .fine a[href^="mailto:"],form.enq .enq-privacy a[href="privacy.html"]')};});
 ok('form has no insecure action attribute',f.action===null,String(f.action));ok('visible mailto link next to the form',f.vis&&/@/.test(f.mt||''));
 ok('no mixed-content / insecure form console warnings',!msgs.some(m=>/mixed|insecure|not secure/i.test(m)),msgs.join(' | ').slice(0,200));
 const em=p.locator('form.enq input[name=Email]');await em.focus();await p.keyboard.press('Shift+Tab');await p.keyboard.press('Tab');
