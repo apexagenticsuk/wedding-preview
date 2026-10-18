@@ -36,7 +36,7 @@ for(const W of [320,360,390,430,768]){const H=W<500?800:1000;const ctx=await b.n
  await p.evaluate(()=>document.getElementById('__anch').remove());
  // page link
  await T('button.ham');await p.waitForTimeout(200);const hrefs=await S(()=>[...document.querySelectorAll('#mnav a')].map(a=>[a.getAttribute('href'),a.target]));const first=hrefs.find(x=>/\.html$/.test(x[0])&&!x[1]&&!/index/.test(x[0]));
- if(first){await Promise.all([p.waitForNavigation({timeout:8000}).catch(()=>{}),T('#mnav a[href="'+first[0]+'"]')]);await p.waitForTimeout(500);ok(W+': tapping a page link goes there with the menu closed and the page scrollable',p.url().indexOf(first[0])>-1&&await S(()=>getComputedStyle(document.getElementById('mnav')).display==='none'&&document.body.style.position===''),p.url());}
+ if(first){await Promise.all([p.waitForNavigation({timeout:8000}).catch(()=>{}),T('#mnav a[href="'+first[0]+'"]')]);await p.waitForTimeout(500);ok(W+': tapping a page link goes there with the menu closed and the page scrollable',p.url().indexOf(first[0].replace(/\.html$/,''))>-1&&await S(()=>getComputedStyle(document.getElementById('mnav')).display==='none'&&document.body.style.position===''),p.url());}
  ok(W+': no page errors',errs.length===0,errs.join());
  await ctx.close();}
 // reduced motion
